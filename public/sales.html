@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Big Change Dashboard</title>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.5/esm/popper.js" integrity="sha256-gWVmo9i4h2bb5jtXiO3NFhJvQ7iMpR1bl8x28wbieCI=" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+  <script src="utils.js"></script>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">
+      <img src="jb-logo.png" />
+    </a>
+    <h4>Big Change - Sales Report</h4>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+   <span class="navbar-toggler-icon"></span>
+ </button>
+
+ <div class="collapse navbar-collapse" id="navbarSupportedContent">
+   <ul class="navbar-nav ml-auto">
+     <li class="nav-item dropdown">
+       <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+         Reports
+       </a>
+       <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+         <a class="dropdown-item" href="to-order.html">Door Orders</a>
+         <a class="dropdown-item" href="index.html">Today&apos;s Jobs</a>
+         <a class="dropdown-item" href="sales.html">Sales Report</a>
+       </div>
+     </li>
+   </ul>
+  </nav>
+  <div>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col">
+          <form class="form-inline">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text">Start Date</span>
+              </div>
+              <input id="start" type="date" class="form-control" id="start" name="start" min="2018-01-01" onchange="onkeyup" />
+            </div>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text">End Date</span>
+              </div>
+              <input id="end" type="date" class="form-control" id="end" name="end" min="2018-01-01" onchange="onkeyup" />
+            </div>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text">Surveyor</span>
+              </div>
+              <select id="surveyor" name="surveyor">
+                <option selected value="Andy Marshall">Andy Marshall</option>
+                <option value="Jason Housby">Jason Housby</option>
+              </select>
+            </div>
+          </form>
+          <canvas id="chart"></canvas>
+        </div>
+        <div class="col">
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th scope="col">Customer</th>
+                <th scope="col">Flag</th>
+                <th scope="col">Who?</th>
+                <th scope="col">Survey Date</th>
+              </tr>
+            </thead>
+            <tbody id="jobs">
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+    document.getElementById('start').valueAsDate = new Date();
+    var startDate = document.getElementById('start').valueAsDate;
+    startDate.setHours(0, 0, 0, 0);
+    document.getElementById('end').valueAsDate = new Date();
+    var endDate = document.getElementById('end').valueAsDate;
+    endDate.setHours(23, 59, 59, 999);
+    var surveyor = document.getElementById('surveyor').value;
+
+    function getData() {
+      console.log("Updating from Big Change");
+
+      axios.get(`/data/sales/${util_startDate(startDate)}/${util_endDate(endDate)}`).then(response => {
+        const data = response.data.Result;
+        const table = document.getElementById('jobs');
+        const chart = document.getElementById('chart');
+        var sold = 0;
+        var followup = 0;
+        var notsold = 0;
+        var notset = 0;
+        var total = 0;
+
+        while(jobs.firstChild) {
+          jobs.removeChild(jobs.firstChild);
+        }
+
+        data.sort((a, b) => {
+          if(a.PlannedStart > b.PlannedStart) {
+            return 1;
+          }
+          if(b.PlannedStart > a.PlannedStart) {
+            return -1;
+          }
+        }).map((job, index) => {
+          if(job.Resource && job.Resource.includes(surveyor) && (job.Type.includes("Andy Survey") || job.Type.includes("Jason Survey"))) {
+            const row = document.createElement('tr');
+            const tdWho = document.createElement('td');
+            const tdCustomer = document.createElement('td');
+            const tdFlag = document.createElement('td');
+            const tdFittingDate = document.createElement('td');
+
+            total += 1;
+
+            tdWho.appendChild(document.createTextNode(job.Resource ? job.Resource : "NOT SET"));
+            row.appendChild(tdWho);
+
+            tdCustomer.appendChild(document.createTextNode(job.Contact ? job.Contact + " " + job.Postcode : "NOT SET"));
+            row.appendChild(tdCustomer);
+
+            tdFlag.appendChild(document.createTextNode(job.CurrentFlag ? job.CurrentFlag : "NOT SET"));
+            row.appendChild(tdFlag);
+
+            tdFittingDate.appendChild(document.createTextNode(job.PlannedStart ? job.PlannedStart : "NOT SET"));
+            row.appendChild(tdFittingDate);
+
+            if(job.CurrentFlag) {
+              if(job.CurrentFlag.includes("SF01")) {
+                row.classList.add('table-danger');
+                notsold += 1;
+              }
+
+              if(job.CurrentFlag.includes("SF02")) {
+                row.classList.add('table-warning');
+                followup += 1;
+              }
+
+              if(job.CurrentFlag.includes("SF03") || job.CurrentFlag.includes("IF02") || job.CurrentFlag.includes("IF03") || job.CurrentFlag.includes("IF06")) {
+                row.classList.add('table-success');
+                sold += 1;
+              }
+            } else {
+              row.classList.add('table-danger');
+              row.classList.add('text-danger');
+              notset += 1;
+            }
+            table.appendChild(row);
+          }
+        });
+
+        while(chart.firstChild) {
+          chart.removeChild(chart.firstChild);
+        }
+
+        var ctx = chart.getContext('2d');
+        var cht = new Chart(ctx, {
+            // The type of chart we want to create
+            type: 'pie',
+
+            // The data for our dataset
+            data: {
+                labels: [
+                  `Sold ${(sold / total * 100).toFixed(2)}%`,
+                  `To Follow Up ${(followup / total * 100).toFixed(2)}%`,
+                  `Not Sold ${(notsold / total * 100).toFixed(2)}%`,
+                  `Not Set ${(notset / total * 100).toFixed(2)}%`
+                ],
+                datasets: [{
+                    label: "Sales Figures",
+                    data: [sold, followup, notsold, notset],
+                    backgroundColor: [ 'rgb(75, 192, 192)', 'rgb(255, 205, 86)', 'rgb(255, 99, 132)', 'rgb(51, 51, 255)' ]
+                }]
+            },
+
+            // Configuration options go here
+            options: {
+              legend: {
+                labels: {
+                  fontSize: 18
+                }
+              }
+            }
+        });
+      }).catch(err => {
+        console.log(err);
+      })
+    }
+
+    getData();
+
+    setInterval(() => {
+      var newStartDate = document.getElementById('start').valueAsDate;
+      var newEndDate = document.getElementById('end').valueAsDate;
+      var newSurveyor = document.getElementById('surveyor').value;
+
+      newStartDate.setHours(0, 0, 0, 0);
+      newEndDate.setHours(23, 59, 59, 999);
+
+      if(newStartDate.getTime() !== startDate.getTime() || newEndDate.getTime() !== endDate.getTime() || newSurveyor !== surveyor) {
+        startDate = document.getElementById('start').valueAsDate;
+        endDate = document.getElementById('end').valueAsDate;
+        surveyor = document.getElementById('surveyor').value;
+        getData();
+      }
+    }, 1000);
+
+    setInterval(getData, 300000);
+  </script>
+</body>
+</html>
