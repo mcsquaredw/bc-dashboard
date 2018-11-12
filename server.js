@@ -2,13 +2,14 @@ const express = require('express');
 const app = express();
 const port = 3000;
 const axios = require('axios');
+const { username, password, api_key } = require('./config');
 
 app.use(express.static('public'));
 
 app.get('/data/sales/:start/:end', (req, res) => {
   const { start, end } = req.params;
 
-  axios.get(`https://webservice.bigchangeapps.com/v01/services.ashx?action=jobs&key=Big4Excel!&login=hayley@thegaragedoornetwork.com&pwd=Jbdoors1&start=${start}&end=${end}`, {
+  axios.get(`https://webservice.bigchangeapps.com/v01/services.ashx?action=jobs&key=${api_key}&login=${username}&pwd=${password}&start=${start}&end=${end}`, {
     crossdomain: true,
     method: "GET",
     mode:"no-cors"
@@ -29,7 +30,7 @@ app.get('/data/to-order', (req, res) => {
   const nowStr = `${now.getFullYear()}-${('0' + (now.getMonth() + 1)).slice(-2)}-${('0' + now.getDate()).slice(-2)}`;
   const toDateStr = `${toDate.getFullYear()}-${('0' + (toDate.getMonth() + 1)).slice(-2)}-${('0' + toDate.getDate()).slice(-2)}`;
 
-  axios.get(`https://webservice.bigchangeapps.com/v01/services.ashx?action=tags&key=Big4Excel!&login=hayley@thegaragedoornetwork.com&pwd=Jbdoors1`, {
+  axios.get(`https://webservice.bigchangeapps.com/v01/services.ashx?action=tags&key=${api_key}&login=${username}&pwd=${password}`, {
     crossdomain: true,
     method: "GET",
     mode: "no-cors"
@@ -47,7 +48,7 @@ app.get('/data/to-order', (req, res) => {
       tagIdsStr += (index > 0 ? "|" : "") + item;
     });
 
-    axios.get(`https://webservice.bigchangeapps.com/v01/services.ashx?action=jobs&key=Big4Excel!&login=hayley@thegaragedoornetwork.com&pwd=Jbdoors1&TagId=${tagIdsStr}&start=${nowStr}&end=${toDateStr}`, {
+    axios.get(`https://webservice.bigchangeapps.com/v01/services.ashx?action=jobs&key=${api_key}&login=${username}&pwd=${password}&TagId=${tagIdsStr}&start=${nowStr}&end=${toDateStr}`, {
       crossdomain: true,
       method: "GET",
       mode:"no-cors"
@@ -65,7 +66,7 @@ app.get('/data/jobs/:date', (req, res) => {
   toDate.setDate(toDate.getDate() + 1);
   const toDateStr = `${toDate.getFullYear()}-${('0' + (toDate.getMonth() + 1)).slice(-2)}-${('0' + toDate.getDate()).slice(-2)}`;
 
-  axios.get(`https://webservice.bigchangeapps.com/v01/services.ashx?action=jobs&key=Big4Excel!&login=hayley@thegaragedoornetwork.com&pwd=Jbdoors1&start=${incomingDate}&end=${toDateStr}`, {
+  axios.get(`https://webservice.bigchangeapps.com/v01/services.ashx?action=jobs&key=${api_key}&login=${username}&pwd=${password}&start=${incomingDate}&end=${toDateStr}`, {
     crossdomain: true,
     method: "GET",
     mode: "no-cors"
