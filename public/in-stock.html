@@ -18,26 +18,25 @@
     <a class="navbar-brand" href="#">
       <img src="jb-logo.png" />
     </a>
-    <h4>
-      <label for="start">Big Change - Jobs for Date:</label>
-      <input type="date" class="form-control" id="start" name="start" min="2018-01-01" onchange="onkeyup"/>
-    </h4>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ml-auto">
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Reports
-          </a>
-          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="to-order.html">Door Orders</a>
-            <a class="dropdown-item" href="in-stock.html">Doors in Stock</a>
-            <a class="dropdown-item" href="index.html">Today&apos;s Jobs</a>
-            <a class="dropdown-item" href="sales.html">Sales Report</a>
-          </div>
-        </li>
-      </ul>
-     </nav>
-     <div>
+    <h4>Big Change - Door In Stock (Fitting in next 30 days)</h4>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+   <span class="navbar-toggler-icon"></span>
+ </button>
+
+ <div class="collapse navbar-collapse" id="navbarSupportedContent">
+   <ul class="navbar-nav ml-auto">
+     <li class="nav-item dropdown">
+       <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+         Reports
+       </a>
+       <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+         <a class="dropdown-item" href="to-order.html">Door Orders</a>
+         <a class="dropdown-item" href="in-stock.html">Doors in Stock</a>
+         <a class="dropdown-item" href="index.html">Today&apos;s Jobs</a>
+         <a class="dropdown-item" href="sales.html">Sales Report</a>
+       </div>
+     </li>
+   </ul>
   </nav>
   <div>
     <table class="table table-sm">
@@ -47,9 +46,7 @@
           <th scope="col">Customer</th>
           <th scope="col">Flag</th>
           <th scope="col">Who?</th>
-          <th scope="col">Actual Start</th>
-          <th scope="col">Actual End</th>
-          <th scope="col">Status</th>
+          <th scope="col">Scheduled Fitting Date</th>
         </tr>
       </thead>
       <tbody id="jobs">
@@ -57,26 +54,18 @@
     </table>
   </div>
   <script type="text/javascript">
-    document.getElementById('start').valueAsDate = new Date();
-    var date = document.getElementById('start').valueAsDate;
-
     function getData() {
       console.log("Updating from Big Change");
-      axios.get(`/data/jobs/${util_dateToString(date)}`).then(response => {
+
+      axios.get(`/data/to-order`).then(response => {
         const data = response.data.Result;
         const table = document.getElementById('jobs');
-        //console.log(data);
+
         while(jobs.firstChild) {
           jobs.removeChild(jobs.firstChild);
         }
 
         data.sort((a, b) => {
-          if(a.Resource > b.Resource) {
-            return 1;
-          }
-          if(b.Resource > a.Resource) {
-            return -1;
-          }
           if(a.PlannedStart > b.PlannedStart) {
             return 1;
           }
@@ -84,16 +73,13 @@
             return -1;
           }
         }).map((job, index) => {
-
-          if(job.PlannedStart) {
+          if(job.Type.includes("Fitting") && job.CurrentFlag.includes("IF01")) {
             const row = document.createElement('tr');
             const tdType = document.createElement('td');
             const tdCustomer = document.createElement('td');
             const tdFlag = document.createElement('td');
             const tdWho = document.createElement('td');
-            const tdActualStart = document.createElement('td');
-            const tdActualEnd = document.createElement('td');
-            const tdStatus = document.createElement('td');
+            const tdFittingDate = document.createElement('td');
 
             tdType.appendChild(document.createTextNode(job.Type));
             row.appendChild(tdType);
@@ -107,31 +93,15 @@
             tdWho.appendChild(document.createTextNode(job.Resource ? job.Resource : "NOT SET"));
             row.appendChild(tdWho);
 
-            tdActualStart.appendChild(document.createTextNode(job.RealStart ? job.RealStart : "NOT SET"));
-            row.appendChild(tdActualStart);
+            tdFittingDate.appendChild(document.createTextNode(job.PlannedStart ? job.PlannedStart : "NOT SET"));
+            row.appendChild(tdFittingDate);
 
-            tdActualEnd.appendChild(document.createTextNode(job.RealEnd ? job.RealEnd : "NOT FINISHED"));
-            row.appendChild(tdActualEnd);
-
-            tdStatus.appendChild(document.createTextNode(job.Status ? job.Status : "NOT SET"));
-            row.appendChild(tdStatus);
-
-            if(!job.RealStart && !job.RealEnd) {
+            if(job.CurrentFlag) {
+              row.classList.add('table-success');
+            } else {
               row.classList.add('table-danger');
+              row.classList.add('text-danger');
             }
-
-            if(job.RealStart && !job.RealEnd) {
-              row.classList.add('table-warning');
-            }
-
-            if(job.RealStart && job.RealEnd) {
-              if(job.Status.includes("issues")) {
-                row.classList.add('table-info')  ;
-              } else {
-                row.classList.add('table-success');
-              }
-            }
-
             table.appendChild(row);
           }
 
@@ -140,18 +110,10 @@
         console.log(err);
       })
     }
+
     getData();
 
-    setInterval(() => {
-      var newDate = document.getElementById('start').valueAsDate;
-
-      if(newDate.getTime() !== date.getTime()) {
-        date = document.getElementById('start').valueAsDate;
-        getData();
-      }
-    }, 1000);
-
-    setInterval(getData, 60000);
+    setInterval(getData, 300000);
   </script>
 </body>
 </html>
