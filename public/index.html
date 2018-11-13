@@ -9,14 +9,14 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.5/esm/popper.js" integrity="sha256-gWVmo9i4h2bb5jtXiO3NFhJvQ7iMpR1bl8x28wbieCI=" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-  <script src="utils.js"></script>
+  <script src="js/utils.js"></script>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
   <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="#">
-      <img src="jb-logo.png" />
+      <img src="img/jb-logo.png" />
     </a>
     <h4>
       <label for="start">Big Change - Jobs for Date:</label>
@@ -33,6 +33,8 @@
             <a class="dropdown-item" href="in-stock.html">Doors in Stock</a>
             <a class="dropdown-item" href="index.html">Today&apos;s Jobs</a>
             <a class="dropdown-item" href="sales.html">Sales Report</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="gdn-call-log.html">GDN Calls</a>
           </div>
         </li>
       </ul>
@@ -62,7 +64,7 @@
 
     function getData() {
       console.log("Updating from Big Change");
-      axios.get(`/data/jobs/${util_dateToString(date)}`).then(response => {
+      axios.get(`/jb/jobs/${util_dateToString(date)}`).then(response => {
         const data = response.data.Result;
         const table = document.getElementById('jobs');
         //console.log(data);

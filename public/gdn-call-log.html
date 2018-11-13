@@ -17,9 +17,9 @@
 <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="#">
-      <img src="img/jb-logo.png" />
+      <img src="img/gdn-logo.png" />
     </a>
-    <h4>Big Change - Sales Report</h4>
+    <h4>Garage Door Network - Call Log</h4>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
    <span class="navbar-toggler-icon"></span>
  </button>
@@ -45,6 +45,51 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col">
+          <h4>Today&apos;s Calls</h4>
+          <form class="form form-inline">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text">Call Type</span>
+              </div>
+              <select id="call_type" required>
+                <option value="" selected disabled>Select Call Type...</option>
+              </select>
+            </div>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text">Area</span>
+              </div>
+              <select id="area" required>
+                <option value="" selected disabled>Select Area...</option>
+              </select>
+            </div>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text">Call Type</span>
+              </div>
+              <select id="call_purpose" required>
+                <option value="" selected disabled>Select Call Purpose...</option>
+              </select>
+              <div class="input-group-append">
+                <input type="submit" value="Log Call" class="btn btn-primary"/>
+              </div>
+            </div>
+          </form>
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th scope="col">Call Date</th>
+                <th scope="col">Call Type</th>
+                <th scope="col">Area</th>
+                <th scope="col">Purpose</th>
+              </tr>
+            </thead>
+            <tbody id="jobs">
+            </tbody>
+          </table>
+        </div>
+        <div class="col">
+          <h4>Conversion Rates</h4>
           <form class="form-inline">
             <div class="input-group mb-3">
               <div class="input-group-prepend">
@@ -58,26 +103,14 @@
               </div>
               <input id="end" type="date" class="form-control" id="end" name="end" min="2018-01-01" onchange="onkeyup" />
             </div>
-            <div class="input-group mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text">Surveyor</span>
-              </div>
-              <select id="surveyor" name="surveyor">
-                <option selected value="Andy Marshall">Andy Marshall</option>
-                <option value="Jason Housby">Jason Housby</option>
-              </select>
-            </div>
           </form>
-          <canvas id="chart"></canvas>
-        </div>
-        <div class="col">
           <table class="table table-sm">
             <thead>
               <tr>
-                <th scope="col">Customer</th>
-                <th scope="col">Flag</th>
-                <th scope="col">Who?</th>
-                <th scope="col">Survey Date</th>
+                <th scope="col">Area</th>
+                <th scope="col">Leads</th>
+                <th scope="col">Other</th>
+                <th scope="col">Conversion Rate</th>
               </tr>
             </thead>
             <tbody id="jobs">
@@ -94,12 +127,11 @@
     document.getElementById('end').valueAsDate = new Date();
     var endDate = document.getElementById('end').valueAsDate;
     endDate.setHours(23, 59, 59, 999);
-    var surveyor = document.getElementById('surveyor').value;
 
     function getData() {
       console.log("Updating from Big Change");
 
-      axios.get(`/jb/sales/${util_startDate(startDate)}/${util_endDate(endDate)}`).then(response => {
+      axios.get(`/data/sales/${util_startDate(startDate)}/${util_endDate(endDate)}`).then(response => {
         const data = response.data.Result;
         const table = document.getElementById('jobs');
         const chart = document.getElementById('chart');
