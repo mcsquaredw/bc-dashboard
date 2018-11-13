@@ -77,8 +77,6 @@ app.get('/data/jobs/:date', (req, res) => {
   });
 });
 
-
-
 app.listen(port, () => {
   console.log("Listening on port", port);
 });
