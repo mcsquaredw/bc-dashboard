@@ -21,32 +21,39 @@
     </a>
     <h4>Garage Door Network - Call Log</h4>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-   <span class="navbar-toggler-icon"></span>
- </button>
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
- <div class="collapse navbar-collapse" id="navbarSupportedContent">
-   <ul class="navbar-nav ml-auto">
-     <li class="nav-item dropdown">
-       <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-         Reports
-       </a>
-       <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-         <a class="dropdown-item" href="to-order.html">Door Orders</a>
-         <a class="dropdown-item" href="in-stock.html">Doors in Stock</a>
-         <a class="dropdown-item" href="index.html">Today&apos;s Jobs</a>
-         <a class="dropdown-item" href="sales.html">Sales Report</a>
-         <div class="dropdown-divider"></div>
-         <a class="dropdown-item" href="gdn-call-log.html">GDN Calls</a>
-       </div>
-     </li>
-   </ul>
+   <div class="collapse navbar-collapse" id="navbarSupportedContent">
+     <ul class="navbar-nav ml-auto">
+       <li class="nav-item dropdown">
+         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+           Reports
+         </a>
+         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+           <a class="dropdown-item" href="jobs-engineers.html">Today&apos;s Engineer Jobs</a>
+           <a class="dropdown-item" href="jobs-surveyors.html">Today&apos;s Surveyor Jobs</a>
+           <div class="dropdown-divider"></div>
+           <a class="dropdown-item" href="doors-alert.html">Door Orders - Alerts</a>
+           <a class="dropdown-item" href="doors-to-order.html">Door Orders - To Order</a>
+           <a class="dropdown-item" href="doors-to-be-acknowledged.html">Door Orders - To Be Acknowledged</a>
+           <a class="dropdown-item" href="doors-to-be-delivered.html">Door Orders - To Be Delivered</a>
+           <a class="dropdown-item" href="doors-in-stock.html">Door Orders - Doors In Stock</a>
+           <div class="dropdown-divider"></div>
+           <a class="dropdown-item" href="sales.html">Sales Report</a>
+           <div class="dropdown-divider"></div>
+           <a class="dropdown-item" href="gdn-call-log.html">GDN Calls (In Development)</a>
+         </div>
+       </li>
+     </ul>
+   </div>
   </nav>
   <div>
     <div class="container-fluid">
       <div class="row">
         <div class="col">
           <h4>Today&apos;s Calls</h4>
-          <form class="form form-inline">
+          <form id="call-log-form" class="form form-inline" onsubmit="logCall()">
             <div class="input-group mb-3">
               <div class="input-group-prepend">
                 <span class="input-group-text">Call Type</span>
@@ -71,7 +78,7 @@
                 <option value="" selected disabled>Select Call Purpose...</option>
               </select>
               <div class="input-group-append">
-                <input type="submit" value="Log Call" class="btn btn-primary"/>
+                <input type="submit" value="Log Call" class="btn btn-primary" onClick="logCall()" />
               </div>
             </div>
           </form>
@@ -128,133 +135,53 @@
     var endDate = document.getElementById('end').valueAsDate;
     endDate.setHours(23, 59, 59, 999);
 
-    function getData() {
-      console.log("Updating from Big Change");
+    var callTypes = document.getElementById('call_type');
+    var areas = document.getElementById('area');
+    var callPurposes = document.getElementById('call_purpose');
 
-      axios.get(`/data/sales/${util_startDate(startDate)}/${util_endDate(endDate)}`).then(response => {
-        const data = response.data.Result;
-        const table = document.getElementById('jobs');
-        const chart = document.getElementById('chart');
-        var sold = 0;
-        var followup = 0;
-        var notsold = 0;
-        var notset = 0;
-        var total = 0;
+    axios.get(`/gdn/call_type`).then(response => {
+      response.data.map(item => {
+        let option = document.createElement("option");
+        option.value = item.id;
+        option.appendChild(document.createTextNode(item.label));
+        callTypes.appendChild(option);
+      });
+    });
 
-        while(jobs.firstChild) {
-          jobs.removeChild(jobs.firstChild);
-        }
+    axios.get(`/gdn/area`).then(response => {
+      response.data.map(item => {
+        let option = document.createElement("option");
+        option.value = item.id;
+        option.appendChild(document.createTextNode(item.label));
+        areas.appendChild(option);
+      });
+    });
 
-        data.sort((a, b) => {
-          if(a.PlannedStart > b.PlannedStart) {
-            return 1;
-          }
-          if(b.PlannedStart > a.PlannedStart) {
-            return -1;
-          }
-        }).map((job, index) => {
-          if(job.Resource && job.Resource.includes(surveyor) && (job.Type.includes("Andy Survey") || job.Type.includes("Jason Survey"))) {
-            const row = document.createElement('tr');
-            const tdWho = document.createElement('td');
-            const tdCustomer = document.createElement('td');
-            const tdFlag = document.createElement('td');
-            const tdFittingDate = document.createElement('td');
+    axios.get(`/gdn/call_purpose`).then(response => {
+      response.data.map(item => {
+        let option = document.createElement("option");
+        option.value = item.id;
+        option.appendChild(document.createTextNode(item.label));
+        callPurposes.appendChild(option);
+      });
+    });
 
-            total += 1;
+    function logCall() {
+      event.preventDefault();
 
-            tdWho.appendChild(document.createTextNode(job.Resource ? job.Resource : "NOT SET"));
-            row.appendChild(tdWho);
+      let call_type = document.getElementById("call_type");
+      let area = document.getElementById("area");
+      let call_purpose = document.getElementById("call_purpose");
+      let selectedCallType = call_type.options[getSelectedFromSelect(call_type)].value;
+      let selectedArea = area.options[getSelectedFromSelect(area)].value;
+      let selectedCallPurpose = call_purpose.options[getSelectedFromSelect(call_purpose)].value;
 
-            tdCustomer.appendChild(document.createTextNode(job.Contact ? job.Contact + " " + job.Postcode : "NOT SET"));
-            row.appendChild(tdCustomer);
-
-            tdFlag.appendChild(document.createTextNode(job.CurrentFlag ? job.CurrentFlag : "NOT SET"));
-            row.appendChild(tdFlag);
-
-            tdFittingDate.appendChild(document.createTextNode(job.PlannedStart ? job.PlannedStart : "NOT SET"));
-            row.appendChild(tdFittingDate);
-
-            if(job.CurrentFlag) {
-              if(job.CurrentFlag.includes("SF01")) {
-                row.classList.add('table-danger');
-                notsold += 1;
-              }
-
-              if(job.CurrentFlag.includes("SF02")) {
-                row.classList.add('table-warning');
-                followup += 1;
-              }
-
-              if(job.CurrentFlag.includes("SF03") || job.CurrentFlag.includes("IF02") || job.CurrentFlag.includes("IF03") || job.CurrentFlag.includes("IF06")) {
-                row.classList.add('table-success');
-                sold += 1;
-              }
-            } else {
-              row.classList.add('table-danger');
-              row.classList.add('text-danger');
-              notset += 1;
-            }
-            table.appendChild(row);
-          }
-        });
-
-        while(chart.firstChild) {
-          chart.removeChild(chart.firstChild);
-        }
-
-        var ctx = chart.getContext('2d');
-        var cht = new Chart(ctx, {
-            // The type of chart we want to create
-            type: 'pie',
-
-            // The data for our dataset
-            data: {
-                labels: [
-                  `Sold ${(sold / total * 100).toFixed(2)}%`,
-                  `To Follow Up ${(followup / total * 100).toFixed(2)}%`,
-                  `Not Sold ${(notsold / total * 100).toFixed(2)}%`,
-                  `Not Set ${(notset / total * 100).toFixed(2)}%`
-                ],
-                datasets: [{
-                    label: "Sales Figures",
-                    data: [sold, followup, notsold, notset],
-                    backgroundColor: [ 'rgb(75, 192, 192)', 'rgb(255, 205, 86)', 'rgb(255, 99, 132)', 'rgb(51, 51, 255)' ]
-                }]
-            },
-
-            // Configuration options go here
-            options: {
-              legend: {
-                labels: {
-                  fontSize: 18
-                }
-              }
-            }
-        });
+      axios.get(`/gdn/log-call/${selectedCallType}/${selectedArea}/${selectedCallPurpose}`).then(response => {
+        document.getElementById("call-log-form").reset();
       }).catch(err => {
-        console.log(err);
-      })
+        console.error(err);
+      });
     }
-
-    getData();
-
-    setInterval(() => {
-      var newStartDate = document.getElementById('start').valueAsDate;
-      var newEndDate = document.getElementById('end').valueAsDate;
-      var newSurveyor = document.getElementById('surveyor').value;
-
-      newStartDate.setHours(0, 0, 0, 0);
-      newEndDate.setHours(23, 59, 59, 999);
-
-      if(newStartDate.getTime() !== startDate.getTime() || newEndDate.getTime() !== endDate.getTime() || newSurveyor !== surveyor) {
-        startDate = document.getElementById('start').valueAsDate;
-        endDate = document.getElementById('end').valueAsDate;
-        surveyor = document.getElementById('surveyor').value;
-        getData();
-      }
-    }, 1000);
-
-    setInterval(getData, 300000);
   </script>
 </body>
 </html>

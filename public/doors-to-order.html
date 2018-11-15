@@ -18,7 +18,7 @@
     <a class="navbar-brand" href="#">
       <img src="img/jb-logo.png" />
     </a>
-    <h4>Big Change - Door Orders (Next 30 days)</h4>
+    <h4>Big Change - Doors to Order (Next 30 days)</h4>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
    <span class="navbar-toggler-icon"></span>
  </button>
@@ -30,12 +30,18 @@
          Reports
        </a>
        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-         <a class="dropdown-item" href="to-order.html">Door Orders</a>
-         <a class="dropdown-item" href="in-stock.html">Doors in Stock</a>
-         <a class="dropdown-item" href="index.html">Today&apos;s Jobs</a>
+         <a class="dropdown-item" href="jobs-engineers.html">Today&apos;s Engineer Jobs</a>
+         <a class="dropdown-item" href="jobs-surveyors.html">Today&apos;s Surveyor Jobs</a>
+         <div class="dropdown-divider"></div>
+         <a class="dropdown-item" href="doors-alert.html">Door Orders - Alerts</a>
+         <a class="dropdown-item" href="doors-to-order.html">Door Orders - To Order</a>
+         <a class="dropdown-item" href="doors-to-be-acknowledged.html">Door Orders - To Be Acknowledged</a>
+         <a class="dropdown-item" href="doors-to-be-delivered.html">Door Orders - To Be Delivered</a>
+         <a class="dropdown-item" href="doors-in-stock.html">Door Orders - Doors In Stock</a>
+         <div class="dropdown-divider"></div>
          <a class="dropdown-item" href="sales.html">Sales Report</a>
          <div class="dropdown-divider"></div>
-         <a class="dropdown-item" href="gdn-call-log.html">GDN Calls</a>
+         <a class="dropdown-item" href="gdn-call-log.html">GDN Calls (In Development)</a>
        </div>
      </li>
    </ul>
@@ -75,7 +81,7 @@
             return -1;
           }
         }).map((job, index) => {
-          if(job.Type.includes("Fitting") && (!job.CurrentFlag || (job.CurrentFlag.includes("IF02") || job.CurrentFlag.includes("IF03") || job.CurrentFlag.includes("IF06")))) {
+          if(job.Type.includes("Fitting") && (job.CurrentFlag && job.CurrentFlag.includes("IF02"))) {
             const row = document.createElement('tr');
             const tdType = document.createElement('td');
             const tdCustomer = document.createElement('td');

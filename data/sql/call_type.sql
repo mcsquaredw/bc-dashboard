@@ -1,13 +1,8 @@
 DROP TABLE IF EXISTS call_type;
 
-CREATE TABLE call_type (
-  Name Varchar
-);
+CREATE TABLE call_type (  id Integer Primary Key, label Varchar );
 
-INSERT INTO call_type (
-  Name
-) VALUES (
-  "Incoming Call",
-  "Call Centre",
-  "Web"
-);
+INSERT INTO call_type ( label ) VALUES
+( "Incoming Call" ),
+( "Call Centre" ),
+( "Web" );

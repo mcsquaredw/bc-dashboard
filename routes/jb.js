@@ -109,4 +109,24 @@ router.get("/jobs/:date", (req, res) => {
     });
 });
 
+router.get("/job/:id", (req, res) => {
+  const { id } = req.params;
+
+  axios
+    .get(
+      `https://webservice.bigchangeapps.com/v01/services.ashx?&key=${api_key}&login=${username}&pwd=${password}&action=job&jobId=${id}&flaghistory=1`,
+      {
+        crossdomain: true,
+        method: "GET",
+        mode: "no-cors"
+      }
+    )
+    .then(response => {
+      res.send(response.data);
+    })
+    .catch(err => {
+      console.log(err);
+    });
+});
+
 module.exports = router;
