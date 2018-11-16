@@ -147,7 +147,7 @@
             tdFlag.appendChild(document.createTextNode(job.CurrentFlag ? job.CurrentFlag : "NOT SET"));
             row.appendChild(tdFlag);
 
-            tdFittingDate.appendChild(document.createTextNode(job.PlannedStart ? job.PlannedStart : "NOT SET"));
+            tdFittingDate.appendChild(document.createTextNode(job.PlannedStart ? formatTime(job.PlannedStart) : "NOT SET"));
             row.appendChild(tdFittingDate);
 
             if(job.CurrentFlag) {

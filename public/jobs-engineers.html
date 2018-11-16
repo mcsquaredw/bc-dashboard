@@ -114,10 +114,10 @@
             tdWho.appendChild(document.createTextNode(job.Resource ? job.Resource : "NOT SET"));
             row.appendChild(tdWho);
 
-            tdActualStart.appendChild(document.createTextNode(job.RealStart ? job.RealStart : "NOT SET"));
+            tdActualStart.appendChild(document.createTextNode(job.RealStart ? formatTime(job.RealStart) : "NOT SET"));
             row.appendChild(tdActualStart);
 
-            tdActualEnd.appendChild(document.createTextNode(job.RealEnd ? job.RealEnd : "NOT FINISHED"));
+            tdActualEnd.appendChild(document.createTextNode(job.RealEnd ? formatTime(job.RealEnd) : "NOT FINISHED"));
             row.appendChild(tdActualEnd);
 
             tdStatus.appendChild(document.createTextNode(job.Status ? job.Status : "NOT SET"));
