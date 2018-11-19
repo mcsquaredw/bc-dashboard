@@ -10,8 +10,10 @@
   <script src="js/bootstrap.min.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/menu.js"></script>
-  <link href="css/font-awesome.min.css" rel="stylesheet" />
-  <link href="css/bootstrap.min.css" rel="stylesheet" /></head>
+  <script src="js/display.js"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="css/bootstrap.min.css" rel="stylesheet" />
+</head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="#">
@@ -32,31 +34,15 @@
         </li>
       </ul>
     </nav>
-  <div>
-    <table class="table table-sm">
-      <thead>
-        <tr>
-          <th scope="col">Type</th>
-          <th scope="col">Customer</th>
-          <th scope="col">Flag</th>
-          <th scope="col">Who?</th>
-          <th scope="col">Planned Start</th>
-          <th scope="col">Actual Start</th>
-          <th scope="col">Planned End</th>
-          <th scope="col">Actual End</th>
-          <th scope="col">Status</th>
-        </tr>
-      </thead>
-      <tbody id="jobs">
-      </tbody>
-    </table>
-  </div>
+    <div id="jobs">
+    </div>
   <script type="text/javascript">
     document.getElementById('start').valueAsDate = new Date();
     var date = document.getElementById('start').valueAsDate;
-renderMenu("mainMenu");
-    function getData() {
 
+    renderMenu("mainMenu");
+
+    function getData() {
       console.log("Updating from Big Change");
       axios.get(`/jb/jobs/${util_dateToString(date)}`).then(response => {
         const data = response.data.Result;
@@ -66,79 +52,23 @@ renderMenu("mainMenu");
           jobs.removeChild(jobs.firstChild);
         }
 
-        data.sort((a, b) => {
-          if(a.Resource > b.Resource) {
-            return 1;
+        data.sort(sortJobs).map((job, index) => {
+
+          if(job.Resource && job.Type.includes("Survey")) {
+            const row = document.createElement('div');
+
+            row.classList.add("row");
+
+            renderJobTypeIcon(job, row);
+            renderJobDetails(job, row);
+            renderCustomerDetails(job, row);
+            renderTimingDetails(job, row);
+            renderJobStatus(job, row);
+
+            row.classList.add("align-items-center");
+            row.classList.add("m-2");
+            jobs.appendChild(row);
           }
-          if(b.Resource > a.Resource) {
-            return -1;
-          }
-          if(a.PlannedStart > b.PlannedStart) {
-            return 1;
-          }
-          if(b.PlannedStart > a.PlannedStart) {
-            return -1;
-          }
-        }).map((job, index) => {
-
-          if(job.PlannedStart && job.Type.includes("Survey")) {
-            const row = document.createElement('tr');
-            const tdType = document.createElement('td');
-            const tdCustomer = document.createElement('td');
-            const tdFlag = document.createElement('td');
-            const tdWho = document.createElement('td');
-            const tdPlannedStart = document.createElement('td');
-            const tdActualStart = document.createElement('td');
-            const tdPlannedEnd = document.createElement('td');
-            const tdActualEnd = document.createElement('td');
-            const tdStatus = document.createElement('td');
-
-            tdType.appendChild(document.createTextNode(job.Type));
-            row.appendChild(tdType);
-
-            tdCustomer.appendChild(document.createTextNode(job.Contact ? job.Contact + " " + job.Postcode : "NOT SET"));
-            row.appendChild(tdCustomer);
-
-            tdFlag.appendChild(document.createTextNode(job.CurrentFlag ? job.CurrentFlag : "NOT SET"));
-            row.appendChild(tdFlag);
-
-            tdWho.appendChild(document.createTextNode(job.Resource ? job.Resource : "NOT SET"));
-            row.appendChild(tdWho);
-
-            tdPlannedStart.appendChild(document.createTextNode(job.PlannedStart ? formatTime(job.PlannedStart) : "NOT SET"));
-            row.appendChild(tdPlannedStart);
-
-            tdActualStart.appendChild(document.createTextNode(job.RealStart ? formatTime(job.RealStart) : "NOT STARTED"));
-            row.appendChild(tdActualStart);
-
-            tdPlannedEnd.appendChild(document.createTextNode(job.PlannedEnd ? formatTime(job.PlannedEnd) : "NOT SET"));
-            row.appendChild(tdPlannedEnd);
-
-            tdActualEnd.appendChild(document.createTextNode(job.RealEnd ? formatTime(job.RealEnd) : "NOT FINISHED"));
-            row.appendChild(tdActualEnd);
-
-            tdStatus.appendChild(document.createTextNode(job.Status ? job.Status : "NOT SET"));
-            row.appendChild(tdStatus);
-
-            if(!job.RealStart && !job.RealEnd) {
-              row.classList.add('table-danger');
-            }
-
-            if(job.RealStart && !job.RealEnd) {
-              row.classList.add('table-warning');
-            }
-
-            if(job.RealStart && job.RealEnd) {
-              if(job.Status.includes("issues")) {
-                row.classList.add('table-info')  ;
-              } else {
-                row.classList.add('table-success');
-              }
-            }
-
-            table.appendChild(row);
-          }
-
         });
       }).catch(err => {
         console.log(err);

@@ -4,7 +4,7 @@ const menu = [
     href: "jobs-engineers.html",
     label: "Today's Engineer Jobs"
   },
-  { type: "link", href: "jobs-surveyors.html", label: "" },
+  { type: "link", href: "jobs-surveyors.html", label: "Today's Surveyor Jobs" },
   { type: "divider" },
   { type: "link", href: "doors-alert.html", label: "Door Orders - Alerts" },
   {
@@ -30,6 +30,11 @@ const menu = [
   { type: "divider" },
   { type: "link", href: "sales.html", label: "Sales Report" },
   { type: "divider" },
+  {
+    type: "link",
+    href: "gdn-lookup.html",
+    label: "GDN Contractor Lookup"
+  },
   {
     type: "link",
     href: "gdn-call-log.html",

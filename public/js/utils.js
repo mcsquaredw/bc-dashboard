@@ -40,3 +40,24 @@ function formatDate(dateStr) {
     (dateObj.getMonth() + 1)
   ).slice(-2)}/${dateObj.getFullYear()}`;
 }
+
+function toTitleCase(str) {
+  return str.replace(/(?:^|\s)\w/g, function(match) {
+    return match.toUpperCase();
+  });
+}
+
+function sortJobs(a, b) {
+  if (a.Resource > b.Resource) {
+    return 1;
+  }
+  if (b.Resource > a.Resource) {
+    return -1;
+  }
+  if (a.PlannedStart > b.PlannedStart) {
+    return 1;
+  }
+  if (b.PlannedStart > a.PlannedStart) {
+    return -1;
+  }
+}
