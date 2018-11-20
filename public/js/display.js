@@ -10,6 +10,8 @@ function renderJobTypeIcon(job, container) {
     jobTypeIcon = "build";
   } else if (job.Type.includes("Survey")) {
     jobTypeIcon = "search";
+  } else if (job.Type.includes("Misc")) {
+    jobTypeIcon = "search";
   }
 
   iTypeIcon.classList.add("material-icons");
