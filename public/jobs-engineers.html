@@ -13,6 +13,7 @@
   <script src="js/display.js"></script>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="css/bootstrap.min.css" rel="stylesheet" />
+  <link href="css/no-gutters.css" rel="stylesheet" />
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -35,7 +36,7 @@
       </ul>
     </div>
   </nav>
-  <div id="jobs">
+  <div id="fitters">
 
   </div>
   <script type="text/javascript">
@@ -47,34 +48,94 @@
     function getData() {
       console.log("Updating from Big Change");
       axios.get(`/jb/jobs/${util_dateToString(date)}`).then(response => {
-        const data = response.data.Result;
-        const jobs = document.getElementById('jobs');
+        axios.get('/jb/resources').then(resourcePositions => {
+          const data = response.data.Result;
+          const fitters = document.getElementById('fitters');
+          let currentResource = "";
+          let currentJobList;
 
-        while(jobs.firstChild) {
-          jobs.removeChild(jobs.firstChild);
-        }
-
-        data.sort(sortJobs).map((job, index) => {
-          if(job.Resource && (job.Type.includes("Fitting") || job.Type.includes("Repair") || job.Type.includes("Remedial") || job.Type.includes("Misc"))) {
-            const row = document.createElement('div');
-
-            row.classList.add("row");
-
-            renderJobTypeIcon(job, row, 1);
-            renderJobDetails(job, row, 4);
-            renderCustomerDetails(job, row, 3);
-            renderTimingDetails(job, row, 3);
-            renderJobStatus(job, row, 1);
-
-            row.classList.add("align-items-center");
-            row.classList.add("m-2");
-            jobs.appendChild(row);
+          while(fitters.firstChild) {
+            fitters.removeChild(fitters.firstChild);
           }
 
-        });
+          data.sort(sortJobs).map((job, index) => {
+            if(job.Resource && (job.Type.includes("Fitting") || job.Type.includes("Repair") || job.Type.includes("Remedial") || job.Type.includes("Misc"))) {
+              if(job.Resource !== currentResource) {
+                let nameRow = document.createElement("div");
+                let mapRow = document.createElement("div");
+
+                currentResource = job.Resource;
+
+                nameRow.classList.add("row");
+                nameRow.classList.add("text-center");
+                nameRow.appendChild(document.createTextNode(job.Resource));
+
+                mapRow.classList.add("row");
+
+                resourcePositions.data.Result.map(resource => {
+                  if(resource.ResourceName === job.Resource) {
+                    let iframe = document.createElement("iframe");
+
+                    iframe.setAttribute("src", `https://google.com/maps/embed/v1/place?key=AIzaSyD55V3pJb2XQ02l44ecXJ5VgWWE8KRk-NM&zoom=9&q=${resource.PositionLatitude},${resource.PositionLongitude}`);
+                    iframe.setAttribute("style", "height: 100%; width: 100%; ");
+                    mapRow.setAttribute("style", "height: 90%; width: 100%; overflow-y: hidden;");
+                    mapRow.appendChild(iframe);
+                  }
+                })
+
+                fitterName = document.createElement("div");
+                fitterName.classList.add("col-3");
+                fitterName.classList.add("text-center");
+                fitterName.setAttribute("style", "font-size:25px; font-weight: bold;");
+                fitterName.classList.add("mr-0");
+                fitterName.classList.add("pr-0");
+                fitterName.appendChild(nameRow);
+                fitterName.appendChild(mapRow);
+                fitterName.appendChild(document.createElement("br"));
+
+                currentJobList = document.createElement("div");
+                currentJobList.classList.add("col-9");
+                currentJobList.classList.add("mr-0");
+                currentJobList.classList.add("ml-0");
+                currentJobList.classList.add("pr-0");
+                currentJobList.classList.add("pl-0");
+
+                currentFitter = document.createElement("div");
+                currentFitter.classList.add("row");
+                currentFitter.classList.add("p-2");
+                currentFitter.classList.add("m-1");
+                currentFitter.classList.add("rounded");
+                currentFitter.classList.add("border-secondary");
+                currentFitter.classList.add("row-border");
+                currentFitter.appendChild(fitterName);
+                currentFitter.appendChild(currentJobList);
+
+                fitters.appendChild(currentFitter);
+              }
+
+              let jobRow = document.createElement("row");
+              jobRow.classList.add("row");
+              jobRow.classList.add("align-items-center");
+              jobRow.classList.add("mt-1");
+              jobRow.classList.add("mb-1");
+
+              jobRow.classList.add("no-gutters");
+
+              renderJobTypeIcon(job, jobRow, 1);
+              renderJobDetails(job, jobRow, 3);
+              renderCustomerDetails(job, jobRow, 4);
+              renderTimingDetails(job, jobRow, 3);
+              renderJobStatus(job, jobRow, 1);
+
+              currentJobList.appendChild(jobRow);
+            }
+          });
       }).catch(err => {
         console.log(err);
-      })
+      });
+    }).catch(err => {
+      console.log(err);
+    })
     }
 
     getData();

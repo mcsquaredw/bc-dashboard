@@ -30,18 +30,13 @@ function renderJobTypeIcon(job, container, width) {
 
 function renderJobDetails(job, container, width) {
   const spJobType = document.createElement("b");
-  const spFitter = document.createElement("b");
   const colType = document.createElement("div");
 
   spJobType.appendChild(document.createTextNode(job.Type));
-  spFitter.appendChild(document.createTextNode(job.Resource));
 
   colType.classList.add(`col-${width}`);
   colType.setAttribute("style", "font-size: 25px;");
   colType.appendChild(spJobType);
-  colType.appendChild(document.createElement("br"));
-  colType.appendChild(document.createTextNode("Assigned To: "));
-  colType.appendChild(spFitter);
 
   container.appendChild(colType);
 }
@@ -66,34 +61,50 @@ function renderCustomerDetails(job, container, width) {
 }
 
 function renderTimingDetails(job, container, width) {
-  const iStartIcon = document.createElement("i");
-  const iEndIcon = document.createElement("i");
+  const iIcon = document.createElement("i");
+  const rowTiming = document.createElement("div");
+  const colIcon = document.createElement("div");
   const colTiming = document.createElement("div");
+  const colContainer = document.createElement("div");
 
-  iStartIcon.classList.add("material-icons");
-  iStartIcon.setAttribute("style", "font-size: 25px;");
-  iStartIcon.appendChild(document.createTextNode("play_circle_filled"));
-  iEndIcon.classList.add("material-icons");
-  iEndIcon.setAttribute("style", "font-size: 25px;");
-  iEndIcon.appendChild(document.createTextNode("stop"));
+  let iconName = "";
+  let label = "";
 
-  colTiming.classList.add(`col-${width}`);
+  if (!job.RealStart) {
+    iconName = "stop";
+    label = "NOT STARTED";
+  } else if (!job.RealEnd) {
+    iconName = "play_circle_filled";
+    label = `Started ${formatTime(job.RealStart)}`;
+  } else {
+    iconName = "watch_later";
+    label = `Finished in ${formatTime(
+      new Date(
+        new Date(job.RealEnd).getTime() - new Date(job.RealStart).getTime()
+      ).toString()
+    )}`;
+  }
+
+  iIcon.appendChild(document.createTextNode(iconName));
+  iIcon.classList.add("material-icons");
+  iIcon.setAttribute("style", "font-size: 25px;");
+
+  colIcon.setAttribute("style", "font-size: 25px;");
+  colIcon.appendChild(iIcon);
+  colIcon.classList.add("col-2");
+
+  colTiming.appendChild(document.createTextNode(label));
   colTiming.setAttribute("style", "font-size: 25px;");
-  colTiming.appendChild(iStartIcon);
-  colTiming.appendChild(
-    document.createTextNode(
-      job.RealStart ? formatTime(job.RealStart) : "NOT STARTED"
-    )
-  );
-  colTiming.appendChild(document.createElement("br"));
-  colTiming.appendChild(iEndIcon);
-  colTiming.appendChild(
-    document.createTextNode(
-      job.RealEnd ? formatTime(job.RealEnd) : "NOT FINISHED"
-    )
-  );
+  colTiming.classList.add("col-10");
 
-  container.appendChild(colTiming);
+  rowTiming.classList.add("row");
+  rowTiming.appendChild(colIcon);
+  rowTiming.appendChild(colTiming);
+
+  colContainer.appendChild(rowTiming);
+  colContainer.classList.add(`col-${width}`);
+
+  container.appendChild(colContainer);
 }
 
 function renderJobStatus(job, container, width) {
