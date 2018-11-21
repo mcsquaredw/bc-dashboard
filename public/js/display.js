@@ -1,4 +1,4 @@
-function renderJobTypeIcon(job, container) {
+function renderJobTypeIcon(job, container, width) {
   const iTypeIcon = document.createElement("i");
   const colTypeIcon = document.createElement("div");
 
@@ -12,13 +12,15 @@ function renderJobTypeIcon(job, container) {
     jobTypeIcon = "search";
   } else if (job.Type.includes("Misc")) {
     jobTypeIcon = "search";
+  } else if (job.Type.includes("Meeting")) {
+    jobTypeIcon = "people";
   }
 
   iTypeIcon.classList.add("material-icons");
   iTypeIcon.classList.add("mt-2");
   iTypeIcon.setAttribute("style", "font-size: 48px;");
   iTypeIcon.appendChild(document.createTextNode(jobTypeIcon));
-  colTypeIcon.classList.add("col-1");
+  colTypeIcon.classList.add(`col-${width}`);
   colTypeIcon.classList.add("align-middle");
   colTypeIcon.classList.add("text-center");
   colTypeIcon.appendChild(iTypeIcon);
@@ -26,7 +28,7 @@ function renderJobTypeIcon(job, container) {
   container.appendChild(colTypeIcon);
 }
 
-function renderJobDetails(job, container) {
+function renderJobDetails(job, container, width) {
   const spJobType = document.createElement("b");
   const spFitter = document.createElement("b");
   const colType = document.createElement("div");
@@ -34,7 +36,7 @@ function renderJobDetails(job, container) {
   spJobType.appendChild(document.createTextNode(job.Type));
   spFitter.appendChild(document.createTextNode(job.Resource));
 
-  colType.classList.add("col-4");
+  colType.classList.add(`col-${width}`);
   colType.setAttribute("style", "font-size: 25px;");
   colType.appendChild(spJobType);
   colType.appendChild(document.createElement("br"));
@@ -44,7 +46,7 @@ function renderJobDetails(job, container) {
   container.appendChild(colType);
 }
 
-function renderCustomerDetails(job, container) {
+function renderCustomerDetails(job, container, width) {
   const spCustomerName = document.createElement("b");
   const spCustomerPostcode = document.createElement("b");
   const colCustomer = document.createElement("div");
@@ -54,7 +56,7 @@ function renderCustomerDetails(job, container) {
     document.createTextNode(job.Postcode.toUpperCase())
   );
 
-  colCustomer.classList.add("col-3");
+  colCustomer.classList.add(`col-${width}`);
   colCustomer.setAttribute("style", "font-size: 25px;");
   colCustomer.appendChild(spCustomerName);
   colCustomer.appendChild(document.createElement("br"));
@@ -63,7 +65,7 @@ function renderCustomerDetails(job, container) {
   container.appendChild(colCustomer);
 }
 
-function renderTimingDetails(job, container) {
+function renderTimingDetails(job, container, width) {
   const iStartIcon = document.createElement("i");
   const iEndIcon = document.createElement("i");
   const colTiming = document.createElement("div");
@@ -75,7 +77,7 @@ function renderTimingDetails(job, container) {
   iEndIcon.setAttribute("style", "font-size: 25px;");
   iEndIcon.appendChild(document.createTextNode("stop"));
 
-  colTiming.classList.add("col-3");
+  colTiming.classList.add(`col-${width}`);
   colTiming.setAttribute("style", "font-size: 25px;");
   colTiming.appendChild(iStartIcon);
   colTiming.appendChild(
@@ -94,7 +96,7 @@ function renderTimingDetails(job, container) {
   container.appendChild(colTiming);
 }
 
-function renderJobStatus(job, container) {
+function renderJobStatus(job, container, width) {
   const iStatus = document.createElement("i");
   const colStatus = document.createElement("div");
 
@@ -121,7 +123,7 @@ function renderJobStatus(job, container) {
     }
   }
 
-  colStatus.classList.add("col-1");
+  colStatus.classList.add(`col-${width}`);
   colStatus.appendChild(iStatus);
 
   container.appendChild(colStatus);

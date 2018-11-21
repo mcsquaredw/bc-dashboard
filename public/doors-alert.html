@@ -5,12 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Big Change Dashboard</title>
-  <script src="js/axios.min.js"></script>
-  <script src="js/jquery.min.js"></script>
-  <script src="js/bootstrap.min.js"></script>
+  <script src="js/lib/axios.min.js"></script>
+  <script src="js/lib/jquery.min.js"></script>
+  <script src="js/lib/bootstrap.min.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/menu.js"></script>
-  <link href="css/font-awesome.min.css" rel="stylesheet" />
+  <script src="js/display.js"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="css/bootstrap.min.css" rel="stylesheet" />
 </head>
 <body>
@@ -88,12 +89,18 @@
                   response.data.Result.FlagHistory.map(flag => {
                     if(new Date().getTime() > (new Date(flag.flagDate).getTime() + (2 * 24 * 60 * 60 * 1000))) {
                       alerted = true;
-                      reason = "Door not acknowledge within 2 days of order";
+                      reason = "Door not acknowledged within 2 days of order";
                     }
                   });
                 }).catch(err => {
                   console.log(err);
-                })
+                });
+              } else if(!job.Resource) {
+                alerted = true;
+                reason = "Door fitting not assigned";
+              } else if(!job.PlannedStart) {
+                alerted = true;
+                reason = "Job has no fitting date";
               } else if(job.CurrentFlag.includes("IF03") && (new Date(job.PlannedStart).getTime() - new Date().getTime()) < (7 * 24 * 60 * 60 * 1000)) {
                 alerted = true;
                 reason = "Door not delivered less than 7 days before fitting date"

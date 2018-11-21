@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Big Change Dashboard</title>
-  <script src="js/axios.min.js"></script>
-  <script src="js/jquery.min.js"></script>
-  <script src="js/bootstrap.min.js"></script>
+  <script src="js/lib/axios.min.js"></script>
+  <script src="js/lib/jquery.min.js"></script>
+  <script src="js/lib/bootstrap.min.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/menu.js"></script>
   <script src="js/display.js"></script>
@@ -54,16 +54,16 @@
 
         data.sort(sortJobs).map((job, index) => {
 
-          if(job.Resource && job.Type.includes("Survey")) {
+          if(job.Resource && (job.Type.includes("Survey") || job.Type.includes("Meeting"))) {
             const row = document.createElement('div');
 
             row.classList.add("row");
 
-            renderJobTypeIcon(job, row);
-            renderJobDetails(job, row);
-            renderCustomerDetails(job, row);
-            renderTimingDetails(job, row);
-            renderJobStatus(job, row);
+            renderJobTypeIcon(job, row, 1);
+            renderJobDetails(job, row, 4);
+            renderCustomerDetails(job, row, 3);
+            renderTimingDetails(job, row, 3);
+            renderJobStatus(job, row, 1);
 
             row.classList.add("align-items-center");
             row.classList.add("m-2");
