@@ -1,18 +1,24 @@
 const express = require("express");
-const app = express();
-const port = 3000;
+const dev = process.env.NODE_DEV !== 'production';
+const next = require("next");
+const nextApp = next({ dev });
+const handle = nextApp.getRequestHandler();
 const jbRoutes = require("./routes/jb");
-const gdnRoutes = require("./routes/gdn");
 
-app.set("view engine", "pug");
-app.use(express.static("public"));
+nextApp.prepare().then(() => {
+  const app = express();
+  const port = 3000;
 
-app.get("/", (req, res) => {
-  res.redirect("./jobs-engineers.html");
-});
-app.use("/jb", jbRoutes);
-app.use("/gdn", gdnRoutes);
+  app.set("view engine", "pug");
+  app.use(express.static("public"));
 
-app.listen(port, () => {
-  console.log("Listening on port", port);
-});
+  app.get("/", (req, res) => {
+    res.redirect("./jobs-engineers.html");
+  });
+
+  app.use("/jb", jbRoutes);
+
+  app.listen(port, () => {
+    console.log("Listening on port", port);
+  });
+})
