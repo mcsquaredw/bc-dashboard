@@ -6,27 +6,7 @@ const menu = [
   },
   { type: "link", href: "jobs-surveyors.html", label: "Today's Surveyor Jobs" },
   { type: "divider" },
-  { type: "link", href: "doors-alert.html", label: "Door Orders - Alerts" },
-  {
-    type: "link",
-    href: "doors-to-order.html",
-    label: "Door Orders - To Order"
-  },
-  {
-    type: "link",
-    href: "doors-to-be-acknowledged.html",
-    label: "Door Orders - To Be Acknowledged"
-  },
-  {
-    type: "link",
-    href: "doors-to-be-delivered.html",
-    label: "Door Orders - To Be Delivered"
-  },
-  {
-    type: "link",
-    href: "doors-in-stock.html",
-    label: "Door Orders - Doors In Stock"
-  },
+  { type: "link", href: "order-status.html", label: "Door Order Status" },
   { type: "divider" },
   { type: "link", href: "sales.html", label: "Sales Report" },
   { type: "divider" },

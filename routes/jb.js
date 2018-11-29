@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const axios = require("axios");
 const { username, password, api_key } = require("../config");
+const moment = require("moment");
 
 router.get("/sales/:start/:end", (req, res) => {
   const { start, end } = req.params;
@@ -95,6 +96,24 @@ router.get("/jobs/:date", (req, res) => {
   axios
     .get(
       `https://webservice.bigchangeapps.com/v01/services.ashx?action=jobs&key=${api_key}&login=${username}&pwd=${password}&start=${incomingDate}&end=${toDateStr}`,
+      {
+        crossdomain: true,
+        method: "GET",
+        mode: "no-cors"
+      }
+    )
+    .then(response => {
+      res.send(response.data);
+    })
+    .catch(err => {
+      console.log(err);
+    });
+});
+
+router.get("/all-jobs", (req, res) => {
+  axios
+    .get(
+      `https://webservice.bigchangeapps.com/v01/services.ashx?action=jobs&key=${api_key}&login=${username}&pwd=${password}&start=${moment("2018-10-30").format('YYYY-MM-DD')}&end=${moment().add(60, 'days').format('YYYY-MM-DD')}`,
       {
         crossdomain: true,
         method: "GET",

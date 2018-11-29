@@ -40,6 +40,7 @@
 
   </div>
   <script type="text/javascript">
+    var engineers = ["Adrian Ibbertson", "Andy Begg", "Andy MacDonald", "Dave McLaughan", "Jamie Organ", "Jimmy Rawlings", "Jordan Fletcher", "Kevin Jowett", "Stuart Kershaw"];
     document.getElementById('start').valueAsDate = new Date();
     var date = document.getElementById('start').valueAsDate;
 
@@ -59,7 +60,7 @@
           }
 
           data.sort(sortJobs).map((job, index) => {
-            if(job.Resource && (job.Type.includes("Fitting") || job.Type.includes("Repair") || job.Type.includes("Remedial") || job.Type.includes("Misc"))) {
+            if(job.Resource && engineers.includes(job.Resource)) {
               if(job.Resource !== currentResource) {
                 let nameRow = document.createElement("div");
                 let mapRow = document.createElement("div");
@@ -114,18 +115,32 @@
               }
 
               let jobRow = document.createElement("row");
+              
               jobRow.classList.add("row");
               jobRow.classList.add("align-items-center");
               jobRow.classList.add("mt-1");
               jobRow.classList.add("mb-1");
+              jobRow.classList.add(`${jobStatusColour(job)}`)
 
               jobRow.classList.add("no-gutters");
 
-              renderJobTypeIcon(job, jobRow, 1);
-              renderJobDetails(job, jobRow, 3);
-              renderCustomerDetails(job, jobRow, 4);
-              renderTimingDetails(job, jobRow, 3);
-              renderJobStatus(job, jobRow, 1);
+              jobRow.innerHTML += `
+                <div class="col-1 align-middle text-center">
+                  ${renderJobTypeIcon(job)}
+                </div>
+                <div class="col-3" style="font-size: 25px;">
+                  ${renderJobDetails(job)}
+                </div>
+                <div class="col-4" style="font-size: 25px;">
+                  ${renderCustomerDetails(job)}
+                </div>
+                <div class="col-3" style="font-size: 25px;">
+                  ${renderTimingDetails(job)}
+                </div>
+                <div class="col-1">
+                  ${jobStatusIcon(job)}
+                </div>
+              `;
 
               currentJobList.appendChild(jobRow);
             }

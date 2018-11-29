@@ -48,16 +48,8 @@ function toTitleCase(str) {
 }
 
 function sortJobs(a, b) {
-  if (a.Resource > b.Resource) {
-    return 1;
-  }
-  if (b.Resource > a.Resource) {
-    return -1;
-  }
-  if (a.PlannedStart > b.PlannedStart) {
-    return 1;
-  }
-  if (b.PlannedStart > a.PlannedStart) {
-    return -1;
-  }
+  const aDate = new Date(a.PlannedStart);
+  const bDate = new Date(b.PlannedStart);
+  const result = ('' + a.Resource).localeCompare(b.Resource)
+  return (result !== 0 ? result : aDate - bDate);
 }

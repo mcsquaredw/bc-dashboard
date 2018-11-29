@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Big Change Dashboard</title>
+  <script src="js/lib/axios.min.js"></script>
+  <script src="js/lib/jquery.min.js"></script>
+  <script src="js/lib/bootstrap.min.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/menu.js"></script>
+  <script src="js/display.js"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="css/bootstrap.min.css" rel="stylesheet" />
+  <link href="css/kanban.css" rel="stylesheet" />
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">
+      <img src="img/jb-logo.png" />
+    </a>
+    <h4>Big Change - Door Order Status (WORK IN PROGRESS)</h4>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+ <div class="collapse navbar-collapse" id="navbarSupportedContent">
+   <ul class="navbar-nav ml-auto">
+     <li class="nav-item dropdown">
+       <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+         Reports
+       </a>
+       <div id="mainMenu" class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+       </div>
+     </li>
+   </ul>
+  </nav>
+  <div>
+    <div class="dd">
+        <div id="lists">
+        </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+    renderMenu("mainMenu");
+
+    function getData() {
+        console.log("Updating from Big Change");
+        axios.get(`/jb/all-jobs`).then(response => {
+            let lists = document.getElementById("lists");
+
+            let orderPlacedTitle = document.createElement("h2");
+            let orderPlaced = document.createElement("ol");
+            orderPlacedTitle.appendChild(document.createTextNode("Order Placed"));
+            orderPlaced.classList.add("kanban");
+            orderPlaced.appendChild(orderPlacedTitle);
+            
+            let doorToOrderTitle = document.createElement("h2");
+            let doorToOrder = document.createElement("ol");
+            doorToOrderTitle.appendChild(document.createTextNode("Door To Order"));
+            doorToOrder.classList.add("kanban");
+            doorToOrder.appendChild(doorToOrderTitle);
+
+            let ackTitle = document.createElement("h2");
+            let ack = document.createElement("ol");
+            ackTitle.appendChild(document.createTextNode("Ordered - Not Acknowledged"));
+            ack.classList.add("kanban");
+            ack.appendChild(ackTitle);
+
+            let toDeliverTitle = document.createElement("h2");
+            let toDeliver = document.createElement("ol");
+            toDeliverTitle.appendChild(document.createTextNode("To Deliver"));
+            toDeliver.classList.add("kanban");
+            toDeliver.appendChild(toDeliverTitle);
+
+            let readyToFitTitle = document.createElement("h2");
+            let readyToFit = document.createElement("ol");
+            readyToFitTitle.appendChild(document.createTextNode("Ready To Fit"));
+            readyToFit.classList.add("kanban");
+            readyToFit.appendChild(readyToFitTitle);
+
+            let fittedTitle = document.createElement("h2");
+            let fitted = document.createElement("ol");
+            fittedTitle.appendChild(document.createTextNode("Fitted - To Pay"));
+            fitted.classList.add("kanban");
+            fitted.appendChild(fittedTitle);
+
+            let followUpTitle = document.createElement("h2");
+            let followUp = document.createElement("ol");
+            followUpTitle.appendChild(document.createTextNode("Fitted - Followup Required"));
+            followUp.classList.add("kanban");
+            followUp.appendChild(followUpTitle);
+
+            response.data.Result.sort((a, b) => {
+                let aDate = new Date(a.PlannedStart);
+                let bDate = new Date(b.PlannedStart);
+                
+                return aDate - bDate;
+            }).map((job, index) => {
+                if(job.CurrentFlag) {
+                    if(job.Type.includes("Fitting") && job.Status === "Completed" && !job.CurrentFlag.includes("Paid")) {
+                        fitted.innerHTML += `
+                            <li class="dd-item" data-id="${index}">
+                                <h3 class="title dd-handle">${job.Contact} ${job.Postcode}</h3>
+                                <div class="text">
+                                    ${job.Type} Fitted ${formatDate(job.RealEnd)}
+                                </div>
+                            </li>
+                        `;
+                    } else if(job.Type.includes("Fitting") && job.Status === "Completed with issues" && !(job.Contact === "Test Contact")) {
+                        followUp.innerHTML += `
+                            <li class="dd-item bg-danger text-light" data-id="${index}">
+                                <h3 class="title dd-handle">${job.Contact} ${job.Postcode}</h3>
+                                <div class="text text-light">
+                                    ${job.Type} Fitted ${formatDate(job.RealEnd)}
+                                </div>
+                            </li>
+                        `;
+                    } else if(job.CurrentFlag.includes("SF03")) {
+                        orderPlaced.innerHTML += `
+                            <li class="dd-item" data-id="${index}">
+                                <h3 class="title dd-handle">${job.Contact} ${job.Postcode}</h3>
+                                <div class="text">
+                                    Surveyed ${formatDate(job.PlannedStart)} by <br />
+                                    ${job.Resource}
+                                </div>
+                            </li>
+                        `;
+                    } else if(job.CurrentFlag.includes("IF02")) {
+                        doorToOrder.innerHTML += `
+                            <li class="dd-item" data-id="${index}">
+                                <h3 class="title dd-handle">${job.Contact} ${job.Postcode}</h3>
+                                <div class="text">
+                                    ${job.Type} To Be Fitted ${formatDate(job.PlannedStart)}
+                                </div>
+                            </li>
+                        `;
+                    } else if(job.CurrentFlag.includes("IF06")) {
+                        ack.innerHTML += `
+                            <li class="dd-item" data-id="${index}">
+                                <h3 class="title dd-handle">${job.Contact} ${job.Postcode}</h3>
+                                <div class="text">
+                                    ${job.Type} To Be Fitted ${formatDate(job.PlannedStart)}
+                                </div>
+                            </li>
+                        `;
+                    } else if(job.CurrentFlag.includes("IF03")) {
+                        toDeliver.innerHTML += `
+                            <li class="dd-item ${job.PlannedStart && (new Date(job.PlannedStart).getTime() - new Date().getTime()) < 7 * 24 * 60 * 60 * 1000 ? "bg-warning" : "" }" data-id="${index}">
+                                <h3 class="title dd-handle">${job.Contact} ${job.Postcode}</h3>
+                                <div class="text">
+                                    ${job.Type} To Be Fitted ${formatDate(job.PlannedStart)}
+                                </div>
+                            </li>
+                        `;
+                    } else if(job.CurrentFlag.includes("IF01")) {
+                        readyToFit.innerHTML += `
+                            <li class="dd-item" data-id="${index}">
+                                <h3 class="title dd-handle">${job.Contact} ${job.Postcode}</h3>
+                                <div class="text">
+                                    ${job.Type} To Be Fitted ${formatDate(job.PlannedStart)}
+                                </div>
+                            </li>
+                        `;
+                    }
+                }
+            });
+
+            lists.appendChild(orderPlaced);
+            lists.appendChild(doorToOrder);
+            lists.appendChild(ack);
+            lists.appendChild(toDeliver);
+            lists.appendChild(readyToFit);
+            lists.appendChild(fitted);
+            lists.appendChild(followUp);
+        }).catch(err => {
+            console.log(err);
+        });
+    }   
+    
+    getData();
+</script>
+</body>
+</html>
