@@ -9,7 +9,7 @@
   <script src="js/lib/jquery.min.js"></script>
   <script src="js/lib/bootstrap.min.js"></script>
   <script src="js/utils.js"></script>
-  <script src="js/menu.js"></script>
+  
   <script src="js/display.js"></script>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="css/bootstrap.min.css" rel="stylesheet" />
@@ -43,8 +43,6 @@
     var engineers = ["Adrian Ibbertson", "Andy Begg", "Andy MacDonald", "Dave McLaughan", "Jamie Organ", "Jimmy Rawlings", "Jordan Fletcher", "Kevin Jowett", "Stuart Kershaw"];
     document.getElementById('start').valueAsDate = new Date();
     var date = document.getElementById('start').valueAsDate;
-
-    renderMenu("mainMenu");
 
     function getData() {
       console.log("Updating from Big Change");
@@ -166,5 +164,6 @@
 
     setInterval(getData, 60000);
   </script>
+  <script src="js/menu.js"></script>
 </body>
 </html>

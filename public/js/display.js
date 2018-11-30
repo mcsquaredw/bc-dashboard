@@ -21,6 +21,8 @@ function renderJobTypeIcon(job) {
 function renderJobDetails(job) {
   return `
     <b>${job.Type}</b>
+    <br />
+    Expected to take ${job.Duration}hrs
   `;
 }
 

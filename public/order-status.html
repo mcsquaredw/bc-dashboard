@@ -9,7 +9,6 @@
   <script src="js/lib/jquery.min.js"></script>
   <script src="js/lib/bootstrap.min.js"></script>
   <script src="js/utils.js"></script>
-  <script src="js/menu.js"></script>
   <script src="js/display.js"></script>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="css/bootstrap.min.css" rel="stylesheet" />
@@ -43,8 +42,6 @@
     </div>
   </div>
   <script type="text/javascript">
-    renderMenu("mainMenu");
-
     function getData() {
         console.log("Updating from Big Change");
         axios.get(`/jb/all-jobs`).then(response => {
@@ -92,6 +89,14 @@
             followUp.classList.add("kanban");
             followUp.appendChild(followUpTitle);
 
+            let uncatTitle = document.createElement("h2");
+            let uncat = document.createElement("ol");
+            uncatTitle.appendChild(document.createTextNode("Uncategorised - Check for Errors!"));
+            uncat.classList.add("kanban");
+            uncat.appendChild(uncatTitle);
+
+            let unflagged = false;
+
             response.data.Result.sort((a, b) => {
                 let aDate = new Date(a.PlannedStart);
                 let bDate = new Date(b.PlannedStart);
@@ -99,29 +104,11 @@
                 return aDate - bDate;
             }).map((job, index) => {
                 if(job.CurrentFlag) {
-                    if(job.Type.includes("Fitting") && job.Status === "Completed" && !job.CurrentFlag.includes("Paid")) {
-                        fitted.innerHTML += `
-                            <li class="dd-item" data-id="${index}">
-                                <h3 class="title dd-handle">${job.Contact} ${job.Postcode}</h3>
-                                <div class="text">
-                                    ${job.Type} Fitted ${formatDate(job.RealEnd)}
-                                </div>
-                            </li>
-                        `;
-                    } else if(job.Type.includes("Fitting") && job.Status === "Completed with issues" && !(job.Contact === "Test Contact")) {
-                        followUp.innerHTML += `
-                            <li class="dd-item bg-danger text-light" data-id="${index}">
-                                <h3 class="title dd-handle">${job.Contact} ${job.Postcode}</h3>
-                                <div class="text text-light">
-                                    ${job.Type} Fitted ${formatDate(job.RealEnd)}
-                                </div>
-                            </li>
-                        `;
-                    } else if(job.CurrentFlag.includes("SF03")) {
+                    if(job.CurrentFlag.includes("SF03")) {
                         orderPlaced.innerHTML += `
-                            <li class="dd-item" data-id="${index}">
-                                <h3 class="title dd-handle">${job.Contact} ${job.Postcode}</h3>
-                                <div class="text">
+                            <li class="dd-item bg-danger text-light" data-id="${index}">
+                                <h3 class="title dd-handle">${toTitleCase(job.Contact)} ${job.Postcode}</h3>
+                                <div class="text text-light">
                                     Surveyed ${formatDate(job.PlannedStart)} by <br />
                                     ${job.Resource}
                                 </div>
@@ -129,9 +116,9 @@
                         `;
                     } else if(job.CurrentFlag.includes("IF02")) {
                         doorToOrder.innerHTML += `
-                            <li class="dd-item" data-id="${index}">
-                                <h3 class="title dd-handle">${job.Contact} ${job.Postcode}</h3>
-                                <div class="text">
+                            <li class="dd-item text-light ${job.PlannedStart ? (new Date(job.PlannedStart).getTime() - new Date().getTime()) < 7 * 24 * 60 * 60 * 1000 ? "bg-danger" :  (new Date(job.PlannedStart).getTime() - new Date().getTime()) < 14 * 24 * 60 * 60 * 1000 ? "bg-warning" : "bg-info" : "bg-danger"}" data-id="${index}">
+                                <h3 class="title dd-handle">${toTitleCase(job.Contact)} ${job.Postcode}</h3>
+                                <div class="text text-light">
                                     ${job.Type} To Be Fitted ${formatDate(job.PlannedStart)}
                                 </div>
                             </li>
@@ -139,7 +126,7 @@
                     } else if(job.CurrentFlag.includes("IF06")) {
                         ack.innerHTML += `
                             <li class="dd-item" data-id="${index}">
-                                <h3 class="title dd-handle">${job.Contact} ${job.Postcode}</h3>
+                                <h3 class="title dd-handle">${toTitleCase(job.Contact)} ${job.Postcode}</h3>
                                 <div class="text">
                                     ${job.Type} To Be Fitted ${formatDate(job.PlannedStart)}
                                 </div>
@@ -147,19 +134,48 @@
                         `;
                     } else if(job.CurrentFlag.includes("IF03")) {
                         toDeliver.innerHTML += `
-                            <li class="dd-item ${job.PlannedStart && (new Date(job.PlannedStart).getTime() - new Date().getTime()) < 7 * 24 * 60 * 60 * 1000 ? "bg-warning" : "" }" data-id="${index}">
-                                <h3 class="title dd-handle">${job.Contact} ${job.Postcode}</h3>
-                                <div class="text">
-                                    ${job.Type} To Be Fitted ${formatDate(job.PlannedStart)}
+                            <li class="dd-item text-light ${job.PlannedStart ? (new Date(job.PlannedStart).getTime() - new Date().getTime()) < 7 * 24 * 60 * 60 * 1000 ? "bg-danger" :  (new Date(job.PlannedStart).getTime() - new Date().getTime()) < 14 * 24 * 60 * 60 * 1000 ? "bg-warning" : "bg-info" : "bg-danger"}" data-id="${index}">
+                                <h3 class="title dd-handle">${toTitleCase(job.Contact)} ${job.Postcode}</h3>
+                                <div class="text text-light">
+                                    ${job.PlannedStart ? `${job.Type} To Be Fitted ${formatDate(job.PlannedStart)}` : `NO FITTING DATE!`}
                                 </div>
                             </li>
                         `;
                     } else if(job.CurrentFlag.includes("IF01")) {
-                        readyToFit.innerHTML += `
-                            <li class="dd-item" data-id="${index}">
-                                <h3 class="title dd-handle">${job.Contact} ${job.Postcode}</h3>
-                                <div class="text">
-                                    ${job.Type} To Be Fitted ${formatDate(job.PlannedStart)}
+                        if(job.RealEnd) {
+                            if(job.Status.includes("issues")) {
+                                followUp.innerHTML += `                                
+                                    <li class="dd-item bg-danger text-light" data-id="${index}">
+                                        <h3 class="title dd-handle">${toTitleCase(job.Contact)} ${job.Postcode}</h3>
+                                        <div class="text text-light">
+                                            ${job.Type} Fitted ${formatDate(job.RealEnd)}
+                                        </div>
+                                    </li>`;
+                            } else {
+                                fitted.innerHTML += `
+                                    <li class="dd-item bg-info" data-id="${index}">
+                                        <h3 class="title dd-handle">${toTitleCase(job.Contact)} ${job.Postcode}</h3>
+                                        <div class="text">
+                                            ${job.Type} Fitted ${formatDate(job.RealEnd)}
+                                        </div>
+                                    </li>`;
+                            }
+                        } else {
+                            readyToFit.innerHTML += `
+                                <li class="dd-item" data-id="${index}">
+                                    <h3 class="title dd-handle">${toTitleCase(job.Contact)} ${job.Postcode}</h3>
+                                    <div class="text">
+                                        ${job.Type} To Be Fitted ${formatDate(job.PlannedEnd)}
+                                    </div>
+                                </li>`;
+                        }                       
+                    } else if (!job.CurrentFlag) {
+                        unflagged = true;
+                        uncat.innerHTML += `
+                            <li class="dd-item bg-danger text-light" data-id="${index}">
+                                <h3 class="title dd-handle">${toTitleCase(job.Contact)} ${job.Postcode}</h3>
+                                <div class="text text-light">
+                                    ${job.Type}
                                 </div>
                             </li>
                         `;
@@ -174,6 +190,9 @@
             lists.appendChild(readyToFit);
             lists.appendChild(fitted);
             lists.appendChild(followUp);
+            if(unflagged) {
+                lists.appendChild(uncat);
+            }
         }).catch(err => {
             console.log(err);
         });
@@ -181,5 +200,6 @@
     
     getData();
 </script>
+<script src="js/menu.js"></script>
 </body>
 </html>

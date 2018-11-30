@@ -10,8 +10,8 @@
   <script src="js/lib/bootstrap.min.js"></script>
   <script src="js/lib/Chart.min.js"></script>
   <script src="js/utils.js"></script>
-  <script src="js/menu.js"></script>
   <script src="js/display.js"></script>
+  <script src="js/pieChart.js"></script>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="css/bootstrap.min.css" rel="stylesheet" />
 <body>
@@ -70,7 +70,6 @@
               <tr>
                 <th scope="col">Customer</th>
                 <th scope="col">Flag</th>
-                <th scope="col">Who?</th>
                 <th scope="col">Survey Date</th>
               </tr>
             </thead>
@@ -82,53 +81,38 @@
     </div>
   </div>
   <script type="text/javascript">
-    renderMenu("mainMenu");
-    document.getElementById('start').valueAsDate = new Date();
-    var startDate = document.getElementById('start').valueAsDate;
-    startDate.setHours(0, 0, 0, 0);
-    document.getElementById('end').valueAsDate = new Date();
-    var endDate = document.getElementById('end').valueAsDate;
-    endDate.setHours(23, 59, 59, 999);
-    var surveyor = document.getElementById('surveyor').value;
-    var ctx = chart.getContext('2d');
-    var cht;
+    var startDate = new Date();
+    var endDate = new Date();
+    endDate.setDate(endDate.getDate() + 1);
+
+    document.getElementById('start').valueAsDate = startDate;
+    document.getElementById('end').valueAsDate = endDate;
+    
+    var surveyor = document.getElementById('surveyor').value; 
 
     function getData() {
       console.log("Updating from Big Change");
 
-      axios.get(`/jb/sales/${util_startDate(startDate)}/${util_endDate(endDate)}`).then(response => {
+      axios.get(`/jb/sales/${util_dateToString(startDate)}/${util_dateToString(endDate)}`).then(response => {
         const data = response.data.Result;
         const table = document.getElementById('jobs');
-        const chart = document.getElementById('chart');
+        
         var sold = 0;
         var followup = 0;
         var notsold = 0;
         var notset = 0;
         var total = 0;
 
-        while(jobs.firstChild) {
-          jobs.removeChild(jobs.firstChild);
-        }
+        removeChildren(jobs);
 
-        data.sort((a, b) => {
-          if(a.PlannedStart > b.PlannedStart) {
-            return 1;
-          }
-          if(b.PlannedStart > a.PlannedStart) {
-            return -1;
-          }
-        }).map((job, index) => {
-          if(job.Resource && job.Resource.includes(surveyor) && (job.Type.includes("Andy Survey") || job.Type.includes("Jason Survey"))) {
+        data.sort(sortJobs).map((job, index) => {
+          if(job.Resource && job.Resource.includes(surveyor) && (job.Type.includes("Survey"))) {
             const row = document.createElement('tr');
-            const tdWho = document.createElement('td');
             const tdCustomer = document.createElement('td');
             const tdFlag = document.createElement('td');
             const tdFittingDate = document.createElement('td');
 
             total += 1;
-
-            tdWho.appendChild(document.createTextNode(job.Resource ? job.Resource : "NOT SET"));
-            row.appendChild(tdWho);
 
             tdCustomer.appendChild(document.createTextNode(job.Contact ? job.Contact + " " + job.Postcode : "NOT SET"));
             row.appendChild(tdCustomer);
@@ -150,7 +134,7 @@
                 followup += 1;
               }
 
-              if(job.CurrentFlag.includes("SF03") || job.CurrentFlag.includes("IF02") || job.CurrentFlag.includes("IF03") || job.CurrentFlag.includes("IF06")) {
+              if(job.CurrentFlag.includes("SF03") || job.CurrentFlag.includes("SF04")) {
                 row.classList.add('table-success');
                 sold += 1;
               }
@@ -162,48 +146,30 @@
             table.appendChild(row);
           }
         });
-
-        while(chart.firstChild) {
-          chart.removeChild(chart.firstChild);
-        }
-
-        ctx = chart.getContext('2d');
-
-        if(cht) {
-          cht.destroy();
-        }
-
-        cht = new Chart(ctx, {
-            // The type of chart we want to create
-            type: 'pie',
-
-            // The data for our dataset
-            data: {
-                labels: [
-                  `Sold ${(sold / total * 100).toFixed(2)}%`,
-                  `To Follow Up ${(followup / total * 100).toFixed(2)}%`,
-                  `Not Sold ${(notsold / total * 100).toFixed(2)}%`,
-                  `Not Set ${(notset / total * 100).toFixed(2)}%`
-                ],
-                datasets: [{
-                    label: "Sales Figures",
-                    data: [sold, followup, notsold, notset],
-                    backgroundColor: [ 'rgb(75, 192, 192)', 'rgb(255, 205, 86)', 'rgb(255, 99, 132)', 'rgb(51, 51, 255)' ]
-                }]
-            },
-
-            // Configuration options go here
-            options: {
-              legend: {
-                labels: {
-                  fontSize: 18
-                }
-              }
-            }
-        });
+        renderChart(
+          "Sales Report", 
+          [
+              `Sold (${sold} Sales) ${(sold / total * 100).toFixed(2)}%`,
+              `To Follow Up (${followup} Sales) ${(followup / total * 100).toFixed(2)}%`,
+              `Not Sold (${notsold} Sales) ${(notsold / total * 100).toFixed(2)}%`,
+              `Not Set (${notset} Sales) ${(notset / total * 100).toFixed(2)}%`
+          ],
+          [
+            sold,
+            followup,
+            notsold,
+            notset
+          ],
+          [ 
+            'rgb(75, 192, 192)', 
+            'rgb(255, 205, 86)', 
+            'rgb(255, 99, 132)', 
+            'rgb(51, 51, 255)' 
+          ]
+        );
       }).catch(err => {
         console.log(err);
-      })
+      });   
     }
 
     getData();
@@ -212,9 +178,6 @@
       var newStartDate = document.getElementById('start').valueAsDate;
       var newEndDate = document.getElementById('end').valueAsDate;
       var newSurveyor = document.getElementById('surveyor').value;
-
-      newStartDate.setHours(0, 0, 0, 0);
-      newEndDate.setHours(23, 59, 59, 999);
 
       if(newStartDate.getTime() !== startDate.getTime() || newEndDate.getTime() !== endDate.getTime() || newSurveyor !== surveyor) {
         startDate = document.getElementById('start').valueAsDate;
@@ -226,5 +189,6 @@
 
     setInterval(getData, 300000);
   </script>
+  <script src="js/menu.js"></script>
 </body>
 </html>

@@ -4,18 +4,6 @@ function util_dateToString(date) {
   ).slice(-2)}`;
 }
 
-function util_startDate(date) {
-  date.setHours(0, 0, 0, 0);
-
-  return util_dateToString(date);
-}
-
-function util_endDate(date) {
-  date.setHours(23, 59, 59, 999);
-
-  return util_dateToString(date);
-}
-
 function getSelectedFromSelect(select) {
   for (var i = 0; i < select.options.length; i++) {
     if (select.options[i].selected) {
@@ -25,6 +13,7 @@ function getSelectedFromSelect(select) {
 }
 
 function formatTime(dateStr) {
+  console.log(dateStr);
   const dateObj = new Date(dateStr);
 
   return `${("0" + dateObj.getHours()).slice(-2)}:${(
@@ -53,3 +42,10 @@ function sortJobs(a, b) {
   const result = ('' + a.Resource).localeCompare(b.Resource)
   return (result !== 0 ? result : aDate - bDate);
 }
+
+function removeChildren(container) {
+  while(container.firstChild) {
+    container.removeChild(container.firstChild);
+  }
+}
+

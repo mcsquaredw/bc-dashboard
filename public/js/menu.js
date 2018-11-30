@@ -22,20 +22,22 @@ const menu = [
   }
 ];
 
-function renderMenu(containerId) {
-  let container = document.getElementById(containerId);
-
-  menu.map(item => {
-    if (item.type === "link") {
-      let a = document.createElement("a");
-      a.classList.add("dropdown-item");
-      a.setAttribute("href", item.href);
-      a.appendChild(document.createTextNode(item.label));
-      container.appendChild(a);
+function renderMenu() {
+  return menu.map(item => {
+    if(item.type === "link") {
+      return `
+        <a class="dropdown-item" href="${item.href}">
+          ${item.label}
+        </a>
+      `;
     } else if (item.type === "divider") {
-      let divider = document.createElement("div");
-      divider.classList.add("dropdown-divider");
-      container.appendChild(divider);
+      return `
+        <div class="dropdown-divider"></div>
+      `;
     }
-  });
+  }).join('');
 }
+
+let container = document.getElementById("mainMenu");
+
+container.innerHTML = renderMenu();

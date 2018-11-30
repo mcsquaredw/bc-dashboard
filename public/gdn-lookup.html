@@ -8,7 +8,6 @@
   <script src="js/lib/jquery.min.js"></script>
   <script src="js/lib/bootstrap.min.js"></script>
   <script src="js/utils.js"></script>
-  <script src="js/menu.js"></script>
   <script src="js/display.js"></script>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="css/bootstrap.min.css" rel="stylesheet" />
@@ -176,8 +175,6 @@
       },
     ];
 
-    renderMenu("mainMenu");
-
     function doLookup(postcode) {
       const lookupSuppliers = suppliers.filter(supplier => {
         return supplier.areas.includes(postcode.toUpperCase());
@@ -201,5 +198,6 @@
       }
     }
   </script>
+  <script src="js/menu.js"></script>
 </body>
 </html>
