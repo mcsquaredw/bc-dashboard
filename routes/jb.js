@@ -166,4 +166,22 @@ router.get("/resources", (req, res) => {
     });
 });
 
+router.get("/flags", (req, res) => {
+  axios
+    .get(
+      `https://webservice.bigchangeapps.com/v01/services.ashx?&key=${api_key}&login=${username}&pwd=${password}&action=tags`,
+      {
+        crossdomain: true,
+        method: "GET",
+        mode: "no-cors"
+      }
+    )
+    .then(response => {
+      res.send(response.data);
+    })
+    .catch(err => {
+      console.log(err);
+    });
+});
+
 module.exports = router;

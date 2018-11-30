@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,12 +10,13 @@
   <script src="js/lib/jquery.min.js"></script>
   <script src="js/lib/bootstrap.min.js"></script>
   <script src="js/utils.js"></script>
+  <script src="js/dashboard.js"></script>
   
-  <script src="js/display.js"></script>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="css/bootstrap.min.css" rel="stylesheet" />
   <link href="css/no-gutters.css" rel="stylesheet" />
 </head>
+
 <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="#">
@@ -22,12 +24,13 @@
     </a>
     <h4>
       <label for="start">Big Change - Engineer Jobs for Date:</label>
-      <input type="date" class="form-control" id="start" name="start" min="2018-01-01" onchange="onkeyup"/>
+      <input type="date" class="form-control" id="start" name="start" min="2018-01-01" onchange="onkeyup" />
     </h4>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav ml-auto">
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
             Reports
           </a>
           <div id="mainMenu" class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
@@ -41,8 +44,8 @@
   </div>
   <script type="text/javascript">
     var engineers = ["Adrian Ibbertson", "Andy Begg", "Andy MacDonald", "Dave McLaughan", "Jamie Organ", "Jimmy Rawlings", "Jordan Fletcher", "Kevin Jowett", "Stuart Kershaw"];
-    document.getElementById('start').valueAsDate = new Date();
-    var date = document.getElementById('start').valueAsDate;
+    var date = new Date();
+    document.getElementById('start').valueAsDate = date;
 
     function getData() {
       console.log("Updating from Big Change");
@@ -53,102 +56,15 @@
           let currentResource = "";
           let currentJobList;
 
-          while(fitters.firstChild) {
-            fitters.removeChild(fitters.firstChild);
-          }
+          removeChildren(fitters);
 
-          data.sort(sortJobs).map((job, index) => {
-            if(job.Resource && engineers.includes(job.Resource)) {
-              if(job.Resource !== currentResource) {
-                let nameRow = document.createElement("div");
-                let mapRow = document.createElement("div");
-
-                currentResource = job.Resource;
-
-                nameRow.classList.add("row");
-                nameRow.classList.add("text-center");
-                nameRow.appendChild(document.createTextNode(job.Resource));
-
-                mapRow.classList.add("row");
-
-                resourcePositions.data.Result.map(resource => {
-                  if(resource.ResourceName === job.Resource) {
-                    let iframe = document.createElement("iframe");
-
-                    iframe.setAttribute("src", `https://google.com/maps/embed/v1/place?key=AIzaSyD55V3pJb2XQ02l44ecXJ5VgWWE8KRk-NM&zoom=9&q=${resource.PositionLatitude},${resource.PositionLongitude}`);
-                    iframe.setAttribute("style", "height: 100%; width: 100%; ");
-                    mapRow.setAttribute("style", "height: 90%; width: 100%; overflow-y: hidden;");
-                    mapRow.appendChild(iframe);
-                  }
-                })
-
-                fitterName = document.createElement("div");
-                fitterName.classList.add("col-3");
-                fitterName.classList.add("text-center");
-                fitterName.setAttribute("style", "font-size:25px; font-weight: bold;");
-                fitterName.classList.add("mr-0");
-                fitterName.classList.add("pr-0");
-                fitterName.appendChild(nameRow);
-                fitterName.appendChild(mapRow);
-                fitterName.appendChild(document.createElement("br"));
-
-                currentJobList = document.createElement("div");
-                currentJobList.classList.add("col-9");
-                currentJobList.classList.add("mr-0");
-                currentJobList.classList.add("ml-0");
-                currentJobList.classList.add("pr-0");
-                currentJobList.classList.add("pl-0");
-
-                currentFitter = document.createElement("div");
-                currentFitter.classList.add("row");
-                currentFitter.classList.add("p-2");
-                currentFitter.classList.add("m-1");
-                currentFitter.classList.add("rounded");
-                currentFitter.classList.add("border-secondary");
-                currentFitter.classList.add("row-border");
-                currentFitter.appendChild(fitterName);
-                currentFitter.appendChild(currentJobList);
-
-                fitters.appendChild(currentFitter);
-              }
-
-              let jobRow = document.createElement("row");
-              
-              jobRow.classList.add("row");
-              jobRow.classList.add("align-items-center");
-              jobRow.classList.add("mt-1");
-              jobRow.classList.add("mb-1");
-              jobRow.classList.add(`${jobStatusColour(job)}`)
-
-              jobRow.classList.add("no-gutters");
-
-              jobRow.innerHTML += `
-                <div class="col-1 align-middle text-center">
-                  ${renderJobTypeIcon(job)}
-                </div>
-                <div class="col-3" style="font-size: 25px;">
-                  ${renderJobDetails(job)}
-                </div>
-                <div class="col-4" style="font-size: 25px;">
-                  ${renderCustomerDetails(job)}
-                </div>
-                <div class="col-3" style="font-size: 25px;">
-                  ${renderTimingDetails(job)}
-                </div>
-                <div class="col-1">
-                  ${jobStatusIcon(job)}
-                </div>
-              `;
-
-              currentJobList.appendChild(jobRow);
-            }
-          });
+          fitters.innerHTML = renderDashboard(data, engineers, resourcePositions.data.Result);
+        }).catch(err => {
+          console.log(err);
+        });
       }).catch(err => {
         console.log(err);
-      });
-    }).catch(err => {
-      console.log(err);
-    })
+      })
     }
 
     getData();
@@ -156,7 +72,7 @@
     setInterval(() => {
       var newDate = document.getElementById('start').valueAsDate;
 
-      if(newDate.getTime() !== date.getTime()) {
+      if (newDate.getTime() !== date.getTime()) {
         date = document.getElementById('start').valueAsDate;
         getData();
       }
@@ -166,4 +82,5 @@
   </script>
   <script src="js/menu.js"></script>
 </body>
+
 </html>

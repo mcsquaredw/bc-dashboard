@@ -13,7 +13,6 @@ function getSelectedFromSelect(select) {
 }
 
 function formatTime(dateStr) {
-  console.log(dateStr);
   const dateObj = new Date(dateStr);
 
   return `${("0" + dateObj.getHours()).slice(-2)}:${(
@@ -47,5 +46,21 @@ function removeChildren(container) {
   while(container.firstChild) {
     container.removeChild(container.firstChild);
   }
+}
+
+function renderAlertLevelIcon(job) {
+  const jobDate = new Date(job.PlannedStart);
+  const now = new Date();
+  const diff = jobDate.getTime() - now.getTime();
+
+  if(diff < 7 * 24 * 60 * 60 * 1000) {
+    return "report_problem";
+  } else if(diff < 14 * 24 * 60 * 60 * 1000) {
+    return "help";
+  } else {
+    return "info";
+  }
+
+  return "";
 }
 
