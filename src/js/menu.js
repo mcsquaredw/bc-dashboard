@@ -3,10 +3,10 @@ import $ from 'jquery';
 const menu = [
   {
     type: "link",
-    href: "jobs-engineers.html",
+    href: "dashboard-engineers.html",
     label: "Today's Engineer Jobs"
   },
-  { type: "link", href: "jobs-surveyors.html", label: "Today's Surveyor Jobs" },
+  { type: "link", href: "dashboard-surveyors.html", label: "Today's Surveyor Jobs" },
   { type: "divider" },
   { type: "link", href: "order-status.html", label: "Door Order Status" },
   { type: "divider" },

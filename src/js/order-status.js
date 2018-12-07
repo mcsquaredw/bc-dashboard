@@ -137,7 +137,7 @@ function getData() {
                         return `
 
                         <h2 class="text-center py-1 my-2 bg-secondary text-light">
-                            Fitting ${new Date(key).toLocaleDateString("en-GB", { weekday: 'long' })} ${formatDate(new Date(key))}
+                            ${new Date(key).toLocaleDateString("en-GB", { weekday: 'long' })} ${formatDate(new Date(key))}
                         </h2>
                         ${dates[key].jobs
                             .map((job, index) => `
@@ -148,16 +148,20 @@ function getData() {
                                     
                                     <div class="card-body">
                                         <div class="row align-items-center">
-                                            <div class="col-2 row-height">
+                                            <div class="col-2">
                                                 <i class="material-icons">add_box</i>
                                             </div>
-                                            <div class="col-10 row-height">
+                                            <div class="col-10">
                                                 <p>${toTitleCase(job.Contact)} ${job.Postcode.toUpperCase()}</p>
                                                 <p>${jobMessage(job)}</p>
+                                                <p>${job.Resource ? `To Be Fitted By <b>${job.Resource}</b>` : "NOT ASSIGNED TO FITTER"}</p>
+                                                <button type="button" class="btn btn-primary ml-auto" data-toggle="modal" data-target="#jobDetails" data-jobId="${job.JobId}">
+                                                    View Details...
+                                                </button>
                                             </div>
                                         </div>
-
                                     </div>
+
                                     <div class="card-footer">
                                         <div class="row align-items-center">
                                             <div class="col-2 row-height">
@@ -170,7 +174,7 @@ function getData() {
                                     </div>
                                 </div>
                             `
-                            ).join('')}
+                        ).join('')}
                     `;
                     }
 
