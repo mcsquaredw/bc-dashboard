@@ -1,17 +1,20 @@
 const express = require("express");
+const Bundler = require('parcel-bundler');
+
 const dev = process.env.NODE_DEV !== 'production';
-const jbRoutes = require("./routes/jb");
 const app = express();
 const port = 3000;
-
-app.set("view engine", "pug");
-app.use(express.static("public"));
+const jbRoutes = require("./routes/jb");
+const entryPoint = './src/*.html';
+const bundler = new Bundler(entryPoint, {});
 
 app.get("/", (req, res) => {
-  res.redirect("./jobs-engineers.html");
+  res.redirect("./dashboard-engineers.html");
 });
 
 app.use("/jb", jbRoutes);
+
+app.use(bundler.middleware());
 
 app.listen(port, () => {
   console.log("Listening on port", port);

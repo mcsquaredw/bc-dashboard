@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 const menu = [
   {
     type: "link",
@@ -22,22 +24,24 @@ const menu = [
   }
 ];
 
-function renderMenu() {
-  return menu.map(item => {
-    if(item.type === "link") {
-      return `
-        <a class="dropdown-item" href="${item.href}">
-          ${item.label}
-        </a>
-      `;
-    } else if (item.type === "divider") {
-      return `
-        <div class="dropdown-divider"></div>
-      `;
-    }
-  }).join('');
-}
-
-let container = document.getElementById("mainMenu");
-
-container.innerHTML = renderMenu();
+$(document).ready(() => {
+  function renderMenu() {
+    return menu.map(item => {
+      if(item.type === "link") {
+        return `
+          <a class="dropdown-item" href="${item.href}">
+            ${item.label}
+          </a>
+        `;
+      } else if (item.type === "divider") {
+        return `
+          <div class="dropdown-divider"></div>
+        `;
+      }
+    }).join('');
+  }
+  
+  let container = document.getElementById("mainMenu");
+  
+  container.innerHTML = renderMenu();
+});

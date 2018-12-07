@@ -1,3 +1,5 @@
+import { sortJobs, toTitleCase, formatTime } from './utils';
+
 function renderJobTypeIcon(job) {
     let jobTypeIcon = "";
 
@@ -142,7 +144,7 @@ function renderWorker(worker, jobs, position) {
     `;
 }
 
-function renderDashboard(jobs, desiredWorkers, positions) {
+export function renderDashboard(jobs, desiredWorkers, positions) {
     let workers = {};
     let dashboard = ``;
 

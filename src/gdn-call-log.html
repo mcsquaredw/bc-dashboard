@@ -5,12 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Big Change Dashboard</title>
-  <script src="js/lib/axios.min.js"></script>
-  <script src="js/lib/jquery.min.js"></script>
-  <script src="js/lib/bootstrap.min.js"></script>
+  <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+  <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
   <script src="js/utils.js"></script>
-  <link href="css/font-awesome.min.css" rel="stylesheet" />
-  <link href="css/bootstrap.min.css" rel="stylesheet" /></head>
+  <script src="js/menu.js"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="css/no-gutters.css" rel="stylesheet" />
 <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="#">
@@ -112,62 +113,5 @@
       </div>
     </div>
   </div>
-  <script type="text/javascript">
-    document.getElementById('start').valueAsDate = new Date();
-    var startDate = document.getElementById('start').valueAsDate;
-    startDate.setHours(0, 0, 0, 0);
-    document.getElementById('end').valueAsDate = new Date();
-    var endDate = document.getElementById('end').valueAsDate;
-    endDate.setHours(23, 59, 59, 999);
-
-    var callTypes = document.getElementById('call_type');
-    var areas = document.getElementById('area');
-    var callPurposes = document.getElementById('call_purpose');
-
-    axios.get(`/gdn/call_type`).then(response => {
-      response.data.map(item => {
-        let option = document.createElement("option");
-        option.value = item.id;
-        option.appendChild(document.createTextNode(item.label));
-        callTypes.appendChild(option);
-      });
-    });
-
-    axios.get(`/gdn/area`).then(response => {
-      response.data.map(item => {
-        let option = document.createElement("option");
-        option.value = item.id;
-        option.appendChild(document.createTextNode(item.label));
-        areas.appendChild(option);
-      });
-    });
-
-    axios.get(`/gdn/call_purpose`).then(response => {
-      response.data.map(item => {
-        let option = document.createElement("option");
-        option.value = item.id;
-        option.appendChild(document.createTextNode(item.label));
-        callPurposes.appendChild(option);
-      });
-    });
-
-    function logCall() {
-      event.preventDefault();
-
-      let call_type = document.getElementById("call_type");
-      let area = document.getElementById("area");
-      let call_purpose = document.getElementById("call_purpose");
-      let selectedCallType = call_type.options[getSelectedFromSelect(call_type)].value;
-      let selectedArea = area.options[getSelectedFromSelect(area)].value;
-      let selectedCallPurpose = call_purpose.options[getSelectedFromSelect(call_purpose)].value;
-
-      axios.get(`/gdn/log-call/${selectedCallType}/${selectedArea}/${selectedCallPurpose}`).then(response => {
-        document.getElementById("call-log-form").reset();
-      }).catch(err => {
-        console.error(err);
-      });
-    }
-  </script>
-  <script src="js/menu.js"></script>
 </body>
 </html>

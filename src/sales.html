@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Big Change Dashboard</title>
+  <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+  <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/sales.js"></script>
+  <script src="js/menu.js"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="css/no-gutters.css" rel="stylesheet" />
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">
+      <img src="img/jb-logo.png" />
+    </a>
+    <h4>Big Change - Sales Report</h4>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+   <span class="navbar-toggler-icon"></span>
+ </button>
+
+ <div class="collapse navbar-collapse" id="navbarSupportedContent">
+   <ul class="navbar-nav ml-auto">
+     <li class="nav-item dropdown">
+       <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+         Reports
+       </a>
+       <div id="mainMenu" class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+       </div>
+     </li>
+   </ul>
+  </nav>
+  <div>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col">
+          <form class="form-inline">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text">Start Date</span>
+              </div>
+              <input id="start" type="date" class="form-control" id="start" name="start" min="2018-01-01" onchange="onkeyup" />
+            </div>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text">End Date</span>
+              </div>
+              <input id="end" type="date" class="form-control" id="end" name="end" min="2018-01-01" onchange="onkeyup" />
+            </div>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text">Surveyor</span>
+              </div>
+              <select id="surveyor" name="surveyor">
+                <option selected value="Andy Marshall">Andy Marshall</option>
+                <option value="Jason Housby">Jason Housby</option>
+              </select>
+            </div>
+          </form>
+          <canvas id="chartCanvas"></canvas>
+        </div>
+        <div class="col">
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th scope="col">Customer</th>
+                <th scope="col">Flag</th>
+                <th scope="col">Survey Date</th>
+              </tr>
+            </thead>
+            <tbody id="jobs">
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

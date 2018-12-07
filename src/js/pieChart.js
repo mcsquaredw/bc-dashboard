@@ -1,10 +1,12 @@
+import { removeChildren } from './utils';
+import Chart from 'chart.js';
+
 var cht;
 
-function renderChart(datasetLabel, labels, data, colours) {
-    const chart = document.getElementById('chart');
-    let ctx = chart.getContext('2d');
+export function renderChart(chartCanvas, datasetLabel, labels, data, colours) {
+    let ctx = chartCanvas.getContext('2d');
 
-    removeChildren(chart);
+    removeChildren(chartCanvas);
 
     if(cht) {
         cht.destroy();
