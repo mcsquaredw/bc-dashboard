@@ -13,10 +13,10 @@ $(document).ready(() => {
 
     function getData() {
         console.log("Updating from Big Change");
-        axios.get(`/jb/jobs/${dateToString(selectedDate)}`).then(response => {
+        axios.get(`/jb/all-jobs`).then(response => {
             axios.get('/jb/resources').then(resourcePositions => {
-                const jobs = response.data.Result;
-                const tracking = resourcePositions.data.Result;
+                const jobs = response.data;
+                const tracking = resourcePositions.data;
 
                 removeChildren(surveysField);
         

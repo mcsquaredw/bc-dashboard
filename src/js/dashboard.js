@@ -147,9 +147,16 @@ function renderWorker(worker, jobs, position) {
 export function renderDashboard(jobs, desiredWorkers, positions) {
     let workers = {};
     let dashboard = ``;
+    let now = document.getElementById("start").valueAsDate;
+    now.setHours(0, 0, 0, 0);
+    let later = new Date(now.getTime());
+    later.setHours(23, 59, 59, 999);
 
     jobs
         .filter(job => desiredWorkers.includes(job.Resource))
+        .filter(job => job.PlannedStart)
+        .filter(job => new Date(job.PlannedStart).getTime() >= now.getTime())
+        .filter(job => new Date(job.PlannedStart).getTime() <= later.getTime())
         .sort(sortJobs)
         .map(job => {
             if (!workers[job.Resource]) {

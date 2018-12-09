@@ -100,10 +100,10 @@ function getData() {
 
     console.log("Updating from Big Change");
     axios.get(`/jb/flags`).then(flagResponse => {
-        const flags = flagResponse.data.Result;
+        const flags = flagResponse.data;
 
         axios.get(`/jb/all-jobs`).then(response => {
-            const jobs = response.data.Result;
+            const jobs = response.data;
             const now = new Date();
             now.setHours(0, 0, 0, 0);
 

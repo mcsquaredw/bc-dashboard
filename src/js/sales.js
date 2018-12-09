@@ -3,6 +3,7 @@ import $ from 'jquery';
 
 import { renderChart } from './pieChart';
 import { dateToString, removeChildren, sortJobs, formatDate } from './utils';
+import { now } from 'moment';
 
 var startDate = new Date();
 var endDate = new Date();
@@ -29,18 +30,23 @@ function highlightJob(job) {
 function getData() {
   console.log("Updating from Big Change");
 
-  axios.get(`/jb/sales/${dateToString(startDate)}/${dateToString(endDate)}`).then(response => {
-    const data = response.data.Result;
-    const table = document.getElementById('jobs');
-    
+  axios.get(`/jb/all-jobs`).then(response => {
+    const data = response.data;
+
     var sold = 0;
     var followup = 0;
     var notsold = 0;
     var notset = 0;
     var total = 0;
 
-    jobs.innerHTML = data.sort(sortJobs).map((job, index) => {
-      if(job.Resource && job.Resource.includes(surveyor) && (job.Type.includes("Survey"))) {
+    jobs.innerHTML = data
+      .filter(job => job.Type.includes("Survey"))
+      .filter(job => job.Resource)
+      .filter(job => job.Resource.includes(surveyor))
+      .filter(job => job.RealStart && job.RealEnd)
+      .filter(job => new Date(job.RealStart).getTime() >= startDate.getTime() && new Date(job.RealStart).getTime() <= endDate.getTime()) 
+      .sort(sortJobs)
+      .map((job, index) => {
         total += 1;
 
         if(job.CurrentFlag) {
@@ -66,7 +72,6 @@ function getData() {
             <td>${job.PlannedStart ? formatDate(job.PlannedStart) : "NOT SET"}</td>
           </tr>
         `;
-      }
     }).join('');
 
     renderChart(
