@@ -16,7 +16,7 @@ cache[RESOURCES] = {};
 function outOfDate(then) {
   let now = new Date().getTime();
 
-  if(now - then > 5 * 60 * 1000) {
+  if((now - then) > 60000) {
     return true;
   }
 
@@ -27,7 +27,7 @@ function updateCache(key, data) {
   let now = new Date().getTime();
 
   cache[key].time = now;
-  cache[key].data = data;
+  cache[key].data = Object.assign(data, cache[key].data);
 }
 
 router.get("/all-jobs", (req, res) => {
