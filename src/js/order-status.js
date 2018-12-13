@@ -1,5 +1,4 @@
-import axios from 'axios';
-import $ from 'jquery';
+import io from 'socket.io-client';
 
 import { formatDate, toTitleCase, dateToString } from './utils';
 
@@ -81,7 +80,7 @@ function renderAlertText(job) {
     } else if (job.RealEnd && job.Type.includes("Fitting")) {
         return "Completed - Ready To Pay";
     } else if (job.PlannedStart && job.CurrentFlag && job.CurrentFlag.includes("IF01")) {
-        return "Job To Be Completed Today";
+        return "Job To Be Completed";
     } else if (diff < 7 * 24 * 60 * 60 * 1000) {
         return "Door Not Arrived - Less Than 7 Days to Fitting!";
     } else if (diff < 14 * 24 * 60 * 60 * 1000) {
@@ -91,104 +90,93 @@ function renderAlertText(job) {
     }
 }
 
-function getData() {
+function renderOrderStatus(jobs, flags) {
     const container = document.getElementById("container");
     const dates = {}
 
     dates["No Date"] = {};
     dates["No Date"].jobs = [];
 
-    console.log("Updating from Big Change");
-    axios.get(`/jb/flags`).then(flagResponse => {
-        const flags = flagResponse.data;
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
 
-        axios.get(`/jb/all-jobs`).then(response => {
-            const jobs = response.data;
-            const now = new Date();
-            now.setHours(0, 0, 0, 0);
+    jobs
+        .sort((a, b) => {
+            return new Date(a.PlannedStart) - new Date(b.PlannedStart)
+        })
+        .map(job => {
+            let dateKey = "";
+            let start;
 
-            jobs
-                .sort((a, b) => {
-                    return new Date(a.PlannedStart) - new Date(b.PlannedStart)
-                })
-                .map(job => {
-                    let dateKey = "";
-                    let start;
+            if (job.PlannedStart) {
+                dateKey = dateToString(new Date(job.PlannedStart));
+                start = new Date(job.PlannedStart);
+                if (!dates[dateKey]) {
+                    dates[dateKey] = {};
+                    dates[dateKey].jobs = [];
+                }
+            } else {
+                dateKey = "No Date";
+            }
 
-                    if (job.PlannedStart) {
-                        dateKey = dateToString(new Date(job.PlannedStart));
-                        start = new Date(job.PlannedStart);
-                        if (!dates[dateKey]) {
-                            dates[dateKey] = {};
-                            dates[dateKey].jobs = [];
-                        }
-                    } else {
-                        dateKey = "No Date";
-                    }
+            if (job.Type.includes("Fitting") && (job.PlannedStart && start.getTime() >= now.getTime()) && (!job.CurrentFlag || (job.CurrentFlag && !job.CurrentFlag.includes("Paid") || !job.Status.includes("Cancelled")))) {
+                dates[dateKey].jobs.push(job);
+            }
+        });
 
-                    if (job.Type.includes("Fitting") && (job.PlannedStart && start.getTime() >= now.getTime()) && (!job.CurrentFlag || (job.CurrentFlag && !job.CurrentFlag.includes("Paid") || !job.Status.includes("Cancelled")))) {
-                        dates[dateKey].jobs.push(job);
-                    }
-                });
-
-            container.innerHTML = `${
-                Object.keys(dates).sort((a, b) => ('' + a).localeCompare(b)).map(key => {
-                    if (dates[key].jobs.length > 0) {
-                        return `
-
-                        <h2 class="text-center py-1 my-2 bg-secondary text-light">
+    container.innerHTML = `${
+        Object.keys(dates).sort((a, b) => ('' + a).localeCompare(b)).map(key => {
+            if (dates[key].jobs.length > 0) {
+                return `
+                            
+                        <h2 class="date-label">
                             ${new Date(key).toLocaleDateString("en-GB", { weekday: 'long' })} ${formatDate(new Date(key))}
                         </h2>
+
+                        <div class="grid-cards">
                         ${dates[key].jobs
-                            .map((job, index) => `
-                                <div class="card m-1" style="max-width: 25%; display:inline-block;">
-                                    <div class="card-header text-light" ${flags.map(flag => `${flag.tagName.includes(job.CurrentFlag) ? `style="background-color:${flag.colour}"` : ""}`).join('')}>
-                                        <b>${job.CurrentFlag ? job.CurrentFlag : "NO FLAG"}</b>
+                        .map((job, index) => `
+                                <div class="grid-card">
+                                    <div class="flag" ${flags.map(flag => `${flag.tagName.includes(job.CurrentFlag) ? `style="background-color:${flag.colour}"` : ""}`).join('')}>                                           
+                                        ${job.CurrentFlag ? job.CurrentFlag : "NO FLAG"}
                                     </div>
                                     
-                                    <div class="card-body">
-                                        <div class="row align-items-center">
-                                            <div class="col-2">
-                                                <i class="material-icons">add_box</i>
-                                            </div>
-                                            <div class="col-10">
-                                                <p>${toTitleCase(job.Contact)} ${job.Postcode.toUpperCase()}</p>
-                                                <p>${jobMessage(job)}</p>
-                                                <p>${job.Resource ? `To Be Fitted By <b>${job.Resource}</b>` : "NOT ASSIGNED TO FITTER"}</p>
-                                                <button type="button" class="btn btn-primary ml-auto" data-toggle="modal" data-target="#jobDetails" data-jobId="${job.JobId}">
-                                                    View Details...
-                                                </button>
-                                            </div>
-                                        </div>
+                                    <div class="logo">
+                                        <i class="material-icons">add_box</i>
+                                    </div>
+                                    
+                                    <div class="desc">
+                                        ${toTitleCase(job.Contact)} ${job.Postcode.toUpperCase()}
                                     </div>
 
-                                    <div class="card-footer">
-                                        <div class="row align-items-center">
-                                            <div class="col-2 row-height">
-                                                <i class="material-icons pt-2">${renderAlertLevelIcon(job)}</i>
-                                            </div>
-                                            <div class="col-10 row-height">
-                                                ${renderAlertText(job)}
-                                            </div>
-                                        </div>
+                                    <div class="job">
+                                        ${jobMessage(job)}
+                                    </div>
+                                    
+                                    <div class="fitter">
+                                        ${job.Resource ? `To Be Fitted By <b>${job.Resource}</b>` : "NOT ASSIGNED TO FITTER"}
+                                    </div>
+                                    
+                                    <div class="status-icon">
+                                        <i class="material-icons pt-2">${renderAlertLevelIcon(job)}</i>
+                                    </div>
+
+                                    <div class="status">
+                                        ${renderAlertText(job)}
                                     </div>
                                 </div>
-                            `
-                        ).join('')}
+                        `).join('')}
+                        </div>
                     `;
-                    }
-
-                }).join('')
-                }`;
-        }).catch(err => {
-            console.log(err);
-        });
-    }).catch(err => {
-        console.log(err);
-    });
+            }
+        }).join('')
+        }`;
 }
 
-$(document).ready(() => {
-    getData();
-});
+document.addEventListener("DOMContentLoaded", function () {
+    var socket = io();
 
+    socket.on('order-status', (data) => {
+        renderOrderStatus(data.jobs, data.flags);
+    });
+});

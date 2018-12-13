@@ -1,0 +1,53 @@
+* {
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+
+#header {
+    display: grid;
+    grid-template-areas: "logo menu";
+    align-items: center;
+    border-bottom: 1px solid black;
+    margin-bottom: 5px;
+}
+
+#header #logo {
+    grid-area: logo;
+}
+
+#menu {
+    grid-area: menu;
+    margin-left: auto;
+}
+
+#menu .menu-item {
+    text-decoration: none;
+    color: rgb(51, 95, 156);
+    background-color: white;
+    text-decoration: none;
+    border: 3px solid rgb(51, 95, 156);
+    border-radius: 10px;
+    margin-right: 5px;
+    padding-top: 10px;
+    padding-bottom: 5px;
+    padding-right: 5px;
+    font-size: 25px;
+}
+
+#menu .menu-item:hover {
+    border: 3px solid rgb(252,198,9);
+}
+
+#menu .menu-item i {
+    color: rgb(252,198,9);
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+#menu .menu-item.selected {
+    background-color: lightskyblue;
+}
+
+#menu .menu-item.selected i {
+    color: rgb(51, 95, 156);
+}

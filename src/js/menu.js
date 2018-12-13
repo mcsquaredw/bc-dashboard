@@ -1,47 +1,41 @@
-import $ from 'jquery';
-
 const menu = [
   {
-    type: "link",
+    icon: "build",
     href: "dashboard-engineers.html",
-    label: "Today's Engineer Jobs"
+    label: "Engineer Jobs"
   },
-  { type: "link", href: "dashboard-surveyors.html", label: "Today's Surveyor Jobs" },
-  { type: "divider" },
-  { type: "link", href: "order-status.html", label: "Door Order Status" },
-  { type: "divider" },
-  { type: "link", href: "sales.html", label: "Sales Report" },
-  { type: "divider" },
+  { 
+    icon: "search",
+    href: "dashboard-surveyors.html", 
+    label: "Surveyor Jobs" 
+  },
+  { 
+    icon: "queue",
+    href: "order-status.html", 
+    label: "Door Orders" 
+  },
+  { 
+    icon: "payment",
+    href: "sales.html", 
+    label: "Sales Report" 
+  },
   {
-    type: "link",
+    icon: "business",
     href: "gdn-lookup.html",
-    label: "GDN Contractor Lookup"
-  },
-  {
-    type: "link",
-    href: "gdn-call-log.html",
-    label: "GDN Calls (In Development)"
+    label: "GDN Contractors"
   }
 ];
 
-$(document).ready(() => {
-  function renderMenu() {
-    return menu.map(item => {
-      if(item.type === "link") {
-        return `
-          <a class="dropdown-item" href="${item.href}">
+document.addEventListener("DOMContentLoaded", function() {
+  const container = document.getElementById("header");
+
+  container.innerHTML += `
+    <div id="menu">
+      ${menu.map(item => 
+          `<a class="menu-item ${window.location.pathname.includes(item.href) ? `selected` : ``}" href="${item.href}">
+            <i class="material-icons">${item.icon}</i>
             ${item.label}
-          </a>
-        `;
-      } else if (item.type === "divider") {
-        return `
-          <div class="dropdown-divider"></div>
-        `;
-      }
-    }).join('');
-  }
-  
-  let container = document.getElementById("mainMenu");
-  
-  container.innerHTML = renderMenu();
+          </a>`
+      ).join('')}
+    </div>`
 });

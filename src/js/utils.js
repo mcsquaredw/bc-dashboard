@@ -38,7 +38,7 @@ export function toTitleCase(str) {
 export function sortJobs(a, b) {
   const aDate = new Date(a.PlannedStart);
   const bDate = new Date(b.PlannedStart);
-  const result = ('' + a.Resource).localeCompare(b.Resource)
+  const result = ('' + a.Resource).localeCompare(b.Resource);
   return (result !== 0 ? result : aDate - bDate);
 }
 

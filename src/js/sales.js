@@ -1,10 +1,8 @@
-import axios from 'axios';
-import $ from 'jquery';
-
 import { renderChart } from './pieChart';
-import { dateToString, removeChildren, sortJobs, formatDate } from './utils';
-import { now } from 'moment';
+import { sortJobs, toTitleCase } from './utils';
+import io from 'socket.io-client';
 
+var socket = io();
 var startDate = new Date();
 var endDate = new Date();
 var surveyor = "";
@@ -12,67 +10,91 @@ var surveyor = "";
 function highlightJob(job) {
   if(job.CurrentFlag) {
     if(job.CurrentFlag.includes("SF01")) {
-      return 'table-danger';
-    }
-
-    if(job.CurrentFlag.includes("SF02")) {
-      return 'table-warning';
-    }
-
-    if(job.CurrentFlag.includes("SF03") || job.CurrentFlag.includes("SF04")) {
-      return 'table-success';
+      return 'danger';
+    } else if(job.CurrentFlag.includes("SF02")) {
+      return 'warning';
+    } else if(job.CurrentFlag.includes("SF03") || job.CurrentFlag.includes("SF04")) {
+      return 'success';
+    } else {
+      return 'danger';
     }
   } else {
-    return 'table-danger text-danger';
+    return 'danger';
   }
 }
 
-function getData() {
-  console.log("Updating from Big Change");
+function jobStatusIcon(job) {
+  let icon = ""
 
-  axios.get(`/jb/all-jobs`).then(response => {
-    const data = response.data;
+  if(job.CurrentFlag) {
+    if(job.CurrentFlag.includes("SF03")) {
+      icon = "thumb_up";
+    } else if(job.CurrentFlag.includes("SF02")) {
+      icon = "help";
+    } else if(job.CurrentFlag.includes("SF01")) {
+      icon = "thumb_down";
+    } else {
+      icon = "report_problem";
+    }
+  } else {
+    icon = "report_problem"; 
+  }
+  return `<i class="material-icons">${icon}</i>`
+}
 
-    var sold = 0;
+socket.on('sales', (data) => {
+  const { jobs } = data;
+
+  var sold = 0;
     var followup = 0;
     var notsold = 0;
     var notset = 0;
     var total = 0;
 
-    jobs.innerHTML = data
-      .filter(job => job.Type.includes("Survey"))
-      .filter(job => job.Resource)
-      .filter(job => job.Resource.includes(surveyor))
-      .filter(job => job.RealStart && job.RealEnd)
-      .filter(job => new Date(job.RealStart).getTime() >= startDate.getTime() && new Date(job.RealStart).getTime() <= endDate.getTime()) 
-      .sort(sortJobs)
-      .map((job, index) => {
-        total += 1;
+    document.getElementById("table").innerHTML = `
+      <div class="survey-cards">
+        ${jobs
+        .filter(job => job.Type.includes("Survey"))
+        .filter(job => job.Resource)
+        .filter(job => job.Resource.includes(surveyor))
+        .filter(job => job.RealStart && job.RealEnd)
+        .filter(job => new Date(job.RealStart).getTime() >= startDate.getTime() && new Date(job.RealStart).getTime() <= endDate.getTime()) 
+        .sort(sortJobs)
+        .map((job, index) => {
+          total += 1;
 
-        if(job.CurrentFlag) {
-          if(job.CurrentFlag.includes("SF01")) {
-            notsold += 1;
+          if(job.CurrentFlag) {
+            if(job.CurrentFlag.includes("SF01")) {
+              notsold += 1;
+            }
+
+            if(job.CurrentFlag.includes("SF02")) {
+              followup += 1;
+            }
+
+            if(job.CurrentFlag.includes("SF03") || job.CurrentFlag.includes("SF04")) {
+              sold += 1;
+            }
+          } else {
+            notset += 1;
           }
 
-          if(job.CurrentFlag.includes("SF02")) {
-            followup += 1;
-          }
-
-          if(job.CurrentFlag.includes("SF03") || job.CurrentFlag.includes("SF04")) {
-            sold += 1;
-          }
-        } else {
-          notset += 1;
-        }
-
-        return `
-          <tr class="${highlightJob(job)}">
-            <td>${job.Contact ? job.Contact + " " + job.Postcode : "NOT SET"}</td>
-            <td>${job.CurrentFlag ? job.CurrentFlag : "NOT SET"}</td>
-            <td>${job.PlannedStart ? formatDate(job.PlannedStart) : "NOT SET"}</td>
-          </tr>
-        `;
-    }).join('');
+          return `
+            <div class="survey-card">
+              <div class="flag ${highlightJob(job)}">
+                ${job.CurrentFlag ? job.CurrentFlag : "NOT SET"}
+              </div>
+              <div class="status">
+                ${jobStatusIcon(job)}
+              </div>
+              <div class="customer">
+              ${job.Contact ? toTitleCase(job.Contact) + "<br />" + job.Postcode : "NOT SET"}
+              </div>
+            </div>
+          `;
+      }).join('')}
+      </div>
+    `;
 
     renderChart(
       document.getElementById('chartCanvas'),
@@ -96,32 +118,28 @@ function getData() {
         'rgb(51, 51, 255)' 
       ]
     );
-  }).catch(err => {
-    console.log(err);
-  });   
-}
+});
 
-$(document).ready(() => {
-  var startDateField = document.getElementById('start');
-  var endDateField = document.getElementById('end');
-  var surveyorField = document.getElementById('surveyor'); 
+document.addEventListener("DOMContentLoaded", function() {
+  const startDateField = document.getElementById('start');
+  const endDateField = document.getElementById('end');
+  const surveyorField = document.getElementById('surveyor'); 
+
   endDate.setDate(endDate.getDate() + 1);
   startDateField.valueAsDate = startDate;
   endDateField.valueAsDate = endDate;
 
   setInterval(() => {
-      var newStartDate = startDateField.valueAsDate;
-      var newEndDate = endDateField.valueAsDate;
-      var newSurveyor = surveyorField.value;
+      let newStartDate = startDateField.valueAsDate;
+      let newEndDate = endDateField.valueAsDate;
+      let newSurveyor = surveyorField.value;
     
       if(newStartDate.getTime() !== startDate.getTime() || newEndDate.getTime() !== endDate.getTime() || newSurveyor !== surveyor) {
         startDate = startDateField.valueAsDate;
         endDate = endDateField.valueAsDate;
         surveyor = surveyorField.value;
-        getData();
+        socket.emit('get-sales');
       }
-    }, 1000);
-
-  getData();
+    }, 500);
 });
 

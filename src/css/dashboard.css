@@ -1,0 +1,76 @@
+.worker {
+    display: grid;
+    grid-template-areas: "location name"
+                         "location jobs";
+    grid-template-columns: 25% 75%;
+    border: 1px solid black;
+    -webkit-box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.75);
+    box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.75);
+    margin: 5px;
+}
+
+.worker .location {
+    grid-area: location;
+}
+
+.worker .location iframe {
+    height: 100%;
+    width: 100%;
+}
+
+.worker .name {
+    grid-area: name;   
+    font-size: 25px;
+    font-weight: bold;
+    margin-left: 5px;   
+    background-color: darkslategrey;
+    color: white;
+    padding-left: 5px;
+}
+
+.worker .jobs {
+    grid-area: jobs;
+    display: grid;
+    grid-template-columns: 33% 33% 33%;
+    grid-column-gap: 7px;
+    grid-row-gap: 7px;
+    margin: 5px;
+}
+
+.jobs .job-card {
+    display: grid;
+    grid-template-areas: "type-icon type   status"
+                         "customer customer customer"
+                         "timing    timing timing";
+    grid-template-columns: 15% auto auto;
+    border: 1px solid black;
+    -webkit-box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.75);
+    box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.75);
+}
+
+.job-card .type {
+    grid-area: type;
+    border-bottom: 1px solid black;
+}
+
+.job-card .type-icon {
+    grid-area: type-icon;
+    border-bottom: 1px solid black;
+}
+
+.job-card .customer {
+    grid-area: customer;
+    border-bottom: 1px solid black;
+}
+
+.job-card .status {
+    grid-area: status;
+    text-align: right;
+    border-bottom: 1px solid black;
+}
+
+.job-card .timing {
+    grid-area: timing;
+}

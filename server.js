@@ -1,21 +1,57 @@
-const express = require("express");
+const app = require('express')();
 const Bundler = require('parcel-bundler');
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
 
-const dev = process.env.NODE_DEV !== 'production';
-const app = express();
 const port = 3000;
-const jbRoutes = require("./routes/jb");
+const bigChangeApi = require('./api/big-change');
 const entryPoint = './src/*.html';
 const bundler = new Bundler(entryPoint, {});
 
 app.get("/", (req, res) => {
-  res.redirect("./dashboard-engineers.html");
+    res.redirect("./dashboard-engineers.html");
 });
-
-app.use("/jb", jbRoutes);
 
 app.use(bundler.middleware());
 
-app.listen(port, () => {
-  console.log("Listening on port", port);
+http.listen(port, () => {
+    console.log("Listening on port", port);
 });
+
+io.on('connection', function(socket) {
+    getDashboardData();
+    getOrderStatus();
+
+    socket.on('get-sales', () => {
+        bigChangeApi.getJobs().then(jobs => {
+            socket.emit('sales', {jobs});
+        })
+    });
+});
+
+function getDashboardData() {
+    bigChangeApi.getJobs().then(jobs => {
+        bigChangeApi.getResources().then(resources => {
+            io.emit('dashboard-data', {jobs, resources});
+        });
+    }).catch(err => {
+        console.error(err);
+    });
+}
+
+function getOrderStatus() {
+    bigChangeApi.getJobs().then(jobs => {
+        bigChangeApi.getFlags().then(flags => {
+            io.emit('order-status', {jobs, flags});
+        });
+    }).catch(err => {
+        console.error(err);
+    });
+}
+
+setInterval(() => {
+    getDashboardData();
+    getOrderStatus();
+}, 120000);
+
+getDashboardData();

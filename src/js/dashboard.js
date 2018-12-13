@@ -56,14 +56,7 @@ function renderTimingDetails(job) {
     }
 
     return `
-      <div class="row">
-        <div class="col-2">
-          <i class="material-icons" style="font-size: 25px;">${iconName}</i>
-        </div>
-        <div class="col-10" style="font-size: 25px;">
-          ${label}
-        </div>
-      </div>
+        <i class="material-icons" style="font-size: 25px;">${iconName}</i>${label}
     `;
 }
 
@@ -101,21 +94,21 @@ function jobStatusIcon(job) {
 
 function renderJob(job) {
     return `
-        <div class="row align-items-center my-1 ${jobStatusColour(job)} no-gutters">
-            <div class="col-1 align-middle text-center">
+        <div class="job-card">
+            <div class="type-icon">
                 ${renderJobTypeIcon(job)}
             </div>
-            <div class="col-3" style="font-size: 25px;">
-                ${renderJobDetails(job)}
-            </div>
-            <div class="col-4" style="font-size: 25px;">
+            <div class="customer">
                 ${renderCustomerDetails(job)}
             </div>
-            <div class="col-3" style="font-size: 25px;">
-                ${renderTimingDetails(job)}
-            </div>
-            <div class="col-1">
+            <div class="status">
                 ${jobStatusIcon(job)}
+            </div>
+            <div class="type">
+                ${renderJobDetails(job)}
+            </div>
+            <div class="timing">
+                ${renderTimingDetails(job)}
             </div>
         </div>
     `;
@@ -123,21 +116,13 @@ function renderJob(job) {
 
 function renderWorker(worker, jobs, position) {
     return `
-        <div class="row p-2 m-1 rounded border-secondary row-border">
-            <div class="col-3 mr-0 pr-0">
-                <div class="row"
-                     style="font-size: 25px;">
-                    <b>${worker}</b>
-                </div>
-                <div class="row" 
-                    style="height: 90%; width: 100%; overflow-y: hidden;">
-                    <iframe 
-                        src="https://google.com/maps/embed/v1/place?key=AIzaSyD55V3pJb2XQ02l44ecXJ5VgWWE8KRk-NM&zoom=9&q=${position}"
-                        style="width: 100%">
-                    </iframe>
-                </div>
+        <div class="worker">
+            <div class="location">
+                <iframe src="https://google.com/maps/embed/v1/place?key=AIzaSyD55V3pJb2XQ02l44ecXJ5VgWWE8KRk-NM&zoom=9&q=${position}">
+                </iframe>
             </div>
-            <div class="col-9 mx-0 px-0">
+            <div class="name">${worker}</div>
+            <div class="jobs">
                 ${jobs.map(job => renderJob(job)).join('')}
             </div>
         </div>
@@ -147,7 +132,7 @@ function renderWorker(worker, jobs, position) {
 export function renderDashboard(jobs, desiredWorkers, positions) {
     let workers = {};
     let dashboard = ``;
-    let now = document.getElementById("start").valueAsDate;
+    let now = new Date();
     now.setHours(0, 0, 0, 0);
     let later = new Date(now.getTime());
     later.setHours(23, 59, 59, 999);
