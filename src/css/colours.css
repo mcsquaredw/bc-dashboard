@@ -1,0 +1,19 @@
+* {
+    box-sizing: border-box;
+}
+
+.danger {
+    background-color: #fd9c81;
+}
+
+.warning {
+    background-color: #fbdc9d;
+}
+
+.success {
+    background-color: #83d2c7;
+}
+
+.info {
+    background-color: lightsteelblue;
+}

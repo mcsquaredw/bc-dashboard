@@ -1,3 +1,7 @@
+* {
+    font-size: 25px;
+}
+
 h2.date-label {
     text-align: center;
     width: 100%;
@@ -8,7 +12,7 @@ h2.date-label {
 
 .grid-cards {
     display: grid;
-    grid-template-columns: 19% 19% 19% 19% 19%;
+    grid-template-columns: 25% 25% 25% 25% ;
     margin-left: auto;
     margin-right: auto;
     grid-column-gap: 7px;

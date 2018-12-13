@@ -1,5 +1,5 @@
 import { renderChart } from './pieChart';
-import { sortJobs, toTitleCase } from './utils';
+import { sortJobs, toTitleCase, formatDate } from './utils';
 import io from 'socket.io-client';
 
 var socket = io();
@@ -88,7 +88,10 @@ socket.on('sales', (data) => {
                 ${jobStatusIcon(job)}
               </div>
               <div class="customer">
-              ${job.Contact ? toTitleCase(job.Contact) + "<br />" + job.Postcode : "NOT SET"}
+                ${job.Contact ? toTitleCase(job.Contact) + "<br />" + job.Postcode : "NOT SET"}
+              </div>
+              <div class="date">
+                Survey Date: <b>${formatDate(job.PlannedStart)}</b>
               </div>
             </div>
           `;

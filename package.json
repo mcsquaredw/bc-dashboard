@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon server.js",
     "build": "parcel build src/*.html",
-    "production": "parcel build src/*.html && npm run start"
+    "start-production": "parcel build src/*.html && npm run start NODE_ENV=production"
   },
   "keywords": [],
   "author": "",

@@ -1,3 +1,7 @@
+* {
+    font-size: 25px;
+}
+
 #container {
     display: grid;
     grid-template-areas: "chart table";
@@ -53,10 +57,17 @@
     display: grid;
     grid-template-rows: auto auto auto;
     grid-template-areas: "flag   flag     flag"
-                         "status customer customer";
+                         "status customer customer"
+                         "date   date     date";
     align-items: center;
     border: 1px solid black;
     -webkit-box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.75);
     -moz-box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.75);
     box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.75);
+}
+
+.date {
+    grid-area: date;
+    border-top: 1px solid black;
+    text-align: center;
 }

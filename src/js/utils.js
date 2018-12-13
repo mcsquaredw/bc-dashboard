@@ -15,9 +15,9 @@ export function getSelectedFromSelect(select) {
 export function formatTime(dateStr) {
   const dateObj = new Date(dateStr);
 
-  return `${("0" + dateObj.getHours()).slice(-2)}:${(
+  return `${dateObj.getHours()}:${(
     "0" + dateObj.getMinutes()
-  ).slice(-2)}:${("0" + dateObj.getSeconds()).slice(-2)}`;
+  ).slice(-2)}`;
 }
 
 export function formatDate(dateStr) {

@@ -30,9 +30,10 @@ function renderJobDetails(job) {
 
 function renderCustomerDetails(job) {
     return `
-      <b>${toTitleCase(job.Contact)}</b>
-      <br />
-      <b>${job.Postcode.toUpperCase()}</b>
+      <b>
+        ${toTitleCase(job.Contact)}
+        ${job.Postcode.toUpperCase()}
+      </b>
     `;
 }
 
@@ -56,20 +57,28 @@ function renderTimingDetails(job) {
     }
 
     return `
-        <i class="material-icons" style="font-size: 25px;">${iconName}</i>${label}
+        <div class="timing-icon">
+            <i class="material-icons" style="font-size: 25px;">${iconName}</i>
+        </div>
+        <div class="timing-label">
+            ${label}
+        </div>
+        <div class="timing-icon2">
+            <i class="material-icons" style="font-size: 25px;">${iconName}</i>
+        </div>
     `;
 }
 
 function jobStatusColour(job) {
     if (!job.RealStart) {
-        return "table-danger";
+        return "danger";
     } else if (!job.RealEnd) {
-        return "table-warning";
+        return "warning";
     } else {
         if (job.Status.includes("issues")) {
-            return "table-info";
+            return "info";
         } else {
-            return "table-success";
+            return "success";
         }
     }
 }
@@ -95,17 +104,19 @@ function jobStatusIcon(job) {
 function renderJob(job) {
     return `
         <div class="job-card">
-            <div class="type-icon">
-                ${renderJobTypeIcon(job)}
+            <div class="header ${jobStatusColour(job)}">
+                <div class="type-icon">
+                    ${renderJobTypeIcon(job)}
+                </div>
+                <div class="type">
+                    ${renderJobDetails(job)}
+                </div>
+                <div class="status">
+                    ${jobStatusIcon(job)}
+                </div>
             </div>
             <div class="customer">
                 ${renderCustomerDetails(job)}
-            </div>
-            <div class="status">
-                ${jobStatusIcon(job)}
-            </div>
-            <div class="type">
-                ${renderJobDetails(job)}
             </div>
             <div class="timing">
                 ${renderTimingDetails(job)}
