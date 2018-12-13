@@ -1,12 +1,12 @@
 {
-  "name": "JB-Dashboard",
+  "name": "jb_dashboard",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "set NODE_ENV=development && nodemon server.js",
     "build": "parcel build src/*.html",
-    "start-production": "parcel build src/*.html && npm run start NODE_ENV=production"
+    "start-production": "set NODE_ENV=production && parcel build src/*.html && npm run start"
   },
   "keywords": [],
   "author": "",
