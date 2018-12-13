@@ -1,4 +1,5 @@
-const app = require('express')();
+const express = require('express') ;
+const app = express();
 const Bundler = require('parcel-bundler');
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
@@ -8,14 +9,14 @@ const bigChangeApi = require('./api/big-change');
 const entryPoint = './src/*.html';
 const bundler = new Bundler(entryPoint, {});
 
+if(process.env.NODE_ENV === "production") {
+    app.use(express.static('dist'));
+} else {
+    app.use(bundler.middleware());
+}
+
 app.get("/", (req, res) => {
     res.redirect("./dashboard-engineers.html");
-});
-
-app.use(bundler.middleware());
-
-http.listen(port, () => {
-    console.log("Listening on port", port);
 });
 
 io.on('connection', function(socket) {
@@ -54,3 +55,7 @@ setInterval(() => {
     getDashboardData();
     getOrderStatus();
 }, 120000);
+
+http.listen(port, () => {
+    console.log("Listening on port", port);
+});

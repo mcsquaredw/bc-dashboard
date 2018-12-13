@@ -2,6 +2,8 @@ import io from 'socket.io-client';
 
 import { formatDate, toTitleCase, dateToString } from './utils';
 
+const socket = io();
+
 function jobMessage(job) {
     let message = "";
     if (job.CurrentFlag) {
@@ -173,10 +175,6 @@ function renderOrderStatus(jobs, flags) {
         }`;
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-    var socket = io();
-
-    socket.on('order-status', (data) => {
-        renderOrderStatus(data.jobs, data.flags);
-    });
+socket.on('order-status', (data) => {
+    renderOrderStatus(data.jobs, data.flags);
 });
