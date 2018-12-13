@@ -1,13 +1,11 @@
 import { renderDashboard } from './dashboard';
 import io from 'socket.io-client';
 
+const socket = io();
 const engineers = ["Adrian Ibbertson", "Andy Begg", "Andy MacDonald", "Dave McLaughan", "Jamie Organ", "Jimmy Rawlings", "Jordan Fletcher", "Kevin Jowett", "Stuart Kershaw"];
 
-document.addEventListener("DOMContentLoaded", function() {
+socket.on('dashboard-data', (data) => {
+    console.log('New Data Received');
     const fittersField = document.getElementById('fitters');
-    var socket = io();
-
-    socket.on('dashboard-data', (data) => {
-        fittersField.innerHTML = renderDashboard(data.jobs, engineers, data.resources);
-    });
+    fittersField.innerHTML = renderDashboard(data.jobs, engineers, data.resources);
 });

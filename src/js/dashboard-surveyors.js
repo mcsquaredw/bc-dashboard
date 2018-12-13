@@ -1,13 +1,11 @@
 import { renderDashboard } from './dashboard';
 import io from 'socket.io-client';
 
+const socket = io();
 const surveyors = ["Andy Marshall", "Darren Baker", "Jason Housby"];
 
-document.addEventListener("DOMContentLoaded", function() {
+socket.on('dashboard-data', (data) => {
+    console.log('New Data Received');
     const surveyorsField = document.getElementById('surveyors');
-    var socket = io();
-
-    socket.on('dashboard-data', (data) => {
-        surveyorsField.innerHTML = renderDashboard(data.jobs, surveyors, data.resources);
-    });
+    surveyorsField.innerHTML = renderDashboard(data.jobs, surveyors, data.resources);
 });
