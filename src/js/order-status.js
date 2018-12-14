@@ -4,6 +4,46 @@ import { formatDate, toTitleCase, dateToString } from './utils';
 
 const socket = io();
 
+function flagColour(flagName, flags) {
+    return flags.map(flag => `${flag.tagName.includes(flagName) ? `${flag.colour}` : ""}`).join('')
+}
+
+function jobButton(job, flags) {
+    let message = "";
+    let handler = "";
+    let colour = "";
+
+    if(job.CurrentFlag) {
+        if(job.CurrentFlag.includes("IF01")) {
+            message = "Paid"
+            colour = flagColour("Paid", flags);
+        } else if(job.CurrentFlag.includes("IF03")) {
+            message = "IF01: Door Arrived";
+            colour = flagColour("IF01", flags);
+        } else if(job.CurrentFlag.includes("IF06")) {
+            message = "IF03: To Be Delivered";
+            colour = flagColour("IF03", flags);
+        } else if(job.CurrentFlag.includes("IF02")) {
+            message = "IF06: Door to be Ack";
+            colour = flagColour("IF06", flags);
+        }
+    } else {
+        message = "IF02: Door To Order";
+        colour = "red";
+    }
+
+    return `
+        <button onClick="${handler}" ${message.includes("Paid") && !job.RealEnd ? "disabled" : "enabled"}>
+            Change Flag to 
+            <span 
+                class="button-flag" 
+                style="background-color:${colour}">
+                ${message}
+            </span>
+        </button>
+    `;
+}
+
 function jobMessage(job) {
     let message = "";
     if (job.CurrentFlag) {
@@ -129,47 +169,50 @@ function renderOrderStatus(jobs, flags) {
     container.innerHTML = `${
         Object.keys(dates).sort((a, b) => ('' + a).localeCompare(b)).map(key => {
             if (dates[key].jobs.length > 0) {
-                return `
-                            
-                        <h2 class="date-label">
-                            ${new Date(key).toLocaleDateString("en-GB", { weekday: 'long' })} ${formatDate(new Date(key))}
-                        </h2>
+                return `    
+                    <h2 class="date-label">
+                        ${new Date(key).toLocaleDateString("en-GB", { weekday: 'long' })} ${formatDate(new Date(key))}
+                    </h2>
 
-                        <div class="grid-cards">
-                        ${dates[key].jobs
-                        .map((job, index) => `
-                                <div class="grid-card">
-                                    <div class="flag" ${flags.map(flag => `${flag.tagName.includes(job.CurrentFlag) ? `style="background-color:${flag.colour}"` : ""}`).join('')}>                                           
-                                        ${job.CurrentFlag ? job.CurrentFlag : "NO FLAG"}
-                                    </div>
-                                    
-                                    <div class="logo">
-                                        <i class="material-icons">add_box</i>
-                                    </div>
-                                    
-                                    <div class="desc">
-                                        ${toTitleCase(job.Contact)} ${job.Postcode.toUpperCase()}
-                                    </div>
-
-                                    <div class="job">
-                                        ${jobMessage(job)}
-                                    </div>
-                                    
-                                    <div class="fitter">
-                                        ${job.Resource ? `To Be Fitted By <b>${job.Resource}</b>` : "NOT ASSIGNED TO FITTER"}
-                                    </div>
-                                    
-                                    <div class="status-icon">
-                                        <i class="material-icons pt-2">${renderAlertLevelIcon(job)}</i>
-                                    </div>
-
-                                    <div class="status">
-                                        ${renderAlertText(job)}
-                                    </div>
+                    <div class="grid-cards">
+                    ${dates[key].jobs
+                    .map((job, index) => `
+                            <div class="grid-card">
+                                <div class="flag" style="background-color:${flags.map(flag => `${flag.tagName.includes(job.CurrentFlag) ? `${flag.colour}` : ""}`).join('')}${job.CurrentFlag ? `` : `red`}">                                           
+                                    ${job.CurrentFlag ? job.CurrentFlag : "NO FLAG"}
                                 </div>
-                        `).join('')}
-                        </div>
-                    `;
+                                
+                                <div class="logo">
+                                    <i class="material-icons">add_box</i>
+                                </div>
+                                
+                                <div class="desc">
+                                    ${toTitleCase(job.Contact)} ${job.Postcode.toUpperCase()}
+                                </div>
+
+                                <div class="job">
+                                    ${jobMessage(job)}
+                                </div>
+                                
+                                <div class="fitter">
+                                    ${job.Resource ? `To Be Fitted By <b>${job.Resource}</b>` : "NOT ASSIGNED TO FITTER"}
+                                </div>
+                                
+                                <div class="status-icon">
+                                    <i class="material-icons pt-2">${renderAlertLevelIcon(job)}</i>
+                                </div>
+
+                                <div class="status">
+                                    ${renderAlertText(job)}
+                                </div>
+
+                                <div class="controls">
+                                    ${jobButton(job, flags)}
+                                </div>
+                            </div>
+                    `).join('')}
+                    </div>
+                `;
             }
         }).join('')
         }`;

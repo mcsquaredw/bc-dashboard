@@ -2,6 +2,20 @@
     font-size: 25px;
 }
 
+button {
+    width: 100%;
+    border-radius: 7px;
+    margin: 5px;
+    padding: 10px;
+}
+
+.button-flag {
+    color: white;
+    padding: 5px;
+    font-weight: bold;
+    border-radius: 5px;
+}
+
 h2.date-label {
     text-align: center;
     width: 100%;
@@ -12,7 +26,7 @@ h2.date-label {
 
 .grid-cards {
     display: grid;
-    grid-template-columns: 25% 25% 25% 25% ;
+    grid-template-columns: auto auto auto auto;
     margin-left: auto;
     margin-right: auto;
     grid-column-gap: 7px;
@@ -28,7 +42,8 @@ h2.date-label {
                          "logo        desc      desc"
                          "logo        job       job"
                          "logo        fitter    fitter"
-                         "status-icon status    status";
+                         "status-icon status    status"
+                         "controls    controls  controls";
     border: 1px solid black;
     -webkit-box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.75);
     -moz-box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.75);
@@ -76,4 +91,11 @@ h2.date-label {
 .status {
     grid-area: status;
     align-self: center;
+}
+
+.controls {
+    grid-area: controls;
+    align-self: center;
+    padding-left: 10px;
+    padding-right: 10px;
 }
