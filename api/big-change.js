@@ -77,5 +77,19 @@ module.exports = {
         }
 
         return response.data.Result;
+    },
+    setFlag: async function(jobId, tagId) {
+        let response;
+        let dateObj = new Date();
+
+        try {
+            response = await axios.get(
+                `https://webservice.bigchangeapps.com/v01/services.ashx?&key=${api_key}&login=${username}&pwd=${password}&action=SetTag&EntityId=${jobId}&TagId=${tagId}&EntityType=job&datetime=${dateObj.getFullYear()}/${("0" + (dateObj.getMonth() + 1)).slice(-2)}/${("0" + dateObj.getDate()).slice(-2)}`
+            )
+        } catch (err) {
+            console.error(err);
+        }
+
+        return response.data.Result;
     }
 }

@@ -26,6 +26,21 @@ io.on('connection', function(socket) {
     socket.on('get-sales', () => {
         bigChangeApi.getJobs().then(jobs => {
             socket.emit('sales', {jobs});
+        }).catch(err => {
+            console.error(err);
+        })
+    });
+
+    socket.on('set-flag', (data) => {
+        let { jobId, flagId } = data;
+
+        console.log(jobId, flagId);
+        
+        bigChangeApi.setFlag(jobId, flagId).then(response => {
+            console.log(jobId, flagId);
+            getOrderStatus();
+        }).catch(err => {
+            console.error(err);
         })
     });
 });

@@ -45,6 +45,17 @@
   <main id="container">
 
   </main>
+  <input id="job-id" type="hidden" />
+  <input id="flag-id" type="hidden" />
+  <script>
+    function changeFlag(jobId, flagId) {
+      const jobIdInput = document.getElementById("job-id");
+      const flagIdInput = document.getElementById("flag-id");
+
+      jobIdInput.value = jobId;
+      flagIdInput.value = flagId;
+    }
+  </script>
 </body>
 
 </html>

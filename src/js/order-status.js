@@ -3,9 +3,25 @@ import io from 'socket.io-client';
 import { formatDate, toTitleCase, dateToString } from './utils';
 
 const socket = io();
+const nextFlag = {
+    "IF01": "Paid",
+    "IF03": "IF01",
+    "IF06": "IF03",
+    "IF02": "IF06"
+};
+
+function setFlag(jobId, flagId) {
+    socket.emit('set-flag', {jobId, flagId});
+
+    console.log(jobId, flagId);
+}
 
 function flagColour(flagName, flags) {
-    return flags.map(flag => `${flag.tagName.includes(flagName) ? `${flag.colour}` : ""}`).join('')
+    return flags.map(flag => `${flag.tagName.includes(flagName) ? `${flag.colour}` : ""}`).join('');
+}
+
+function flagId(flagName, flags) {
+    return flags.filter(flag => flag.tagName.includes(flagName))[0].Id;
 }
 
 function jobButton(job, flags) {
@@ -17,23 +33,28 @@ function jobButton(job, flags) {
         if(job.CurrentFlag.includes("IF01")) {
             message = "Paid"
             colour = flagColour("Paid", flags);
+            handler = `${job.JobId},${flagId("Paid", flags)}`
         } else if(job.CurrentFlag.includes("IF03")) {
             message = "IF01: Door Arrived";
             colour = flagColour("IF01", flags);
+            handler = `${job.JobId},${flagId("IF01", flags)}`
         } else if(job.CurrentFlag.includes("IF06")) {
             message = "IF03: To Be Delivered";
             colour = flagColour("IF03", flags);
+            handler = `${job.JobId},${flagId("IF03", flags)}`
         } else if(job.CurrentFlag.includes("IF02")) {
             message = "IF06: Door to be Ack";
             colour = flagColour("IF06", flags);
+            handler = `${job.JobId},${flagId("IF06", flags)}`
         }
     } else {
         message = "IF02: Door To Order";
         colour = "red";
+        handler = `${job.JobId},${flagId("IF02", flags)}`;
     }
 
     return `
-        <button onClick="${handler}" ${message.includes("Paid") && !job.RealEnd ? "disabled" : "enabled"}>
+        <button id="${job.JobId}" onclick="changeFlag(${handler})" ${message.includes("Paid") && !job.RealEnd ? "disabled" : "enabled"}>
             Change Flag to 
             <span 
                 class="button-flag" 
@@ -177,39 +198,39 @@ function renderOrderStatus(jobs, flags) {
                     <div class="grid-cards">
                     ${dates[key].jobs
                     .map((job, index) => `
-                            <div class="grid-card">
-                                <div class="flag" style="background-color:${flags.map(flag => `${flag.tagName.includes(job.CurrentFlag) ? `${flag.colour}` : ""}`).join('')}${job.CurrentFlag ? `` : `red`}">                                           
-                                    ${job.CurrentFlag ? job.CurrentFlag : "NO FLAG"}
-                                </div>
-                                
-                                <div class="logo">
-                                    <i class="material-icons">add_box</i>
-                                </div>
-                                
-                                <div class="desc">
-                                    ${toTitleCase(job.Contact)} ${job.Postcode.toUpperCase()}
-                                </div>
-
-                                <div class="job">
-                                    ${jobMessage(job)}
-                                </div>
-                                
-                                <div class="fitter">
-                                    ${job.Resource ? `To Be Fitted By <b>${job.Resource}</b>` : "NOT ASSIGNED TO FITTER"}
-                                </div>
-                                
-                                <div class="status-icon">
-                                    <i class="material-icons pt-2">${renderAlertLevelIcon(job)}</i>
-                                </div>
-
-                                <div class="status">
-                                    ${renderAlertText(job)}
-                                </div>
-
-                                <div class="controls">
-                                    ${jobButton(job, flags)}
-                                </div>
+                        <div class="grid-card">
+                            <div class="flag" style="background-color:${flags.map(flag => `${flag.tagName.includes(job.CurrentFlag) ? `${flag.colour}` : ""}`).join('')}${job.CurrentFlag ? `` : `red`}">                                           
+                                ${job.CurrentFlag ? job.CurrentFlag : "NO FLAG"}
                             </div>
+                            
+                            <div class="logo">
+                                <i class="material-icons">add_box</i>
+                            </div>
+                            
+                            <div class="desc">
+                                ${toTitleCase(job.Contact)} ${job.Postcode.toUpperCase()}
+                            </div>
+
+                            <div class="job">
+                                ${jobMessage(job)}
+                            </div>
+                            
+                            <div class="fitter">
+                                ${job.Resource ? `To Be Fitted By <b>${job.Resource}</b>` : "NOT ASSIGNED TO FITTER"}
+                            </div>
+                            
+                            <div class="status-icon">
+                                <i class="material-icons pt-2">${renderAlertLevelIcon(job)}</i>
+                            </div>
+
+                            <div class="status">
+                                ${renderAlertText(job)}
+                            </div>
+
+                            <div class="controls">
+                                ${jobButton(job, flags)}
+                            </div>
+                        </div>
                     `).join('')}
                     </div>
                 `;
@@ -220,4 +241,25 @@ function renderOrderStatus(jobs, flags) {
 
 socket.on('order-status', (data) => {
     renderOrderStatus(data.jobs, data.flags);
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    let oldJobId = 0;
+    let oldFlagId = 0;
+
+    setInterval(() => {
+        let jobIdInput = document.getElementById("job-id");
+        let flagIdInput = document.getElementById("flag-id");
+        let newJobId = jobIdInput.value;
+        let newFlagId = flagIdInput.value;
+
+        if(newJobId != oldJobId || newFlagId != oldFlagId) {
+            setFlag(newJobId, newFlagId);
+            oldJobId = newJobId;
+            oldFlagId = newFlagId;
+            jobIdInput = 0;
+            flagIdInput = 0;
+        }
+
+    }, 500);
 });
