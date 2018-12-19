@@ -4,9 +4,10 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "set NODE_ENV=development && nodemon server.js",
+    "start": "nodemon server.js",
     "build": "parcel build src/*.html",
-    "start-production": "set NODE_ENV=production && parcel build src/*.html && npm run start"
+    "start-production": "set NODE_ENV=production && parcel build src/*.html && npm run start",
+    "start-development": "set NODE_ENV=development && npm run start"
   },
   "keywords": [],
   "author": "",

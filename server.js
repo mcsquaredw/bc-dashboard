@@ -33,8 +33,6 @@ io.on('connection', function(socket) {
 
     socket.on('set-flag', (data) => {
         let { jobId, flagId } = data;
-
-        console.log(jobId, flagId);
         
         bigChangeApi.setFlag(jobId, flagId).then(response => {
             console.log(jobId, flagId);

@@ -4,6 +4,10 @@ import { formatDate, toTitleCase, dateToString } from './utils';
 
 const socket = io();
 
+var filterValue = "";
+var jobs = [];
+var flags = [];
+
 function setFlag(jobId, flagId) {
     socket.emit('set-flag', {jobId, flagId});
 }
@@ -157,7 +161,7 @@ function renderAlertText(job) {
     }
 }
 
-function renderOrderStatus(jobs, flags) {
+function renderOrderStatus() {
     const container = document.getElementById("container");
     const dates = {}
 
@@ -168,6 +172,7 @@ function renderOrderStatus(jobs, flags) {
     now.setHours(0, 0, 0, 0);
 
     jobs
+        .filter(job => filterValue !== "" ? job.Contact.toUpperCase().includes(filterValue.toUpperCase()) || job.Postcode.toUpperCase().includes(filterValue.toUpperCase()  ) : true)
         .sort((a, b) => {
             return new Date(a.PlannedStart) - new Date(b.PlannedStart)
         })
@@ -244,7 +249,9 @@ function renderOrderStatus(jobs, flags) {
 }
 
 socket.on('order-status', (data) => {
-    renderOrderStatus(data.jobs, data.flags);
+    jobs = data.jobs;
+    flags = data.flags;
+    renderOrderStatus();
 });
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -265,5 +272,16 @@ document.addEventListener("DOMContentLoaded", function() {
             flagIdInput = 0;
         }
 
+    }, 500);
+
+    setInterval(() => {
+        let searchInput = document.getElementById("search");
+        let newSearch = searchInput.value;
+
+        if(newSearch !== filterValue) {
+            filterValue = newSearch;
+            renderOrderStatus();
+        }
+        
     }, 500);
 });
