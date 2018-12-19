@@ -35,7 +35,6 @@ io.on('connection', function(socket) {
         let { jobId, flagId } = data;
         
         bigChangeApi.setFlag(jobId, flagId).then(response => {
-            console.log(jobId, flagId);
             getOrderStatus();
         }).catch(err => {
             console.error(err);
@@ -46,7 +45,6 @@ io.on('connection', function(socket) {
 function getDashboardData() {
     bigChangeApi.getJobs().then(jobs => {
         bigChangeApi.getResources().then(resources => {
-            console.log('New Data Requested');
             io.emit('dashboard-data', {jobs, resources});
         });
     }).catch(err => {
