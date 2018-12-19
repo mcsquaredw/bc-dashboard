@@ -3,17 +3,9 @@ import io from 'socket.io-client';
 import { formatDate, toTitleCase, dateToString } from './utils';
 
 const socket = io();
-const nextFlag = {
-    "IF01": "Paid",
-    "IF03": "IF01",
-    "IF06": "IF03",
-    "IF02": "IF06"
-};
 
 function setFlag(jobId, flagId) {
     socket.emit('set-flag', {jobId, flagId});
-
-    console.log(jobId, flagId);
 }
 
 function flagColour(flagName, flags) {
@@ -26,35 +18,47 @@ function flagId(flagName, flags) {
 
 function jobButton(job, flags) {
     let message = "";
-    let handler = "";
+    let nextHandler = "";
+    let prevHandler = "";
     let colour = "";
 
     if(job.CurrentFlag) {
         if(job.CurrentFlag.includes("IF01")) {
             message = "Paid"
             colour = flagColour("Paid", flags);
-            handler = `${job.JobId},${flagId("Paid", flags)}`
+            nextHandler = `${job.JobId},${flagId("Paid", flags)}`;
+            prevHandler = `${job.JobId},${flagId("IF03", flags)}`;
         } else if(job.CurrentFlag.includes("IF03")) {
             message = "IF01: Door Arrived";
             colour = flagColour("IF01", flags);
-            handler = `${job.JobId},${flagId("IF01", flags)}`
+            nextHandler = `${job.JobId},${flagId("IF01", flags)}`;
+            prevHandler = `${job.JobId},${flagId("IF06", flags)}`;
         } else if(job.CurrentFlag.includes("IF06")) {
             message = "IF03: To Be Delivered";
             colour = flagColour("IF03", flags);
-            handler = `${job.JobId},${flagId("IF03", flags)}`
+            nextHandler = `${job.JobId},${flagId("IF03", flags)}`;
+            prevHandler = `${job.JobId},${flagId("IF02", flags)}`;
         } else if(job.CurrentFlag.includes("IF02")) {
             message = "IF06: Door to be Ack";
             colour = flagColour("IF06", flags);
-            handler = `${job.JobId},${flagId("IF06", flags)}`
+            nextHandler = `${job.JobId},${flagId("IF06", flags)}`;
         }
     } else {
         message = "IF02: Door To Order";
         colour = "red";
-        handler = `${job.JobId},${flagId("IF02", flags)}`;
+        nextHandler = `${job.JobId},${flagId("IF02", flags)}`;
     }
 
     return `
-        <button id="${job.JobId}" onclick="changeFlag(${handler})" ${message.includes("Paid") && !job.RealEnd ? "disabled" : "enabled"}>
+        ${prevHandler !== '' ? 
+            `<button onclick="changeFlag(${prevHandler})">
+                <i class="material-icons">replay</i>
+                Undo Last Flag
+            </button>`
+            :
+            ``
+        }
+        <button onclick="changeFlag(${nextHandler})" ${message.includes("Paid") && !job.RealEnd ? "disabled" : "enabled"}>
             Change Flag to 
             <span 
                 class="button-flag" 
