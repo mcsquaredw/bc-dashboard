@@ -5,6 +5,7 @@ import { formatDate, toTitleCase, dateToString } from './utils';
 const socket = io();
 
 var filterValue = "";
+var flagValue = "";
 var jobs = [];
 var flags = [];
 
@@ -173,6 +174,8 @@ function renderOrderStatus() {
 
     jobs
         .filter(job => filterValue !== "" ? job.Contact.toUpperCase().includes(filterValue.toUpperCase()) || job.Postcode.toUpperCase().includes(filterValue.toUpperCase()  ) : true)
+        .filter(job => flagValue !== "" ? job.CurrentFlag && job.CurrentFlag.includes(flagValue) : true)
+        .filter(job => job.CurrentFlag && !job.CurrentFlag.includes("Paid"))
         .sort((a, b) => {
             return new Date(a.PlannedStart) - new Date(b.PlannedStart)
         })
@@ -283,5 +286,16 @@ document.addEventListener("DOMContentLoaded", function() {
             renderOrderStatus();
         }
         
+    }, 500);
+
+    setInterval(() => {
+        let flagSelect = document.getElementById("flag");
+        let newFlag = flagSelect.value;
+
+        if(newFlag !== flagValue) {
+            flagValue = newFlag;
+            renderOrderStatus();
+        }
+
     }, 500);
 });
