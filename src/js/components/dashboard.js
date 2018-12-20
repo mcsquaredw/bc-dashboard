@@ -16,7 +16,9 @@ function renderJobTypeIcon(job) {
     }
 
     return `
-      <i class="material-icons mt-2" style="font-size: 48px;">${jobTypeIcon}</i>
+      <button class="view-worksheets" data-job-id="${job.JobId}">
+        <i class="material-icons mt-2" style="font-size: 48px;">${jobTypeIcon}</i>
+      </button>
     `;
 }
 
@@ -97,9 +99,9 @@ function jobStatusIcon(job) {
     return `<i class="material-icons" style="font-size: 48px;">${iconName}</i>`;
 }
 
-function renderJob(job) {
+function renderJob(job) {  
     return `
-        <div class="job-card">
+        <div class="job-card" data-job-id="${job.JobId}">
             <div class="header ${jobStatusColour(job)}">
                 <div class="type-icon">
                     ${renderJobTypeIcon(job)}
@@ -136,7 +138,7 @@ function renderWorker(worker, jobs, position) {
     `;
 }
 
-export function renderDashboard(container, store, desiredWorkers) {
+export function renderDashboard(container, store, desiredWorkers, socket) {
     const jobs = store.getState().bc.jobs;
     const positions = store.getState().bc.resources;
     let workers = {};
@@ -170,4 +172,12 @@ export function renderDashboard(container, store, desiredWorkers) {
 
         return `${renderWorker(key, workers[key].jobs, position)}`;
     }).join('');
+
+    [...document.getElementsByClassName("view-worksheets")].map(jobCard => {
+        jobCard.onclick = (ev) => {
+            const jobId = ev.target.getAttribute("data-job-id");
+
+            socket.emit("get-worksheets", { jobId });
+        };
+    });
 }

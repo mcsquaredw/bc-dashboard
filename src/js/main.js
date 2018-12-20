@@ -5,7 +5,9 @@ import reducers from './redux/reducer';
 import {
     newFlagData,
     newOrderData,
-    newResourceData
+    newResourceData,
+    newWorksheetData,
+    hideWorksheetData
 } from './redux/actions';
 import { renderDashboard } from './components/dashboard';
 import { renderOrderStatus } from './components/order-status';
@@ -35,6 +37,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const store = createStore(reducers);
     const container = document.getElementById("container");
     const controls = document.getElementById("controls");
+    const modalClose = document.getElementById("modal-close");
+
+    modalClose.onclick = (ev) => {
+        store.dispatch(hideWorksheetData());
+    };
 
     window.onhashchange = renderPage;
 
@@ -50,6 +57,10 @@ document.addEventListener("DOMContentLoaded", () => {
         store.dispatch(newFlagData(data.flags));
     });
 
+    socket.on('worksheets', (data) => {
+        store.dispatch(newWorksheetData(data.worksheets));
+    });
+
     if (window.location.hash.length === 0) {
         window.location.hash = "engineer-jobs";
     }
@@ -62,10 +73,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         switch (page) {
             case 'engineer-jobs':
-                renderDashboard(container, store, engineers);
+                renderDashboard(container, store, engineers, socket);
                 break;
             case 'surveyor-jobs':
-                renderDashboard(container, store, surveyors);
+                renderDashboard(container, store, surveyors, store);
                 break;
             case 'door-orders':
                 renderOrderStatus(container, controls, store, socket);
@@ -80,7 +91,39 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    function renderQuestion(question) {
+        return `
+            <div class="question-qn">
+                ${question.Question}
+            </div>
+            <div class="question-answer">
+                ${question.AnswerText}
+            </div>
+        `;
+    }
+
+    function updateWorksheetModal() {
+        const modal = document.getElementById("modal");
+        const modalTarget = document.getElementById("modal-target");
+        const { worksheets, show } = store.getState().ws;
+
+        if(show) {
+            if(worksheets.length > 0) {
+                modalTarget.innerHTML = `
+                    ${worksheets.map(question => renderQuestion(question)).join('')}
+                `;
+            } else {
+                modalTarget.innerHTML = `No Worksheet Data`;
+            }
+
+            modal.style.display = "block";
+        } else {
+            modal.style.display = "none";
+        }
+    }
+
     store.subscribe(updatePage);
+    store.subscribe(updateWorksheetModal);
 
     function renderPage(ev) {
         if (window.location.hash.length > 0) {

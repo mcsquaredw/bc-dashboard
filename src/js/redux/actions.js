@@ -62,3 +62,22 @@ export function changeGDNPostcode(postcode) {
         postcode
     }
 }
+
+export const NEW_WORKSHEET_DATA = 7;
+
+export function newWorksheetData(worksheets) {
+    return {
+        type: NEW_WORKSHEET_DATA,
+        worksheets,
+        show: true
+    }
+}
+
+export const HIDE_WORKSHEET_DATA = 8;
+
+export function hideWorksheetData() {
+    return {
+        type: HIDE_WORKSHEET_DATA,
+        show: false
+    }
+}

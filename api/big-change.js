@@ -91,5 +91,22 @@ module.exports = {
         }
 
         return response.data.Result;
+    },
+    getWorksheets: async function(jobId) {
+        let response;
+
+        console.log(jobId);
+        
+        try {
+            response = await axios.get(
+                `https://webservice.bigchangeapps.com/v01/services.ashx?&key=${api_key}&login=${username}&pwd=${password}&action=jobworksheets&jobId=${jobId}&wsphoto=full`
+            )
+        } catch(err) {
+            console.error(err);
+        }
+
+        console.log(response.data.Result);
+
+        return response.data.Result;
     }
 }

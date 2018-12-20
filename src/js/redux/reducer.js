@@ -7,7 +7,9 @@ import {
     CHANGE_SEARCH_FLAG,
     NEW_FLAG_DATA,
     NEW_RESOURCE_DATA,
-    CHANGE_GDN_POSTCODE
+    CHANGE_GDN_POSTCODE,
+    NEW_WORKSHEET_DATA,
+    HIDE_WORKSHEET_DATA
 } from './actions';
 
 function bigChange(
@@ -93,9 +95,32 @@ function gdn(
     }
 }
 
+function worksheets(
+    state = {
+        worksheets: [],
+        show: false
+    },
+    action
+) {
+    switch(action.type) {
+        case NEW_WORKSHEET_DATA:
+            return Object.assign({}, state, {
+                worksheets: action.worksheets,
+                show: true
+            });
+        case HIDE_WORKSHEET_DATA:
+            return Object.assign({}, state, {
+                show: false
+            });
+        default:
+            return state;
+    }
+}
+
 export default combineReducers({
     bc: bigChange,
     orderStatus,
     sales,
-    gdn
+    gdn,
+    ws: worksheets
 });

@@ -29,6 +29,14 @@ io.on('connection', function (socket) {
             console.error(err);
         })
     });
+
+    socket.on('get-worksheets', (data) => {
+        bigChangeApi.getWorksheets(data.jobId).then(worksheets => {
+            io.emit('worksheets', { worksheets })
+        }).catch(err => {
+            console.error(err);
+        });
+    });
 });
 
 function getResources() {
