@@ -49,11 +49,7 @@ function renderTimingDetails(job) {
         label = `Started ${formatTime(job.RealStart)}`;
     } else {
         iconName = "watch_later";
-        label = `Finished in ${formatTime(
-            new Date(
-                new Date(job.RealEnd).getTime() - new Date(job.RealStart).getTime()
-            ).toString()
-        )}hrs`;
+        label = `Started ${formatTime(job.RealStart)} - Finished ${formatTime(job.RealEnd)}`;
     }
 
     return `
