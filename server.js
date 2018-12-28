@@ -6,12 +6,12 @@ const io = require('socket.io')(http);
 
 const port = 3000;
 const bigChangeApi = require('./api/big-change');
-const entryPoint = './src/index.html';
-const bundler = new Bundler(entryPoint, {});
 
 if (process.env.NODE_ENV === "production") {
     app.use(express.static('dist'));
 } else {
+    const entryPoint = './src/index.html';
+    const bundler = new Bundler(entryPoint, {});
     app.use(bundler.middleware());
 }
 
