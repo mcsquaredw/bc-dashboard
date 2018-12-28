@@ -1,4 +1,4 @@
-import { removeChildren } from './utils';
+import { removeChildren } from '../utils';
 import Chart from 'chart.js';
 
 var cht;

@@ -1,33 +1,17 @@
-* {
-    font-size: 25px;
-}
-
-#container {
+#sales-container {
     display: grid;
-    grid-template-areas: "chart table";
+    grid-template-areas: "sales-chart sales-table";
     grid-template-columns: 50% 50%;
     margin-left: 5px;
     margin-right: 5px;
 }
 
-#container #chart {
-    grid-area: chart;
+#sales-container #chart {
+    grid-area: sales-chart;
 }
 
-#container #table {
-    grid-area: table;
-}
-
-.danger {
-    background-color: #FC4A1A;
-}
-
-.warning {
-    background-color: #F7B733;
-}
-
-.success {
-    background-color: #4ABDAC;
+#sales-container #table {
+    grid-area: sales-table;
 }
 
 .survey-cards {
@@ -49,16 +33,16 @@
     margin-top: 5px;
 }
 
-.customer {
-    grid-area: customer;
+.sales-customer {
+    grid-area: sales-customer;
 }
 
 .survey-card {
     display: grid;
     grid-template-rows: auto auto auto;
-    grid-template-areas: "flag   flag     flag"
-                         "status customer customer"
-                         "date   date     date";
+    grid-template-areas: "flag   flag           flag"
+                         "status sales-customer sales-customer"
+                         "date   date           date";
     align-items: center;
     border: 1px solid black;
     -webkit-box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.75);

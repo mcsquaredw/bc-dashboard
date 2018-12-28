@@ -1,74 +1,42 @@
-import io from 'socket.io-client';
-
-import { formatDate, toTitleCase, dateToString } from './utils';
-
-const socket = io();
-
-var filterValue = "";
-var flagValue = "";
-var jobs = [];
-var flags = [];
-
-function setFlag(jobId, flagId) {
-    socket.emit('set-flag', {jobId, flagId});
-}
-
-function flagColour(flagName, flags) {
-    return flags.map(flag => `${flag.tagName.includes(flagName) ? `${flag.colour}` : ""}`).join('');
-}
-
-function flagId(flagName, flags) {
-    return flags.filter(flag => flag.tagName.includes(flagName))[0].Id;
-}
+import { changeSearchText, changeSearchFlag } from '../redux/actions';
+import { formatDate, toTitleCase, dateToString, getFlagDetails } from '../utils';
 
 function jobButton(job, flags) {
-    let message = "";
-    let nextHandler = "";
-    let prevHandler = "";
-    let colour = "";
+    let nextFlag;
+    let previousFlag;
 
-    if(job.CurrentFlag) {
-        if(job.CurrentFlag.includes("IF01")) {
-            message = "Paid"
-            colour = flagColour("Paid", flags);
-            nextHandler = `${job.JobId},${flagId("Paid", flags)}`;
-            prevHandler = `${job.JobId},${flagId("IF03", flags)}`;
-        } else if(job.CurrentFlag.includes("IF03")) {
-            message = "IF01: Door Arrived";
-            colour = flagColour("IF01", flags);
-            nextHandler = `${job.JobId},${flagId("IF01", flags)}`;
-            prevHandler = `${job.JobId},${flagId("IF06", flags)}`;
-        } else if(job.CurrentFlag.includes("IF06")) {
-            message = "IF03: To Be Delivered";
-            colour = flagColour("IF03", flags);
-            nextHandler = `${job.JobId},${flagId("IF03", flags)}`;
-            prevHandler = `${job.JobId},${flagId("IF02", flags)}`;
-        } else if(job.CurrentFlag.includes("IF02")) {
-            message = "IF06: Door to be Ack";
-            colour = flagColour("IF06", flags);
-            nextHandler = `${job.JobId},${flagId("IF06", flags)}`;
+    if (job.CurrentFlag) {
+        if (job.CurrentFlag.includes("IF01")) {
+            nextFlag = getFlagDetails("Paid", flags);
+            previousFlag = getFlagDetails("IF03", flags);
+        } else if (job.CurrentFlag.includes("IF03")) {
+            nextFlag = getFlagDetails("IF01", flags);
+            previousFlag = getFlagDetails("IF06", flags);
+        } else if (job.CurrentFlag.includes("IF06", flags)) {
+            nextFlag = getFlagDetails("IF03", flags);
+            previousFlag = getFlagDetails("IF02", flags);
+        } else if (job.CurrentFlag.includes("IF02", flags)) {
+            nextFlag = getFlagDetails("IF06", flags);
         }
     } else {
-        message = "IF02: Door To Order";
-        colour = "red";
-        nextHandler = `${job.JobId},${flagId("IF02", flags)}`;
+        nextFlag = getFlagDetails("IF02", flags);
     }
 
     return `
-        ${prevHandler !== '' ? 
-            `<button onclick="changeFlag(${prevHandler})">
+        ${previousFlag ?
+            `<button data-job-id="${job.JobId}" data-flag-id="${previousFlag.Id}" class="changeFlagButton">
                 <i class="material-icons">replay</i>
                 Undo Last Flag
             </button>`
             :
             ``
         }
-        <button onclick="changeFlag(${nextHandler})" ${message.includes("Paid") && !job.RealEnd ? "disabled" : "enabled"}>
+        <button data-job-id="${job.JobId}" data-flag-id="${nextFlag.Id}" ${nextFlag.tagName.includes("Paid") && !job.RealEnd ? "disabled" : "enabled"} class="changeFlagButton">
             Change Flag to 
             <span 
                 class="button-flag" 
-                style="background-color:${colour}">
-                ${message}
+                style="background-color:${nextFlag.colour}">
+                ${nextFlag.tagName}
             </span>
         </button>
     `;
@@ -162,9 +130,37 @@ function renderAlertText(job) {
     }
 }
 
-function renderOrderStatus() {
-    const container = document.getElementById("container");
-    const dates = {}
+export function renderOrderStatus(container, controls, store, socket) {
+    const dates = {};
+    const jobs = store.getState().bc.jobs;
+    const flags = store.getState().bc.flags;
+    const searchText = store.getState().orderStatus.searchText;
+    const searchFlag = store.getState().orderStatus.searchFlag;
+
+    if (controls.innerHTML.trim().length === 0) {
+        controls.innerHTML = `
+        <br />
+        <input id="search" type="text" placeholder="Customer Name or Postcode" style="width: 100%; margin-bottom: 5px;"/>
+        <br />
+        <select id="flag" style="width: 100%; margin-bottom: 5px;">
+          <option value="" selected>All Flags</option>
+          <option value="IF02">IF02: Door to Order</option>
+          <option value="IF06">IF06: Door To Be Ack</option>
+          <option value="IF03">IF03: To Be Delivered</option>
+          <option value="IF01">IF01: Door Arrived</option>
+        </select>`;
+
+        const searchTextInput = document.getElementById("search");
+        const searchFlagInput = document.getElementById("flag");
+
+        searchTextInput.onkeyup = (ev) => {
+            store.dispatch(changeSearchText(searchTextInput.value));
+        };
+
+        searchFlagInput.onchange = (ev) => {
+            store.dispatch(changeSearchFlag(searchFlagInput.value));
+        };
+    }
 
     dates["No Date"] = {};
     dates["No Date"].jobs = [];
@@ -173,9 +169,11 @@ function renderOrderStatus() {
     now.setHours(0, 0, 0, 0);
 
     jobs
-        .filter(job => filterValue !== "" ? job.Contact.toUpperCase().includes(filterValue.toUpperCase()) || job.Postcode.toUpperCase().includes(filterValue.toUpperCase()  ) : true)
-        .filter(job => flagValue !== "" ? job.CurrentFlag && job.CurrentFlag.includes(flagValue) : true)
-        .filter(job => job.CurrentFlag && !job.CurrentFlag.includes("Paid"))
+        .filter(job => !job.Status.includes("Cancelled"))
+        .filter(job => job.Type.includes("Fitting"))
+        .filter(job => new Date(job.PlannedStart).getTime() >= now.getTime())
+        .filter(job => searchText !== "" ? job.Contact.toUpperCase().includes(searchText.toUpperCase()) || job.Postcode.toUpperCase().includes(searchText.toUpperCase()) : true)
+        .filter(job => searchFlag !== "" ? job.CurrentFlag && job.CurrentFlag.includes(searchFlag) : true)
         .sort((a, b) => {
             return new Date(a.PlannedStart) - new Date(b.PlannedStart)
         })
@@ -194,7 +192,7 @@ function renderOrderStatus() {
                 dateKey = "No Date";
             }
 
-            if (job.Type.includes("Fitting") && (job.PlannedStart && start.getTime() >= now.getTime()) && (!job.CurrentFlag || (job.CurrentFlag && !job.CurrentFlag.includes("Paid") || !job.Status.includes("Cancelled")))) {
+            if (!job.CurrentFlag || !job.CurrentFlag.includes("Paid")) {
                 dates[dateKey].jobs.push(job);
             }
         });
@@ -209,14 +207,14 @@ function renderOrderStatus() {
 
                     <div class="grid-cards">
                     ${dates[key].jobs
-                    .map((job, index) => `
+                        .map((job, index) => `
                         <div class="grid-card">
                             <div class="flag" style="background-color:${flags.map(flag => `${flag.tagName.includes(job.CurrentFlag) ? `${flag.colour}` : ""}`).join('')}${job.CurrentFlag ? `` : `red`}">                                           
                                 ${job.CurrentFlag ? job.CurrentFlag : "NO FLAG"}
                             </div>
                             
                             <div class="logo">
-                                <i class="material-icons">add_box</i>
+                                <i style="font-size: 48px;" class="material-icons">add_box</i>
                             </div>
                             
                             <div class="desc">
@@ -249,53 +247,13 @@ function renderOrderStatus() {
             }
         }).join('')
         }`;
+
+    [...document.getElementsByClassName("changeFlagButton")].map(button => {
+        button.onclick = (ev) => {
+            const flagId = ev.target.getAttribute("data-flag-id");
+            const jobId = ev.target.getAttribute("data-job-id");
+
+            socket.emit('set-flag', { jobId, flagId });
+        };
+    });
 }
-
-socket.on('order-status', (data) => {
-    jobs = data.jobs;
-    flags = data.flags;
-    renderOrderStatus();
-});
-
-document.addEventListener("DOMContentLoaded", function() {
-    let oldJobId = 0;
-    let oldFlagId = 0;
-
-    setInterval(() => {
-        let jobIdInput = document.getElementById("job-id");
-        let flagIdInput = document.getElementById("flag-id");
-        let newJobId = jobIdInput.value;
-        let newFlagId = flagIdInput.value;
-
-        if(newJobId != oldJobId || newFlagId != oldFlagId) {
-            setFlag(newJobId, newFlagId);
-            oldJobId = newJobId;
-            oldFlagId = newFlagId;
-            jobIdInput = 0;
-            flagIdInput = 0;
-        }
-
-    }, 500);
-
-    setInterval(() => {
-        let searchInput = document.getElementById("search");
-        let newSearch = searchInput.value;
-
-        if(newSearch !== filterValue) {
-            filterValue = newSearch;
-            renderOrderStatus();
-        }
-        
-    }, 500);
-
-    setInterval(() => {
-        let flagSelect = document.getElementById("flag");
-        let newFlag = flagSelect.value;
-
-        if(newFlag !== flagValue) {
-            flagValue = newFlag;
-            renderOrderStatus();
-        }
-
-    }, 500);
-});

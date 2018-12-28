@@ -1,6 +1,6 @@
 {
   "name": "jb_dashboard",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "",
   "main": "server.js",
   "scripts": {
@@ -19,6 +19,7 @@
     "moment": "^2.22.2",
     "nodemon": "^1.18.7",
     "parcel-bundler": "^1.10.3",
+    "redux": "^4.0.1",
     "socket.io": "^2.2.0"
   }
 }

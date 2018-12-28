@@ -1,4 +1,4 @@
-import { sortJobs, toTitleCase, formatTime } from './utils';
+import { sortJobs, toTitleCase, formatTime } from '../utils';
 
 function renderJobTypeIcon(job) {
     let jobTypeIcon = "";
@@ -136,9 +136,10 @@ function renderWorker(worker, jobs, position) {
     `;
 }
 
-export function renderDashboard(jobs, desiredWorkers, positions) {
+export function renderDashboard(container, store, desiredWorkers) {
+    const jobs = store.getState().bc.jobs;
+    const positions = store.getState().bc.resources;
     let workers = {};
-    let dashboard = ``;
     let now = new Date();
     now.setHours(0, 0, 0, 0);
     let later = new Date(now.getTime());
@@ -159,7 +160,7 @@ export function renderDashboard(jobs, desiredWorkers, positions) {
             workers[job.Resource].jobs.push(job);
         });
 
-    Object.keys(workers).map(key => {
+    container.innerHTML = Object.keys(workers).map(key => {
         const position = positions
             .filter(resource => resource.ResourceName === key)
             .map(resource => {
@@ -167,8 +168,6 @@ export function renderDashboard(jobs, desiredWorkers, positions) {
             })
             .join('');
 
-        dashboard += `${renderWorker(key, workers[key].jobs, position)}`;
-    });
-
-    return dashboard;
+        return `${renderWorker(key, workers[key].jobs, position)}`;
+    }).join('');
 }

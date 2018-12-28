@@ -47,3 +47,7 @@ export function removeChildren(container) {
     container.removeChild(container.firstChild);
   }
 }
+
+export function getFlagDetails(flagName, flags) {
+  return flags.filter(flag => flag.tagName.includes(flagName))[0];
+}
