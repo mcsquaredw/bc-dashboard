@@ -5,7 +5,7 @@
 
 #header {
     display: grid;
-    grid-template-areas: "logo menu";
+    grid-template-areas: "logo controls menu menu";
     align-items: center;
     border-bottom: 1px solid black;
     margin-bottom: 5px;
@@ -13,6 +13,10 @@
 
 #header #logo {
     grid-area: logo;
+}
+
+#header #controls {
+    grid-area: controls;
 }
 
 #menu {

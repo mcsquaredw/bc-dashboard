@@ -82,9 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
         container.innerHTML = "";
         controls.innerHTML = "";
 
-        console.log(`"${window.location.hash}"`)
-        
-        if(window.location.hash.length > 0) {
+        if (window.location.hash.length > 0) {
             const page = window.location.hash.substr(1);
 
             switch (page) {

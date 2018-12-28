@@ -33,8 +33,18 @@ function jobStatusIcon(job) {
 
 function setupControls(controls, store) {
   controls.innerHTML = `
+    <label for="start">
+      From
+    </label>
     <input id="start" type="date" />
+    <label for="end">
+      To
+    </label>
     <input id="end" type="date" />
+    <br />
+    <label for="surveyor">
+      For
+    </label>
     <select id="surveyor">
       <option value="Andy Marshall">Andy Marshall</option>
       <option value="Jason Housby">Jason Housby</option>
@@ -151,10 +161,10 @@ export function renderSales(container, controls, store) {
       notset
     ],
     [
-      'rgb(75, 192, 192)',
-      'rgb(255, 205, 86)',
-      'rgb(255, 99, 132)',
-      'rgb(51, 51, 255)'
+      'rgb(255, 255, 0)',
+      'rgb(30, 144, 255)',
+      'rgb(0, 0, 0)',
+      'rgb(255, 0, 0)'
     ]
   );
 }
