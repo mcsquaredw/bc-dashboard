@@ -48,6 +48,10 @@ document.addEventListener("DOMContentLoaded", () => {
         store.dispatch(newFlagData(data.flags));
     });
 
+    if (window.location.hash.length === 0) {
+        window.location.hash = "engineer-jobs";
+    }
+
     store.subscribe(() => {
         const page = window.location.hash.substr(1);
 
@@ -78,7 +82,9 @@ document.addEventListener("DOMContentLoaded", () => {
         container.innerHTML = "";
         controls.innerHTML = "";
 
-        if (window.location.hash.length > 0) {
+        console.log(`"${window.location.hash}"`)
+        
+        if(window.location.hash.length > 0) {
             const page = window.location.hash.substr(1);
 
             switch (page) {
@@ -100,7 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             }
         } else {
-            window.location.hash = "engineer-jobs";
+            location.href = "#engineer-jobs";
         }
     }
 });

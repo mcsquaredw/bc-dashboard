@@ -15,10 +15,6 @@ if (process.env.NODE_ENV === "production") {
     app.use(bundler.middleware());
 }
 
-app.get("/", (req, res) => {
-    res.redirect("./index.html");
-});
-
 io.on('connection', function (socket) {
     getFlags();
     getOrders();
