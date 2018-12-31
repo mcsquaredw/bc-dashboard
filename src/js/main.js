@@ -33,6 +33,8 @@ const surveyors = [
 document.addEventListener("DOMContentLoaded", () => {
     const socket = io();
     const store = createStore(reducers);
+    const container = document.getElementById("container");
+    const controls = document.getElementById("controls");
 
     window.onhashchange = renderPage;
 
@@ -52,8 +54,11 @@ document.addEventListener("DOMContentLoaded", () => {
         window.location.hash = "engineer-jobs";
     }
 
-    store.subscribe(() => {
+    function updatePage() {
         const page = window.location.hash.substr(1);
+
+        container.innerHTML = "";
+        controls.innerHTML = "";
 
         switch (page) {
             case 'engineer-jobs':
@@ -73,36 +78,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 break;
 
         }
-    })
+    }
+
+    store.subscribe(updatePage);
 
     function renderPage(ev) {
-        const container = document.getElementById("container");
-        const controls = document.getElementById("controls");
-
-        container.innerHTML = "";
-        controls.innerHTML = "";
-
         if (window.location.hash.length > 0) {
-            const page = window.location.hash.substr(1);
-
-            switch (page) {
-                case 'engineer-jobs':
-                    renderDashboard(container, store, engineers);
-                    break;
-                case 'surveyor-jobs':
-                    renderDashboard(container, store, surveyors);
-                    break;
-                case 'door-orders':
-                    renderOrderStatus(container, controls, store, socket);
-                    break;
-                case 'sales':
-                    renderSales(container, controls, store);
-                    break;
-                case 'gdn-contractors':
-                    renderGDNLookup(container, controls, store);
-                    break;
-
-            }
+            updatePage();
         } else {
             location.href = "#engineer-jobs";
         }
