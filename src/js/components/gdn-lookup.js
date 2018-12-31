@@ -135,8 +135,9 @@ export function renderGDNLookup(container, controls, store) {
                     </div>
                     <div class="details">
                         <h1>${supplier.name}</h1>
-                        <h4>Tel: ${supplier.telephone}</h4>
-                        <b>${supplier.instructions}</b>
+                        Tel: ${supplier.telephone}
+                        <br />
+                        ${supplier.instructions}
                     </div>
                 </div>
             `

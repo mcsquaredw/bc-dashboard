@@ -1,23 +1,19 @@
-#target {
-    margin-top: 5px;
-}
-
-#target .office {
+#container .office {
+    margin: 7px;
     padding: 5px;
     display: grid;
     grid-template-columns: 30% auto auto;
-    grid-template-areas: "postcode postcode postcode"
-                         "map      details  details";
+    grid-template-areas: "gdn-map gdn-details gdn-details";
     border: 1px solid black;
     -webkit-box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.75);
     -moz-box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.75);
     box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.75);
 }
 
-#target .map {
-    grid-area: map;
+#container .map {
+    grid-area: gdn-map;
 }
 
-#target .details {
-    grid-area: details;
+#container .details {
+    grid-area: gdn-details;
 }
