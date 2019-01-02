@@ -111,14 +111,14 @@ document.addEventListener("DOMContentLoaded", () => {
     function updateWorksheetModal() {
         const modal = document.getElementById("modal");
         const modalTarget = document.getElementById("modal-target");
-        const { worksheets, show, jobId } = store.getState().ws;
-        const { jobs } = store.getState().bc;
-        const job = jobs.filter(job => job.JobId == jobId)[0];
+        const { worksheets, show } = store.getState().ws;
 
         if(show) {
             if(worksheets.length > 0) {
                 modalTarget.innerHTML = `
-                    ${worksheets.map(question => renderQuestion(question)).join('')}
+                    ${worksheets.sort((a, b) => {
+                        return a.QuestionOrder - b.QuestionOrder;
+                    }).map(question => renderQuestion(question)).join('')}
                 `;
             } else {
                 modalTarget.innerHTML = `No Worksheet Data`;
