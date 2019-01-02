@@ -55,19 +55,19 @@
     grid-area: header;
     display: grid;
     grid-template-areas: "type-icon type status";
-    grid-template-columns: 15% auto auto;
+    grid-template-columns: auto auto auto;
     align-items: center;
     border-bottom: 1px solid black;
     padding: 5px;
 }
 
-.header .type {
-    grid-area: type;
-    
-}
-
 .header .type-icon {
     grid-area: type-icon;
+}
+
+.header .type {
+    grid-area: type;
+    margin-left: 10px;
 }
 
 .header .status {

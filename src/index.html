@@ -47,23 +47,23 @@
             
         </div>
         <div id="menu">
-            <a class="menu-item `${window.location.hash.substr(1).includes('engineer-jobs') ? 'selected' : ''}`" href="#engineer-jobs">
+            <a id="engineer-jobs" class="menu-item" href="#engineer-jobs">
                 <i class="material-icons">build</i>
                 Engineer Jobs
             </a>
-            <a class="menu-item `${window.location.hash.substr(1).includes('surveyor-jobs') ? 'selected' : ''}`" href="#surveyor-jobs">
+            <a id="surveyor-jobs" class="menu-item" href="#surveyor-jobs">
                 <i class="material-icons">search</i>
                 Surveyor Jobs
             </a>
-            <a class="menu-item `${window.location.hash.substr(1).includes('door-orders') ? 'selected' : ''}`" href="#door-orders">
+            <a id="door-orders" class="menu-item" href="#door-orders">
                 <i class="material-icons">queue</i>
                 Door Orders
             </a>
-            <a class="menu-item `${window.location.hash.substr(1).includes('sales') ? 'selected' : ''}`" href="#sales">
+            <a id="sales" class="menu-item" href="#sales">
                 <i class="material-icons">payment</i>
                 Sales Report
             </a>
-            <a class="menu-item `${window.location.hash.substr(1).includes('gdn-contractors') ? 'selected' : ''}`" href="#gdn-contractors">
+            <a id="gdn-contractors" class="menu-item" href="#gdn-contractors">
                 <i class="material-icons">business</i>
                 GDN Contractors
             </a>
@@ -74,7 +74,10 @@
     </main>
     <div id="modal">
         <div class="modal-content">
-            <span id="modal-close" class="close">&times;</span>
+            <div id="modal-title">
+                <div id="modal-title-text"></div>
+                <div id="modal-close" class="close">&times;</div>
+            </div>
             <div id="modal-target">
             </div>
         </div>

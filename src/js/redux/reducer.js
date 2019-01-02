@@ -9,7 +9,8 @@ import {
     NEW_RESOURCE_DATA,
     CHANGE_GDN_POSTCODE,
     NEW_WORKSHEET_DATA,
-    HIDE_WORKSHEET_DATA
+    HIDE_WORKSHEET_DATA,
+    NEW_SELECTED_JOB
 } from './actions';
 
 function bigChange(
@@ -88,7 +89,8 @@ function gdn(
     switch(action.type) {
         case CHANGE_GDN_POSTCODE:
             return Object.assign({}, state, {
-                postcode: action.postcode
+                postcode: action.postcode,
+
             });
         default:
             return state;
@@ -106,6 +108,7 @@ function worksheets(
         case NEW_WORKSHEET_DATA:
             return Object.assign({}, state, {
                 worksheets: action.worksheets,
+                jobId: action.jobId,
                 show: true
             });
         case HIDE_WORKSHEET_DATA:

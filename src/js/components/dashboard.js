@@ -16,7 +16,13 @@ function renderJobTypeIcon(job) {
     }
 
     return `
-      <button class="view-worksheets" data-job-id="${job.JobId}">
+      <button class="view-worksheets" 
+              data-job-id="${job.JobId}" 
+              ${job.RealEnd ? '' : 'disabled'}
+              data-customer="${job.Contact}"
+              data-postcode="${job.Postcode}"
+              data-job-type="${job.Type}"
+      >
         <i class="material-icons mt-2" style="font-size: 48px;">${jobTypeIcon}</i>
       </button>
     `;
@@ -101,7 +107,7 @@ function jobStatusIcon(job) {
 
 function renderJob(job) {  
     return `
-        <div class="job-card" data-job-id="${job.JobId}">
+        <div class="job-card">
             <div class="header ${jobStatusColour(job)}">
                 <div class="type-icon">
                     ${renderJobTypeIcon(job)}
@@ -176,7 +182,14 @@ export function renderDashboard(container, store, desiredWorkers, socket) {
     [...document.getElementsByClassName("view-worksheets")].map(jobCard => {
         jobCard.onclick = (ev) => {
             const jobId = ev.target.getAttribute("data-job-id");
+            const customer = ev.target.getAttribute("data-customer");
+            const postcode = ev.target.getAttribute("data-postcode");
+            const jobType = ev.target.getAttribute("data-job-type");
+            const modalTitle = document.getElementById("modal-title-text");
 
+            modalTitle.innerHTML = `
+                ${jobType} - ${customer} ${postcode}
+            `
             socket.emit("get-worksheets", { jobId });
         };
     });

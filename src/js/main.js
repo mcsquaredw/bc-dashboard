@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 renderDashboard(container, store, engineers, socket);
                 break;
             case 'surveyor-jobs':
-                renderDashboard(container, store, surveyors, store);
+                renderDashboard(container, store, surveyors, socket);
                 break;
             case 'door-orders':
                 renderOrderStatus(container, controls, store, socket);
@@ -87,17 +87,23 @@ document.addEventListener("DOMContentLoaded", () => {
             case 'gdn-contractors':
                 renderGDNLookup(container, controls, store);
                 break;
-
         }
+
+        [...document.getElementsByClassName("menu-item")].map(menuItem => {
+            menuItem.classList.remove("selected");
+        });
+        document.getElementById(page).classList.add("selected");
     }
 
     function renderQuestion(question) {
         return `
-            <div class="question-qn">
-                ${question.Question}
-            </div>
-            <div class="question-answer">
-                ${question.AnswerText}
+            <div class="question">
+                <div class="qn">
+                    ${question.Question}
+                </div>
+                <div class="answer">
+                    ${question.AnswerText}
+                </div>
             </div>
         `;
     }
@@ -105,7 +111,9 @@ document.addEventListener("DOMContentLoaded", () => {
     function updateWorksheetModal() {
         const modal = document.getElementById("modal");
         const modalTarget = document.getElementById("modal-target");
-        const { worksheets, show } = store.getState().ws;
+        const { worksheets, show, jobId } = store.getState().ws;
+        const { jobs } = store.getState().bc;
+        const job = jobs.filter(job => job.JobId == jobId)[0];
 
         if(show) {
             if(worksheets.length > 0) {

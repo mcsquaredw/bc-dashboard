@@ -13,34 +13,65 @@
 
 .modal-content {
     background-color: #fefefe;
-    margin: 15% auto; /* 15% from the top and centered */
-    padding: 20px;
+    margin: 5% auto;
     border: 1px solid #888;
     width: 80%; /* Could be more or less, depending on screen size */   
     display: grid;
     grid-template-areas: "modal-title"
-                         "modal-info"
+                         "modal-info";
 }
 
-.modal-title {
-    grid-area: title;
+#modal-title {
+    grid-area: modal-title;
+    width: 100%;
+    font-weight: bold;
+    display: grid;
+    grid-template-areas: "modal-title-text modal-close";
+    grid-template-columns: 70% 30%;
+    border-bottom: 1px solid black;
+    background-color: lightgrey;
+    margin: 0px;
+    padding: 5px;
+}
+
+#modal-title-text {
+  grid-area: modal-title-text;
+}
+
+#modal-close {
+  grid-area: modal-close;
 }
 
 .modal-info {
-    grid-area: modal-info;
+  grid-area: modal-info;
 }
 
-/* The Close Button */
+#modal-target {
+  padding: 5px;
+}
+
 .close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
+    margin-left: auto;
   }
   
-  .close:hover,
-  .close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-  }
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.question {
+  display: grid;
+  grid-template-areas: "qn answer";
+  grid-template-columns: 30% 70%;
+}
+
+.question .qn {
+  grid-area: qn;
+  font-weight: bold;
+}
+
+.question .answer {
+  grid-area: answer;
+}
