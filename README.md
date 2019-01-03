@@ -20,3 +20,12 @@ An upgraded dashboard for the Big Change Apps platform.
      api_key: "<YOUR BIG CHANGE APPS API KEY>"
    }
 ```
+6. Start app
+### Development
+```
+   npm run start-development
+```
+### Production
+```
+   npm run start-production
+```
