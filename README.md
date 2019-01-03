@@ -1,4 +1,4 @@
-# jb-dashboard
+# JB Dashboard
 An upgraded dashboard for the Big Change Apps platform.
 
 ## Installation
