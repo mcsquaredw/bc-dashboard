@@ -2,7 +2,7 @@
 An upgraded dashboard for the Big Change Apps platform.
 
 ## Installation
-1. Install Node.js (https://nodejs.org/en/)[https://nodejs.org/en/]
+1. Install Node.js [https://nodejs.org/en/](https://nodejs.org/en/)
 2. Clone repository
 ```
    git clone https://github.com/mcsquaredw/jb-dashboard
