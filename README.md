@@ -29,3 +29,7 @@ An upgraded dashboard for the Big Change Apps platform.
 ```
    npm run start-production
 ```
+7. Go to site
+```
+   http://<hostname>:3000
+```
