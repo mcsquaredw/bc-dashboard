@@ -21,12 +21,13 @@ An upgraded dashboard for the Big Change Apps platform.
    }
 ```
 6. Start app
-### Development
 ```
+   # Development
    npm run start-development
 ```
-### Production
+
 ```
+   # Production
    npm run start-production
 ```
 7. Go to site
