@@ -24,7 +24,12 @@ function renderJobTypeIcon(job) {
               data-postcode="${job.Postcode}"
               data-job-type="${job.Type}"
       >
-        <i class="material-icons mt-2" style="font-size: 48px;">${jobTypeIcon}</i>
+        <i class="material-icons mt-2" style="font-size: 48px;"
+            data-job-id="${job.JobId}" 
+            data-customer="${job.Contact}"
+            data-postcode="${job.Postcode}"
+            data-job-type="${job.Type}"
+        >${jobTypeIcon}</i>
       </button>
     `;
 }
@@ -188,17 +193,21 @@ export function renderDashboard(target, dateFieldId, store, desiredWorkers, sock
     }).join('');
 
     [...document.getElementsByClassName("view-worksheets")].map(jobCard => {
-        jobCard.onclick = (ev) => {
+        jobCard.addEventListener('click', (ev) => {
+            console.log(ev.target);
             const jobId = ev.target.getAttribute("data-job-id");
             const customer = ev.target.getAttribute("data-customer");
             const postcode = ev.target.getAttribute("data-postcode");
             const jobType = ev.target.getAttribute("data-job-type");
             const modalTitle = document.getElementById("modal-title-text");
 
+            console.log(jobId, customer, postcode, jobType);
+
             modalTitle.innerHTML = `
                 ${jobType} - ${customer} ${postcode}
-            `
+            `;
+
             socket.emit("get-worksheets", { jobId });
-        };
+        });
     });
 }
