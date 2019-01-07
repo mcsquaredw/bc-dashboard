@@ -17,8 +17,8 @@ function renderJobTypeIcon(job) {
 
     return `
       <button class="view-worksheets" 
+        ${job.RealEnd ? '' : 'disabled'}
               data-job-id="${job.JobId}" 
-              ${job.RealEnd ? '' : 'disabled'}
               data-customer="${job.Contact}"
               data-postcode="${job.Postcode}"
               data-job-type="${job.Type}"
@@ -105,7 +105,7 @@ function jobStatusIcon(job) {
     return `<i class="material-icons" style="font-size: 48px;">${iconName}</i>`;
 }
 
-function renderJob(job) {  
+function renderJob(job) {
     return `
         <div class="job-card">
             <div class="header ${jobStatusColour(job)}">
@@ -148,10 +148,8 @@ export function renderDashboard(container, store, desiredWorkers, socket) {
     const jobs = store.getState().bc.jobs;
     const positions = store.getState().bc.resources;
     let workers = {};
-    let now = new Date();
-    now.setHours(0, 0, 0, 0);
-    let later = new Date(now.getTime());
-    later.setHours(23, 59, 59, 999);
+    let now = new Date(new Date().setHours(0, 0, 0, 0));
+    let later = new Date(new Date().setHours(23, 59, 59, 999));
 
     jobs
         .filter(job => desiredWorkers.includes(job.Resource))

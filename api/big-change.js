@@ -13,7 +13,7 @@ module.exports = {
         } catch (err) {
             console.error(err);
         }
-
+        
         return response.data.Result;
     },
     getOneJob: async function (id) {

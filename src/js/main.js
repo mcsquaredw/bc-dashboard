@@ -68,9 +68,6 @@ document.addEventListener("DOMContentLoaded", () => {
     function updatePage() {
         const page = window.location.hash.substr(1);
 
-        container.innerHTML = "";
-        controls.innerHTML = "";
-
         switch (page) {
             case 'engineer-jobs':
                 renderDashboard(container, store, engineers, socket);
@@ -79,20 +76,29 @@ document.addEventListener("DOMContentLoaded", () => {
                 renderDashboard(container, store, surveyors, socket);
                 break;
             case 'door-orders':
-                renderOrderStatus(container, controls, store, socket);
+                renderOrderStatus(container, store, socket);
                 break;
             case 'sales':
-                renderSales(container, controls, store);
+                renderSales(container, store);
                 break;
             case 'gdn-contractors':
-                renderGDNLookup(container, controls, store);
+                renderGDNLookup(container, store);
                 break;
         }
 
         [...document.getElementsByClassName("menu-item")].map(menuItem => {
             menuItem.classList.remove("selected");
         });
+
         document.getElementById(page).classList.add("selected");
+
+        [...document.getElementsByClassName("controls")].map(controls => {
+            controls.classList.remove("show");
+        });
+
+        console.log(page);
+        
+        document.getElementById(`${page}-controls`).classList.add("show");
     }
 
     function renderQuestion(question) {

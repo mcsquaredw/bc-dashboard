@@ -31,29 +31,10 @@ function jobStatusIcon(job) {
   return `<i class="material-icons">${icon}</i>`
 }
 
-function setupControls(controls, store) {
-  controls.innerHTML = `
-    <label for="start">
-      From
-    </label>
-    <input id="start" type="date" />
-    <label for="end">
-      To
-    </label>
-    <input id="end" type="date" />
-    <br />
-    <label for="surveyor">
-      For
-    </label>
-    <select id="surveyor">
-      <option value="Andy Marshall">Andy Marshall</option>
-      <option value="Jason Housby">Jason Housby</option>
-    </select>
-  `;
-
-  const startDateField = document.getElementById('start');
-  const endDateField = document.getElementById('end');
-  const surveyorField = document.getElementById('surveyor');
+function setupControls(store) {
+  const startDateField = document.getElementById('sales-start');
+  const endDateField = document.getElementById('sales-end');
+  const surveyorField = document.getElementById('sales-surveyor');
 
   startDateField.valueAsDate = store.getState().sales.start;
   endDateField.valueAsDate = store.getState().sales.end;
@@ -70,7 +51,7 @@ function setupControls(controls, store) {
   };
 }
 
-export function renderSales(container, controls, store) {
+export function renderSales(container, store) {
   const jobs = store.getState().bc.jobs;
   const flags = store.getState().bc.flags;
 
@@ -79,14 +60,8 @@ export function renderSales(container, controls, store) {
   var notsold = 0;
   var notset = 0;
   var total = 0;
-
-  if (controls.innerHTML.trim().length === 0) {
-    setupControls(controls, store);
-  }
-
-  const startDateField = document.getElementById('start');
-  const endDateField = document.getElementById('end');
-  const surveyorField = document.getElementById('surveyor');
+    
+  setupControls(store);
 
   container.innerHTML = `
     <div id="sales-container">
@@ -103,9 +78,9 @@ export function renderSales(container, controls, store) {
       ${jobs
       .filter(job => job.Type.includes("Survey"))
       .filter(job => job.Resource)
-      .filter(job => job.Resource.includes(surveyorField.value))
+      .filter(job => job.Resource.includes(store.getState().sales.surveyor))
       .filter(job => job.RealStart && job.RealEnd)
-      .filter(job => new Date(job.RealStart).getTime() >= startDateField.valueAsDate.getTime() && new Date(job.RealStart).getTime() <= endDateField.valueAsDate.getTime())
+      .filter(job => new Date(job.RealStart).getTime() >= new Date(store.getState().sales.start).getTime() && new Date(job.RealStart).getTime() <= new Date(store.getState().sales.end).getTime())
       .sort(sortJobs)
       .map(job => {
         total += 1;

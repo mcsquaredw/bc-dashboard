@@ -107,22 +107,16 @@ const suppliers = [{
 }
 ];
 
-function setupControls(controls, store) {
-    if(controls.innerHTML.trim().length === 0) {
-        controls.innerHTML = `
-            <input id="postcode" type="text" value="${store.getState().gdn.postcode}" placeholder="Postcode (e.g. S)" />
-        `;
-    }
-
-    const postcode = document.getElementById("postcode");
+function setupControls(store) {
+    const postcode = document.getElementById("gdn-contractors-postcode");
 
     postcode.onkeyup = (ev) => {
         store.dispatch(changeGDNPostcode(ev.target.value));
     };
 }
 
-export function renderGDNLookup(container, controls, store) {
-    setupControls(controls, store);
+export function renderGDNLookup(container, store) {
+    setupControls(store);
 
     container.innerHTML = `
         ${suppliers.filter(supplier => {

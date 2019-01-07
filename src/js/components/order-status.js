@@ -130,37 +130,22 @@ function renderAlertText(job) {
     }
 }
 
-export function renderOrderStatus(container, controls, store, socket) {
+export function renderOrderStatus(container, store, socket) {
     const dates = {};
     const jobs = store.getState().bc.jobs;
     const flags = store.getState().bc.flags;
     const searchText = store.getState().orderStatus.searchText;
     const searchFlag = store.getState().orderStatus.searchFlag;
+    const searchTextInput = document.getElementById("dashboard-search");
+    const searchFlagInput = document.getElementById("dashboard-flag");
 
-    if (controls.innerHTML.trim().length === 0) {
-        controls.innerHTML = `
-        <br />
-        <input id="search" type="text" placeholder="Customer Name or Postcode" style="width: 100%; margin-bottom: 5px;"/>
-        <br />
-        <select id="flag" style="width: 100%; margin-bottom: 5px;">
-          <option value="" selected>All Flags</option>
-          <option value="IF02">IF02: Door to Order</option>
-          <option value="IF06">IF06: Door To Be Ack</option>
-          <option value="IF03">IF03: To Be Delivered</option>
-          <option value="IF01">IF01: Door Arrived</option>
-        </select>`;
+    searchTextInput.onkeyup = (ev) => {
+        store.dispatch(changeSearchText(searchTextInput.value));
+    };
 
-        const searchTextInput = document.getElementById("search");
-        const searchFlagInput = document.getElementById("flag");
-
-        searchTextInput.onkeyup = (ev) => {
-            store.dispatch(changeSearchText(searchTextInput.value));
-        };
-
-        searchFlagInput.onchange = (ev) => {
-            store.dispatch(changeSearchFlag(searchFlagInput.value));
-        };
-    }
+    searchFlagInput.onchange = (ev) => {
+        store.dispatch(changeSearchFlag(searchFlagInput.value));
+    };
 
     dates["No Date"] = {};
     dates["No Date"].jobs = [];

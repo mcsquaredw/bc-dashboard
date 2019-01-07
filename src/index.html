@@ -27,6 +27,7 @@
     <script src="js/main.js"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link href="css/global.css" rel="stylesheet" />
     <link href="css/colours.css" rel="stylesheet">
     <link href="css/menu-grid.css" rel="stylesheet" />
     <link href="css/modal.css" rel="stylesheet" />
@@ -44,7 +45,36 @@
             </a>
         </div>
         <div id="controls">
-            
+            <div id="engineer-jobs-controls" class="controls">
+                <input id="engineer-date" type="date" />
+            </div>
+            <div id="surveyor-jobs-controls" class="controls">
+                <input id="surveyor-date" type="date" />
+            </div>
+            <div id="door-orders-controls" class="controls">
+                <input id="dashboard-search" type="text" placeholder="Customer Name or Postcode" style="width: 100%; margin-bottom: 5px;"/>
+                <br />
+                <select id="dashboard-flag" style="width: 100%; margin-bottom: 5px;">
+                </select>
+            </div>
+            <div id="sales-controls" class="controls">
+                <label for="sales-start">
+                    From
+                </label>
+                <input id="sales-start" type="date" />
+                <label for="sales-end">
+                    To
+                </label>
+                <input id="sales-end" type="date" />
+                <br />
+                <label for="sales-surveyor">
+                    For
+                </label>
+                <select id="sales-surveyor"></select>
+            </div>
+            <div id="gdn-contractors-controls" class="controls">
+                <input id="gdn-contractors-postcode" type="text" placeholder="Postcode (e.g. S)" />
+            </div>
         </div>
         <div id="menu">
             <a id="engineer-jobs" class="menu-item" href="#engineer-jobs">
