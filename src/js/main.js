@@ -35,8 +35,6 @@ const surveyors = [
 document.addEventListener("DOMContentLoaded", () => {
     const socket = io();
     const store = createStore(reducers);
-    const container = document.getElementById("container");
-    const controls = document.getElementById("controls");
     const modalClose = document.getElementById("modal-close");
 
     modalClose.onclick = (ev) => {
@@ -70,19 +68,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
         switch (page) {
             case 'engineer-jobs':
-                renderDashboard(container, store, engineers, socket);
+                renderDashboard("engineer-jobs", "engineer-date", store, engineers, socket);
                 break;
             case 'surveyor-jobs':
-                renderDashboard(container, store, surveyors, socket);
+                renderDashboard("surveyor-jobs", "surveyor-date", store, surveyors, socket);
                 break;
             case 'door-orders':
-                renderOrderStatus(container, store, socket);
+                renderOrderStatus(store, socket);
                 break;
             case 'sales':
-                renderSales(container, store);
+                renderSales(store, surveyors);
                 break;
             case 'gdn-contractors':
-                renderGDNLookup(container, store);
+                renderGDNLookup(store);
                 break;
         }
 
@@ -90,15 +88,19 @@ document.addEventListener("DOMContentLoaded", () => {
             menuItem.classList.remove("selected");
         });
 
-        document.getElementById(page).classList.add("selected");
+        document.getElementById(`${page}-link`).classList.add("selected");
 
         [...document.getElementsByClassName("controls")].map(controls => {
             controls.classList.remove("show");
         });
-
-        console.log(page);
         
         document.getElementById(`${page}-controls`).classList.add("show");
+
+        [...document.getElementsByClassName("view")].map(view => {
+            view.classList.remove("show");
+        });
+
+        document.getElementById(`${page}`).classList.add("show");
     }
 
     function renderQuestion(question) {

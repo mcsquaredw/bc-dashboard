@@ -81,3 +81,12 @@ export function hideWorksheetData() {
         show: false
     }
 }
+
+export const UPDATE_DASHBOARD_DATE = 9;
+
+export function updateDashboardDate(dashboardDate) {
+    return {
+        type: UPDATE_DASHBOARD_DATE,
+        dashboardDate
+    }
+}

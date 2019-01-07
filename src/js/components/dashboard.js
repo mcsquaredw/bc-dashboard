@@ -1,4 +1,5 @@
 import { sortJobs, toTitleCase, formatTime } from '../utils';
+import { updateDashboardDate } from '../redux/actions';
 
 function renderJobTypeIcon(job) {
     let jobTypeIcon = "";
@@ -144,12 +145,21 @@ function renderWorker(worker, jobs, position) {
     `;
 }
 
-export function renderDashboard(container, store, desiredWorkers, socket) {
+export function renderDashboard(target, dateFieldId, store, desiredWorkers, socket) {
     const jobs = store.getState().bc.jobs;
     const positions = store.getState().bc.resources;
+    const container = document.getElementById(target);
+    const dateField = document.getElementById(dateFieldId);
+
+    dateField.valueAsDate = store.getState().bc.dashboardDate;
+    
+    dateField.onchange = (ev) => {
+        store.dispatch(updateDashboardDate(dateField.valueAsDate));
+    };
+
     let workers = {};
-    let now = new Date(new Date().setHours(0, 0, 0, 0));
-    let later = new Date(new Date().setHours(23, 59, 59, 999));
+    let now = new Date(new Date(dateField.valueAsDate).setHours(0, 0, 0, 0));
+    let later = new Date(new Date(dateField.valueAsDate).setHours(23, 59, 59, 999));
 
     jobs
         .filter(job => desiredWorkers.includes(job.Resource))

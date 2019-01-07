@@ -107,16 +107,13 @@ const suppliers = [{
 }
 ];
 
-function setupControls(store) {
+export function renderGDNLookup(store) {
     const postcode = document.getElementById("gdn-contractors-postcode");
+    const container = document.getElementById("gdn-contractors");
 
     postcode.onkeyup = (ev) => {
         store.dispatch(changeGDNPostcode(ev.target.value));
     };
-}
-
-export function renderGDNLookup(container, store) {
-    setupControls(store);
 
     container.innerHTML = `
         ${suppliers.filter(supplier => {

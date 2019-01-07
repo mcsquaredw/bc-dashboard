@@ -130,7 +130,7 @@ function renderAlertText(job) {
     }
 }
 
-export function renderOrderStatus(container, store, socket) {
+export function renderOrderStatus(store, socket) {
     const dates = {};
     const jobs = store.getState().bc.jobs;
     const flags = store.getState().bc.flags;
@@ -138,6 +138,8 @@ export function renderOrderStatus(container, store, socket) {
     const searchFlag = store.getState().orderStatus.searchFlag;
     const searchTextInput = document.getElementById("dashboard-search");
     const searchFlagInput = document.getElementById("dashboard-flag");
+    const now = new Date(new Date().setHours(0, 0, 0, 0));
+    const container = document.getElementById("door-orders");
 
     searchTextInput.onkeyup = (ev) => {
         store.dispatch(changeSearchText(searchTextInput.value));
@@ -149,9 +151,6 @@ export function renderOrderStatus(container, store, socket) {
 
     dates["No Date"] = {};
     dates["No Date"].jobs = [];
-
-    const now = new Date();
-    now.setHours(0, 0, 0, 0);
 
     jobs
         .filter(job => !job.Status.includes("Cancelled"))
@@ -222,7 +221,7 @@ export function renderOrderStatus(container, store, socket) {
                                 ${renderAlertText(job)}
                             </div>
 
-                            <div class="controls">
+                            <div class="job-controls">
                                 ${jobButton(job, flags)}
                             </div>
                         </div>

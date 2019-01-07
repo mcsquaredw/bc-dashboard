@@ -17,6 +17,7 @@
 #menu {
     grid-area: menu;
     margin-left: auto;
+    white-space: nowrap;
 }
 
 #menu .menu-item {
@@ -31,6 +32,7 @@
     padding-bottom: 5px;
     padding-right: 5px;
     font-size: 25px;
+    display: inline-block;
 }
 
 #menu .menu-item:hover {

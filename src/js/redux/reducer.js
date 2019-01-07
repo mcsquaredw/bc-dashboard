@@ -10,14 +10,15 @@ import {
     CHANGE_GDN_POSTCODE,
     NEW_WORKSHEET_DATA,
     HIDE_WORKSHEET_DATA,
-    NEW_SELECTED_JOB
+    UPDATE_DASHBOARD_DATE
 } from './actions';
 
 function bigChange(
     state = {
         flags: [],
         resources: [],
-        jobs: []
+        jobs: [],
+        dashboardDate: new Date()
     },
     action
 ) {
@@ -34,6 +35,10 @@ function bigChange(
             return Object.assign({}, state, {
                 flags: action.flags
             });
+        case UPDATE_DASHBOARD_DATE:
+            return Object.assign({}, state, {
+                dashboardDate: action.dashboardDate
+            })
         default:
             return state;
     }

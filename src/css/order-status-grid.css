@@ -89,7 +89,7 @@ h2.date-label {
     align-self: center;
 }
 
-.controls {
+.job-controls {
     grid-area: controls;
     align-self: center;
     padding-left: 10px;

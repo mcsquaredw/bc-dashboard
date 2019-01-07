@@ -31,10 +31,18 @@ function jobStatusIcon(job) {
   return `<i class="material-icons">${icon}</i>`
 }
 
-function setupControls(store) {
+export function renderSales(store, surveyors) {
+  const jobs = store.getState().bc.jobs;
+  const flags = store.getState().bc.flags;
+  const container = document.getElementById("sales");
   const startDateField = document.getElementById('sales-start');
   const endDateField = document.getElementById('sales-end');
   const surveyorField = document.getElementById('sales-surveyor');
+  var sold = 0;
+  var followup = 0;
+  var notsold = 0;
+  var notset = 0;
+  var total = 0;
 
   startDateField.valueAsDate = store.getState().sales.start;
   endDateField.valueAsDate = store.getState().sales.end;
@@ -49,19 +57,6 @@ function setupControls(store) {
   surveyorField.onchange = (ev) => {
     store.dispatch(changeSalesFilters(startDateField.valueAsDate, endDateField.valueAsDate, surveyorField.value));
   };
-}
-
-export function renderSales(container, store) {
-  const jobs = store.getState().bc.jobs;
-  const flags = store.getState().bc.flags;
-
-  var sold = 0;
-  var followup = 0;
-  var notsold = 0;
-  var notset = 0;
-  var total = 0;
-    
-  setupControls(store);
 
   container.innerHTML = `
     <div id="sales-container">
