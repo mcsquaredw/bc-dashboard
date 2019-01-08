@@ -44,9 +44,7 @@ export function renderSales(store, surveyors) {
   var notset = 0;
   var total = 0;
 
-  startDateField.valueAsDate = store.getState().sales.start;
-  endDateField.valueAsDate = store.getState().sales.end;
-  surveyorField.value = store.getState().sales.surveyor;
+  surveyorField.innerHTML = `${surveyors.map(surveyor => `<option value="${surveyor}">${surveyor}</surveyor>`).join('')}`;
 
   startDateField.onchange = (ev) => {
     store.dispatch(changeSalesFilters(startDateField.valueAsDate, endDateField.valueAsDate, surveyorField.value));
@@ -58,6 +56,10 @@ export function renderSales(store, surveyors) {
     store.dispatch(changeSalesFilters(startDateField.valueAsDate, endDateField.valueAsDate, surveyorField.value));
   };
 
+  startDateField.valueAsDate = store.getState().sales.start;
+  endDateField.valueAsDate = store.getState().sales.end;
+  surveyorField.value = store.getState().sales.surveyor;
+
   container.innerHTML = `
     <div id="sales-container">
       <div id="chart">
@@ -67,6 +69,9 @@ export function renderSales(store, surveyors) {
       </div>
     </div>
   `;
+  
+  let startDate = new Date(new Date(store.getState().sales.start).setHours(0, 0, 0, 0)).getTime();
+  let endDate = new Date(new Date(store.getState().sales.end).setHours(23, 59, 59, 999)).getTime();
 
   document.getElementById("table").innerHTML = `
     <div class="survey-cards">
@@ -75,7 +80,7 @@ export function renderSales(store, surveyors) {
       .filter(job => job.Resource)
       .filter(job => job.Resource.includes(store.getState().sales.surveyor))
       .filter(job => job.RealStart && job.RealEnd)
-      .filter(job => new Date(job.RealStart).getTime() >= new Date(store.getState().sales.start).getTime() && new Date(job.RealStart).getTime() <= new Date(store.getState().sales.end).getTime())
+      .filter(job => new Date(job.RealStart).getTime() >= startDate && new Date(job.RealStart).getTime() <= endDate)
       .sort(sortJobs)
       .map(job => {
         total += 1;
