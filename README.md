@@ -2,17 +2,18 @@
 An upgraded dashboard for the Big Change Apps platform.
 
 ## Installation
-1. Install Node.js from [https://nodejs.org/en/](https://nodejs.org/en/)
-2. Install Git from [https://git-scm.com/downloads](https://git-scm.com/downloads)
-3. Clone Git repository
+1. Install mkcert from [https://github.com/FiloSottile/mkcert](https://github.com/FiloSottile/mkcert)
+2. Install Node.js from [https://nodejs.org/en/](https://nodejs.org/en/)
+3. Install Git from [https://git-scm.com/downloads](https://git-scm.com/downloads)
+4. Clone Git repository
 ```
    git clone https://github.com/mcsquaredw/jb-dashboard
 ```
-4. Install dependencies
+5. Install dependencies
 ```
    cd jb-dashboard && npm i
 ```
-5. Create config.js file
+6. Create config.js file
 ```
    module.exports = {
      username: "<YOUR BIG CHANGE APPS USERNAME>",
@@ -20,7 +21,13 @@ An upgraded dashboard for the Big Change Apps platform.
      api_key: "<YOUR BIG CHANGE APPS API KEY>"
    }
 ```
-6. Start app
+7. Create certs using mkcert in certs/ directory
+```
+   mkcert 127.0.0.1 ::1 localhost <hostname>
+   
+   The certificate is at "./<hostname>.pem" and the key at "./<hostname>-key.pem"
+```
+8. Start app
 ```
    # Development
    npm run start-development
@@ -30,7 +37,7 @@ An upgraded dashboard for the Big Change Apps platform.
    # Production
    npm run start-production
 ```
-7. Go to site
+9. Go to site
 ```
-   http://<hostname>:3000
+   https://<hostname>:3000
 ```
