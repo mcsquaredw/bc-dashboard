@@ -1,8 +1,12 @@
+const fs = require('fs');
 const express = require('express');
 const app = express();
 const Bundler = require('parcel-bundler');
-const http = require('http').Server(app);
-const io = require('socket.io')(http);
+const https = require('https').createServer({
+    key: fs.readFileSync('./certs/localhost+3-key.pem'),
+    cert: fs.readFileSync('./certs/localhost+3.pem')
+}, app);
+const io = require('socket.io')(https);
 
 const port = 3000;
 const bigChangeApi = require('./api/big-change');
@@ -68,6 +72,6 @@ setInterval(() => {
     getOrders();
 }, 120000);
 
-http.listen(port, () => {
+https.listen(port, () => {
     console.log("Listening on port", port);
 });

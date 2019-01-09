@@ -33,7 +33,7 @@ const surveyors = [
 ];
 
 document.addEventListener("DOMContentLoaded", () => {
-    const socket = io();
+    const socket = io.connect({ secure: true });
     const store = createStore(reducers);
     const modalClose = document.getElementById("modal-close");
 
