@@ -36,7 +36,7 @@ io.on('connection', function (socket) {
 
     socket.on('get-worksheets', (data) => {
         bigChangeApi.getWorksheets(data.jobId).then(worksheets => {
-            io.emit('worksheets', { worksheets })
+            socket.emit('worksheets', { worksheets })
         }).catch(err => {
             console.error(err);
         });
