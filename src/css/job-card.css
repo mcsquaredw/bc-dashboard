@@ -62,7 +62,7 @@
     grid-area: job-card-details;
     display: grid;
     grid-template-areas: "job-card-customer job-card-status";
-    grid-template-columns: 60% 40%;
+    grid-template-columns: 40% 60%;
 }
 
 .job-card-customer {

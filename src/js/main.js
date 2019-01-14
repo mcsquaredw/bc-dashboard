@@ -119,12 +119,10 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         [...document.getElementsByClassName("flag-button")].map(flagButton => {
-            console.log("Added onclick listener");
-            
             flagButton.onclick = (ev) => {
                 const element = ev.currentTarget;
                 const { jobid, flagid } = element.dataset;
-                console.log("Clicked Change flag button");
+
                 socket.emit("set-flag", {
                     jobid, 
                     flagid
