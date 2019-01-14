@@ -1,35 +1,7 @@
 import { renderChart } from './pieChart';
-import { sortJobs, toTitleCase, formatDate, getFlagDetails } from '../utils';
+import { sortJobs, getFlagDetails, getNextFlag, getPreviousFlag } from '../utils';
 import { changeSalesFilters } from '../redux/actions';
-
-function highlightJob(job, flags) {
-  if (job.CurrentFlag) {
-    let flag = getFlagDetails(job.CurrentFlag, flags);
-
-    return flag.colour;
-  } else {
-    return 'red';
-  }
-}
-
-function jobStatusIcon(job) {
-  let icon = ""
-
-  if (job.CurrentFlag) {
-    if (job.CurrentFlag.includes("SF03")) {
-      icon = "thumb_up";
-    } else if (job.CurrentFlag.includes("SF02")) {
-      icon = "help";
-    } else if (job.CurrentFlag.includes("SF01")) {
-      icon = "thumb_down";
-    } else {
-      icon = "report_problem";
-    }
-  } else {
-    icon = "report_problem";
-  }
-  return `<i class="material-icons">${icon}</i>`
-}
+import { renderJobCard } from './job-card';
 
 export function renderSales(store, surveyors) {
   const jobs = store.getState().bc.jobs;
@@ -43,6 +15,8 @@ export function renderSales(store, surveyors) {
   var notsold = 0;
   var notset = 0;
   var total = 0;
+  let startDate = new Date(new Date(store.getState().sales.start).setHours(0, 0, 0, 0)).getTime();
+  let endDate = new Date(new Date(store.getState().sales.end).setHours(23, 59, 59, 999)).getTime();
 
   surveyorField.innerHTML = `${surveyors.map(surveyor => `<option value="${surveyor}">${surveyor}</surveyor>`).join('')}`;
 
@@ -70,8 +44,7 @@ export function renderSales(store, surveyors) {
     </div>
   `;
   
-  let startDate = new Date(new Date(store.getState().sales.start).setHours(0, 0, 0, 0)).getTime();
-  let endDate = new Date(new Date(store.getState().sales.end).setHours(23, 59, 59, 999)).getTime();
+
 
   document.getElementById("table").innerHTML = `
     <div class="survey-cards">
@@ -83,6 +56,10 @@ export function renderSales(store, surveyors) {
       .filter(job => new Date(job.RealStart).getTime() >= startDate && new Date(job.RealStart).getTime() <= endDate)
       .sort(sortJobs)
       .map(job => {
+        const currentFlag = getFlagDetails(job.CurrentFlag, flags)
+        const nextFlag = getNextFlag(job, flags);
+        const previousFlag = getPreviousFlag(job, flags);
+
         total += 1;
 
         if (job.CurrentFlag) {
@@ -102,20 +79,9 @@ export function renderSales(store, surveyors) {
         }
 
         return `
-          <div class="survey-card">
-            <div class="flag" style="background-color:${highlightJob(job, flags)}">
-              ${job.CurrentFlag ? job.CurrentFlag : "NOT SET"}
-            </div>
-            <div class="status">
-              ${jobStatusIcon(job)}
-            </div>
-            <div class="sales-customer">
-              ${job.Contact ? toTitleCase(job.Contact) + "<br />" + job.Postcode : "NOT SET"}
-            </div>
-            <div class="date">
-              Survey Date: <b>${formatDate(job.PlannedStart)}</b>
-            </div>
-          </div>
+          ${
+            renderJobCard(job, currentFlag, previousFlag, nextFlag)
+          }
         `;
       }).join('')}
     </div>

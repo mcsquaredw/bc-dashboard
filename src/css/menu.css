@@ -12,6 +12,11 @@
 
 #header #controls {
     grid-area: controls;
+    font-size: 30px;
+}
+
+#header #controls input{
+    font-size: 30px;
 }
 
 #menu {
@@ -31,7 +36,7 @@
     padding-top: 10px;
     padding-bottom: 5px;
     padding-right: 5px;
-    font-size: 25px;
+    font-size: 35px;
     display: inline-block;
 }
 
@@ -43,6 +48,8 @@
     color: rgb(252,198,9);
     padding-left: 5px;
     padding-right: 5px;
+    font-size: 35px;
+    margin-top: 5px;
 }
 
 #menu .menu-item.selected {

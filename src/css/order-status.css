@@ -1,0 +1,14 @@
+.order-status-date-label {
+    width: 100%;
+    text-align: center;
+    background-color: darkslategrey;
+    color: white;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.order-status-grid {
+    display: grid;
+    grid-template-columns: 33% 33% 33%;
+}
+

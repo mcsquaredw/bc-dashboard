@@ -16,42 +16,6 @@
 
 .survey-cards {
     display: grid;
-    grid-template-columns: 33% 33% 33%;
+    grid-template-columns: 50% 50%;
     grid-gap: 7px;
-}
-
-.flag {
-    grid-area: flag;
-    color: white;
-    font-weight: bold;
-    border-bottom: 1px solid black;
-}
-
-.status {
-    grid-area: status;
-    margin-left: 5px;
-    margin-top: 5px;
-}
-
-.sales-customer {
-    grid-area: sales-customer;
-}
-
-.survey-card {
-    display: grid;
-    grid-template-rows: auto auto auto;
-    grid-template-areas: "flag   flag           flag"
-                         "status sales-customer sales-customer"
-                         "date   date           date";
-    align-items: center;
-    border: 1px solid black;
-    -webkit-box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.75);
-    -moz-box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.75);
-    box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.75);
-}
-
-.date {
-    grid-area: date;
-    border-top: 1px solid black;
-    text-align: center;
 }

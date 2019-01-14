@@ -30,7 +30,7 @@ export function formatDate(dateStr) {
 }
 
 export function toTitleCase(str) {
-  return str.replace(/(?:^|\s)\w/g, function(match) {
+  return str.replace(/(?:^|\s)\w/g, function (match) {
     return match.toUpperCase();
   });
 }
@@ -43,11 +43,58 @@ export function sortJobs(a, b) {
 }
 
 export function removeChildren(container) {
-  while(container.firstChild) {
+  while (container.firstChild) {
     container.removeChild(container.firstChild);
   }
 }
 
 export function getFlagDetails(flagName, flags) {
-  return flags.filter(flag => flag.tagName.includes(flagName))[0];
+  let flag;
+
+  if (!flagName || flagName === "") {
+    flag = {
+      tagName: "NO FLAG",
+      colour: "red"
+    };
+  } else {
+    flag = flags.filter(flag => flag.tagName.includes(flagName))[0];
+  }
+
+  return flag;
+}
+
+export function getPreviousFlag(job, flags) {
+  let previousFlag;
+
+  if (job.CurrentFlag && job.Type.includes("Fitting") && !job.Type.includes("Motor")) {
+    if (job.CurrentFlag.includes("IF01")) {
+      previousFlag = getFlagDetails("IF03", flags);
+    } else if (job.CurrentFlag.includes("IF03")) {
+      previousFlag = getFlagDetails("IF06", flags);
+    } else if (job.CurrentFlag.includes("IF06", flags)) {
+      previousFlag = getFlagDetails("IF02", flags);
+    } 
+  } 
+
+  return previousFlag;
+}
+
+export function getNextFlag(job, flags) {
+  let nextFlag;
+
+  if (job.CurrentFlag && job.Type.includes("Fitting") && !job.Type.includes("Motor")) {
+    if (job.CurrentFlag.includes("IF01")) {
+      nextFlag = getFlagDetails("Paid", flags);
+    } else if (job.CurrentFlag.includes("IF03")) {
+      nextFlag = getFlagDetails("IF01", flags);
+    } else if (job.CurrentFlag.includes("IF06", flags)) {
+      nextFlag = getFlagDetails("IF03", flags);
+    } else if (job.CurrentFlag.includes("IF02", flags)) {
+      nextFlag = getFlagDetails("IF06", flags);
+    } else {
+      nextFlag = getFlagDetails("IF02", flags);
+    }
+  }
+
+  return nextFlag;
 }

@@ -1,0 +1,148 @@
+.job-card {
+    display: grid;
+    grid-template-areas: "job-card-header"
+                        "job-card-details"
+                        "job-card-controls"
+                        "job-card-description";
+    border: 1px solid black;
+    padding: 5px;
+}
+
+.job-card:hover .job-card-controls {
+    display: block;
+}
+
+.job-card-header {
+    grid-area: job-card-header;
+    display: grid;
+    grid-template-areas: "job-card-icon job-card-type job-card-flag";
+    grid-template-columns: 50px auto auto;
+    border: 1px solid black;
+    grid-column-gap: 5px;
+    align-items: center;
+}
+
+.job-card-icon {
+    grid-area: job-card-icon;
+    align-self: center;
+    justify-self: center;
+    padding: 5px;
+}
+
+.job-card-icon i {
+    font-size: 40px;
+}
+
+.job-card-type {
+    grid-area: job-card-type;
+    font-weight: bold;
+    padding: 5px;
+    text-align: center;
+    font-size: 35px;
+}
+
+.job-card-flag {
+    grid-area: job-card-flag;
+    font-weight: bold;
+    color: white;
+    padding: 5px;
+    border: 1px solid black;
+    margin: 10px;
+}
+
+.job-duration {
+    grid-area: job-duration;
+}
+
+.job-card-inprogress {
+    grid-area: job-card-inprogress;
+}
+
+.job-card-details {
+    grid-area: job-card-details;
+    display: grid;
+    grid-template-areas: "job-card-customer job-card-status";
+    grid-template-columns: 60% 40%;
+}
+
+.job-card-customer {
+    grid-area: job-card-customer;
+    padding: 5px;
+}
+
+.job-card-status {
+    grid-area: job-card-status;
+    display: grid;
+    grid-template-areas: "job-card-status-icon job-card-status-date"
+                         "job-card-status-icon job-card-status-start"
+                         "job-card-status-icon job-card-status-end";
+    grid-template-columns: 60px auto;
+    align-items: center;
+}
+
+.job-card-status-icon {
+    grid-area: job-card-status-icon;
+}
+
+.job-card-status-icon i {
+    font-size: 48px;
+}
+
+.job-card-status-date {
+    grid-area: job-card-status-date;
+}
+
+.job-card-status-start {
+    grid-area: job-card-status-start;
+}
+
+.job-card-status-end {
+    grid-area: job-card-status-end;
+}
+
+.job-card-controls {
+    grid-area: job-card-controls;
+    display: none;
+    border: 1px solid black;
+    padding: 5px;
+    background-color: lightgrey;
+    justify-items: center;
+}
+
+.job-card-select-flag {
+    display: inline-block;
+}
+
+.job-card-description {
+    grid-area: job-card-description;
+    display: none;
+}
+
+.flag {
+    padding: 5px;
+    margin: 5px;
+    color: white;
+    font-weight: bold;
+}
+
+.flag-button {
+    border: 1px solid black;
+}
+
+.flag-button:hover {
+    border: 2px solid yellow;
+}
+
+.flag-button:active {
+    background-color: darkgrey;
+}
+
+.left {
+    border-top-left-radius: 100px;
+    border-bottom-left-radius: 100px;
+}
+
+.right {
+    border-top-right-radius: 100px;
+    border-bottom-right-radius: 100px;
+}

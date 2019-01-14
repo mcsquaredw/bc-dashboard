@@ -48,7 +48,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     socket.on('resources', (data) => {
-        store.dispatch(newResourceData(data.resources));
+        if(JSON.stringify(data.resources) !== JSON.stringify(store.getState().bc.resources)) {
+            store.dispatch(newResourceData(data.resources));
+        }
     });
 
     socket.on('flags', (data) => {
@@ -101,6 +103,34 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         document.getElementById(`${page}`).classList.add("show");
+
+        [...document.getElementsByClassName("view-worksheets")].map(jobCard => {
+            jobCard.onclick = (ev) => {
+                const element = ev.currentTarget;
+                const { jobid, customer, postcode, jobtype } = element.dataset;
+                const modalTitle = document.getElementById("modal-title-text");
+    
+                modalTitle.innerHTML = `
+                    ${jobtype} - ${customer} ${postcode}
+                `;
+    
+                socket.emit("get-worksheets", { jobId: jobid });
+            };
+        });
+
+        [...document.getElementsByClassName("flag-button")].map(flagButton => {
+            console.log("Added onclick listener");
+            
+            flagButton.onclick = (ev) => {
+                const element = ev.currentTarget;
+                const { jobid, flagid } = element.dataset;
+                console.log("Clicked Change flag button");
+                socket.emit("set-flag", {
+                    jobid, 
+                    flagid
+                });
+            }
+        })
     }
 
     function renderQuestion(question) {

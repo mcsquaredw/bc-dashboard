@@ -4,7 +4,9 @@ const app = express();
 const Bundler = require('parcel-bundler');
 const https = require('https').createServer({
     key: fs.readFileSync('./certs/localhost+3-key.pem'),
-    cert: fs.readFileSync('./certs/localhost+3.pem')
+    cert: fs.readFileSync('./certs/localhost+3.pem'),
+    requestCert: false, 
+    rejectUnauthorized: false
 }, app);
 const io = require('socket.io')(https);
 
@@ -25,9 +27,9 @@ io.on('connection', function (socket) {
     getResources();
     
     socket.on('set-flag', (data) => {
-        let { jobId, flagId } = data;
+        let { jobid, flagid } = data;
 
-        bigChangeApi.setFlag(jobId, flagId).then(response => {
+        bigChangeApi.setFlag(jobid, flagid).then(response => {
             getOrders();
         }).catch(err => {
             console.error(err);

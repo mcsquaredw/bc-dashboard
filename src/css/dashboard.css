@@ -4,9 +4,6 @@
                          "location jobs";
     grid-template-columns: 15% auto;
     border: 1px solid black;
-    -webkit-box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.75);
-    -moz-box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.75);
-    box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.75);
     margin: 5px;
     font-size: 25px;
 }
@@ -33,73 +30,8 @@
 .worker .jobs {
     grid-area: jobs;
     display: grid;
-    grid-template-columns: auto auto auto auto;
+    grid-template-columns: 33% 33% 33%;
     grid-column-gap: 7px;
     grid-row-gap: 7px;
     margin: 5px;
-}
-
-.jobs .job-card {
-    display: grid;
-    grid-template-areas: "header   header   header"
-                         "customer customer customer"
-                         "timing   timing   timing";
-    grid-template-columns: auto auto auto;
-    border: 1px solid black;
-    -webkit-box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.75);
-    -moz-box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.75);
-    box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.75);
-}
-
-.job-card .header {
-    grid-area: header;
-    display: grid;
-    grid-template-areas: "type-icon type status";
-    grid-template-columns: auto auto auto;
-    align-items: center;
-    border-bottom: 1px solid black;
-    padding: 5px;
-}
-
-.header .type-icon {
-    grid-area: type-icon;
-}
-
-.header .type {
-    grid-area: type;
-    margin-left: 10px;
-}
-
-.header .status {
-    grid-area: status;
-    text-align: right;
-}
-
-.job-card .customer {
-    grid-area: customer;
-    border-bottom: 1px solid black;
-    padding: 5px;
-}
-
-.job-card .timing {
-    grid-area: timing;
-    display: grid;
-    grid-template-areas: "timing-icon timing-label timing-icon2";
-    grid-template-columns: 10% auto 10%;
-    align-items: center;
-    padding: 5px;
-}
-
-.timing .timing-icon {
-    grid-area: timing-icon;
-}
-
-.timing .timing-label {
-    grid-area: timing-label;
-    text-align: center;
-}
-
-.timing .timing-icon2 {
-    grid-area: timing-icon2;
-    margin-left: auto;
 }
