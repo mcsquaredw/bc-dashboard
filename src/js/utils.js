@@ -82,8 +82,10 @@ export function getPreviousFlag(job, flags) {
 export function getNextFlag(job, flags) {
   let nextFlag;
 
-  if (job.CurrentFlag && job.Type.includes("Fitting") && !job.Type.includes("Motor")) {
-    if (job.CurrentFlag.includes("IF01")) {
+  if (job.Type.includes("Fitting") && !job.Type.includes("Motor")) {
+    if(!job.CurrentFlag) {
+      nextFlag = getFlagDetails("IF02", flags);
+    } else if (job.CurrentFlag.includes("IF01")) {
       nextFlag = getFlagDetails("Paid", flags);
     } else if (job.CurrentFlag.includes("IF03")) {
       nextFlag = getFlagDetails("IF01", flags);
