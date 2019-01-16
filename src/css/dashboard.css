@@ -30,7 +30,7 @@
 .worker .jobs {
     grid-area: jobs;
     display: grid;
-    grid-template-columns: auto auto auto auto;
+    grid-template-columns: repeat(4, 24%);
     grid-column-gap: 7px;
     grid-row-gap: 7px;
     margin: 5px;

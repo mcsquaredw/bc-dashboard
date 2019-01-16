@@ -1,4 +1,5 @@
 import { toTitleCase, formatDate, formatTime } from '../utils';
+import { renderFlagButton } from './flag-button';
 
 function jobStatusColour(job) {
     if (!job.RealStart) {
@@ -15,15 +16,15 @@ function jobStatusColour(job) {
 }
 
 function jobStatusIcon(job) {
-    if(job.Status.includes("issues")) {
+    if (job.Status.includes("issues")) {
         return "report_problem";
-    } else if(job.Status.includes("Completed")) {
+    } else if (job.Status.includes("Completed")) {
         return "thumb_up";
-    } else if(job.Status.includes("Suspended")) {
+    } else if (job.Status.includes("Suspended")) {
         return "pause_circle";
-    } else if(!job.RealStart) {
+    } else if (!job.RealStart) {
         return "watch_later";
-    } else if(!job.RealEnd) {
+    } else if (!job.RealEnd) {
         return "play_arrow";
     }
 }
@@ -60,15 +61,33 @@ export function renderJobCard(job, flag, previousFlag, nextFlag) {
                 <div class="job-card-type">
                      ${job.Type}
                 </div>
-                ${ flag ? 
-                    `
+                ${ flag ?
+            `
                     <div class="job-card-flag shadow" style="background-color: ${flag.colour}">
                         <i class="material-icons">flag</i> ${flag.tagName}
-                    </div>
-                    `
-                    :
-                    ''
-                }
+                        <div class="job-card-change-flag">
+                        ${
+            nextFlag || previousFlag
+                ?
+                `<fieldset>
+                    <legend>Change To:</legend>
+                    ${
+                        renderFlagButton(job.JobId, nextFlag)
+                    }
+                    ${
+                        renderFlagButton(job.JobId, previousFlag)
+                    }
+                </fieldset>
+                `
+                :
+                ``
+            }
+                </div>
+            </div>
+            `
+            :
+            ''
+        }
             </div>
             <div class="job-card-details">
                 <div class="job-card-customer">
@@ -92,39 +111,7 @@ export function renderJobCard(job, flag, previousFlag, nextFlag) {
                 </div>
             </div>
             <div class="job-card-controls">
-                ${
-                    nextFlag || previousFlag
-                    ?
-                        `<fieldset>
-                            <legend>Change Flag</legend>
-                                ${
-                                    nextFlag ? 
-                                        `<button class="flag-button set-flag shadow" data-jobid="${job.JobId}" data-flagid="${nextFlag.Id}">
-                                            <i class="material-icons">
-                                                flag
-                                            </i>
-                                            <span class="job-card-flag shadow" style="background-color: ${nextFlag.colour}">
-                                                ${nextFlag.tagName}
-                                            </span>
-                                        </button>`
-                                    :
-                                    ``
-                                }
-                                ${
-                                    previousFlag ? 
-                                        `<button class="flag-button set-flag shadow" data-jobid="${job.JobId}" data-flagid="${previousFlag.Id}">
-                                            <span class="job-card-flag shadow" style="background-color: ${previousFlag.colour}">
-                                                ${previousFlag.tagName}
-                                            </span>
-                                        </button>`
-                                    :
-                                    ``
-                                }
-                        </fieldset>
-                    `
-                    :
-                    ``
-                }                   
+                                   
                 <button class="show-description shadow view-worksheets"
                     data-jobid="${job.JobId}"
                     data-customer="${job.Contact}"

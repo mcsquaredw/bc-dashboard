@@ -7,10 +7,6 @@
     border: 1px solid black;
 }
 
-.job-card:hover .job-card-controls {
-    display: block;
-}
-
 .job-card-header {
     grid-area: job-card-header;
     display: grid;
@@ -47,6 +43,22 @@
     padding: 5px;
     border: 1px solid black;
     margin: 10px;
+}
+
+.job-card-flag .job-card-change-flag {
+    display: none;
+    background-color: lightgray;
+    color: black;
+}
+
+.job-card-flag .job-card-change-flag button {
+    display: block;
+    width: 100%;
+    text-align: left;
+}
+
+.job-card-flag:hover .job-card-change-flag {
+    display: block;
 }
 
 .job-duration {
@@ -106,10 +118,6 @@
     padding: 5px;
     background-color: lightgrey;
     justify-items: center;
-}
-
-.job-card-select-flag {
-    display: inline-block;
 }
 
 .job-card-description {
