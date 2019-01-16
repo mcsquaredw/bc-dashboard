@@ -90,3 +90,21 @@ export function updateDashboardDate(dashboardDate) {
         dashboardDate
     }
 }
+
+export const START_WORKING = 10;
+
+export function startWorking() {
+    return {
+        type: START_WORKING,
+        working: true
+    }
+}
+
+export const STOP_WORKING = 11;
+
+export function stopWorking() {
+    return {
+        type: STOP_WORKING,
+        working: false
+    }
+}
