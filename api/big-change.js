@@ -92,7 +92,7 @@ module.exports = {
 
         try {
             response = await axios.get(
-                `https://webservice.bigchangeapps.com/v01/services.ashx?&key=${api_key}&login=${username}&pwd=${password}&action=SetTag&EntityId=${jobId}&TagId=${tagId}&EntityType=job&datetime=${dateObj.getFullYear()}/${("0" + (dateObj.getMonth() + 1)).slice(-2)}/${("0" + dateObj.getDate()).slice(-2)}`
+                `https://webservice.bigchangeapps.com/v01/services.ashx?&key=${api_key}&login=${username}&pwd=${password}&action=SetTag&EntityId=${jobId}&TagId=${tagId}&EntityType=job&datetime=${encodeURIComponent(moment().format("yyyy/mm/dd hh:mm:ss"))}`
             );
         } catch (err) {
             logger.error(`Error while setting flag: ${err}`);
@@ -100,7 +100,7 @@ module.exports = {
 
         logger.info(`Big Change API Calls Used: ${apiCalls}`);
 
-        return response.data.Result;
+        return response;
     },
     getWorksheets: async function (jobId) {
         let response;
