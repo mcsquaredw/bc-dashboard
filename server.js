@@ -4,8 +4,8 @@ const app = express();
 const Bundler = require('parcel-bundler');
 const env = (process.env.NODE_ENV ? process.env.NODE_ENV : "development").trim();
 const https = require('https').createServer({
-    key: fs.readFileSync('./certs/localhost+3-key.pem'),
-    cert: fs.readFileSync('./certs/localhost+3.pem'),
+    key: fs.readFileSync('./certs/localhost+2-key.pem'),
+    cert: fs.readFileSync('./certs/localhost+2.pem'),
     requestCert: false, 
     rejectUnauthorized: false
 }, app);

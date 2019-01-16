@@ -74,7 +74,9 @@ export function getPreviousFlag(job, flags) {
     } else if (job.CurrentFlag.includes("IF06", flags)) {
       previousFlag = getFlagDetails("IF02", flags);
     } 
-  } 
+  } else if(job.Type.includes("Remedial") && job.CurrentFlag.includes("Paid")) {
+    previousFlag = getFlagDetails("Remedial", flags);
+  }
 
   return previousFlag;
 }
@@ -95,6 +97,12 @@ export function getNextFlag(job, flags) {
       nextFlag = getFlagDetails("IF06", flags);
     } else {
       nextFlag = getFlagDetails("IF02", flags);
+    }
+  } else if(job.Type.includes("Remedial")) {
+    if(!job.CurrentFlag) {
+      nextFlag = getFlagDetails("Remedial", flags);
+    } if(job.CurrentFlag.includes("Remedial")) {
+      nextFlag = getFlagDetails("Paid", flags);
     }
   }
 

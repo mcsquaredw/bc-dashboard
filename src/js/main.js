@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         document.getElementById(`${page}`).classList.add("show");
 
-        [...document.getElementsByClassName("view-worksheets")].map(jobCard => {
+        [...document.getElementsByClassName("job-card")].map(jobCard => {
             jobCard.onclick = (ev) => {
                 const element = ev.currentTarget;
                 const { jobid, customer, postcode, jobtype } = element.dataset;

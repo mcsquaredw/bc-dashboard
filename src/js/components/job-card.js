@@ -53,7 +53,11 @@ function renderJobTypeIcon(job) {
 
 export function renderJobCard(job, flag, previousFlag, nextFlag) {
     return `
-        <div class="job-card shadow">
+        <div class="job-card shadow"                     
+            data-jobid="${job.JobId}"
+            data-customer="${job.Contact}"
+            data-postcode="${job.Postcode}"
+            data-jobType="${job.Type}">
             <div class="job-card-header ${jobStatusColour(job)}">
                 <div class="job-card-icon">
                     ${renderJobTypeIcon(job)}
@@ -113,10 +117,7 @@ export function renderJobCard(job, flag, previousFlag, nextFlag) {
             <div class="job-card-controls">
                                    
                 <button class="show-description shadow view-worksheets"
-                    data-jobid="${job.JobId}"
-                    data-customer="${job.Contact}"
-                    data-postcode="${job.Postcode}"
-                    data-jobType="${job.Type}"
+
                     ${job.RealEnd ? '' : 'disabled'}
                     >
                     <i class="material-icons">assignment</i> <b>Worksheets</b>
