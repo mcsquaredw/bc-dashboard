@@ -13,56 +13,43 @@ module.exports = {
 
         apiCalls++;
         logger.info(`Getting details for jobs between ${moment("2018-11-01")} and ${moment().add(60, 'days')}`);
-
-        try {
-            response = await axios.get(
-                `https://webservice.bigchangeapps.com/v01/services.ashx?action=jobs&key=${api_key}&login=${username}&pwd=${password}&start=${moment("2018-11-01").format('YYYY-MM-DD')}&end=${moment().add(60, 'days').format('YYYY-MM-DD')}`
-            );
-        } catch (err) {
-            logger.error(`Error while getting jobs: ${err}`);
-        }
-
         logger.info(`Big Change API Calls Used: ${apiCalls}`);
+
+        response = await axios.get(
+            `https://webservice.bigchangeapps.com/v01/services.ashx?action=jobs&key=${api_key}&login=${username}&pwd=${password}&start=${moment("2018-11-01").format('YYYY-MM-DD')}&end=${moment().add(60, 'days').format('YYYY-MM-DD')}`
+        );
         
-        return response.data.Result;
+        return response;
     },
     getOneJob: async function (id) {
         let response;
 
         apiCalls++;
         logger.info(`Getting details for job with ID ${jobId}`);
-
-        try {
-            response = await axios
-                .get(
-                    `https://webservice.bigchangeapps.com/v01/services.ashx?&key=${api_key}&login=${username}&pwd=${password}&action=job&jobId=${id}&flaghistory=1`
-                );
-        } catch (err) {
-            logger.error(`Error while getting job details: ${err}`);
-        }
-
         logger.info(`Big Change API Calls Used: ${apiCalls}`);
 
-        return response.data.Result;
+        response = await axios.get(
+            `https://webservice.bigchangeapps.com/v01/services.ashx?&key=${api_key}&login=${username}&pwd=${password}&action=job&jobId=${id}&flaghistory=1`
+        );
+
+        
+
+        return response;
     },
     getResources: async function () {
         let response;
 
         apiCalls++;
         logger.info(`Getting resources`);
-
-        try {
-            response = await axios
-                .get(
-                    `https://webservice.bigchangeapps.com/v01/services.ashx?&key=${api_key}&login=${username}&pwd=${password}&action=live`
-                );
-        } catch (err) {
-            logger.error(`Error while getting resources: ${err}`);
-        }
-
         logger.info(`Big Change API Calls Used: ${apiCalls}`);
 
-        return response.data.Result;
+        response = await axios.get(
+            `https://webservice.bigchangeapps.com/v01/services.ashx?&key=${api_key}&login=${username}&pwd=${password}&action=live`
+        );
+
+       
+
+        return response;
     },
     getFlags: async function () {
         let response;
@@ -70,18 +57,13 @@ module.exports = {
         apiCalls++;
         logger.info(`Getting flags`);
 
-        try {
-            response = await axios
-                .get(
-                    `https://webservice.bigchangeapps.com/v01/services.ashx?&key=${api_key}&login=${username}&pwd=${password}&action=tags`
-                );
-        } catch (err) {
-            logger.error(`Error while getting flags: ${err}`);
-        }
+        response = await axios.get(
+            `https://webservice.bigchangeapps.com/v01/services.ashx?&key=${api_key}&login=${username}&pwd=${password}&action=tags`
+        );
 
         logger.info(`Big Change API Calls Used: ${apiCalls}`);
 
-        return response.data.Result;
+        return response;
     },
     setFlag: async function (jobId, tagId) {
         let response;
@@ -89,16 +71,11 @@ module.exports = {
 
         apiCalls++;
         logger.info(`Setting flag for job with ID ${jobId} to flag with ID ${tagId}`);
-
-        try {
-            response = await axios.get(
-                `https://webservice.bigchangeapps.com/v01/services.ashx?&key=${api_key}&login=${username}&pwd=${password}&action=SetTag&EntityId=${jobId}&TagId=${tagId}&EntityType=job&datetime=${encodeURIComponent(moment().format("yyyy/mm/dd hh:mm:ss"))}`
-            );  
-        } catch (err) {
-            logger.error(`Error while setting flag: ${err}`);
-        }
-
         logger.info(`Big Change API Calls Used: ${apiCalls}`);
+
+        response = await axios.get(
+            `https://webservice.bigchangeapps.com/v01/services.ashx?&key=${api_key}&login=${username}&pwd=${password}&action=SetTag&EntityId=${jobId}&TagId=${tagId}&EntityType=job&datetime=${encodeURIComponent(moment().format("yyyy/mm/dd hh:mm:ss"))}`
+        );  
 
         return response;
     },
@@ -107,17 +84,12 @@ module.exports = {
 
         apiCalls++;
         logger.info(`Getting worksheets for job with ID ${jobId}`);
-
-        try {
-            response = await axios.get(
-                `https://webservice.bigchangeapps.com/v01/services.ashx?&key=${api_key}&login=${username}&pwd=${password}&action=jobworksheets&jobId=${jobId}&wsphoto=full`
-            );
-        } catch (err) {
-            logger.error(`Error while getting worksheets for job: ${err}`);
-        }
-
         logger.info(`Big Change API Calls Used: ${apiCalls}`);
 
-        return response.data.Result;
+        response = await axios.get(
+            `https://webservice.bigchangeapps.com/v01/services.ashx?&key=${api_key}&login=${username}&pwd=${password}&action=jobworksheets&jobId=${jobId}&wsphoto=full`
+        );
+        
+        return response;
     }
 }

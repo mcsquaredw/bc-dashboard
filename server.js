@@ -2,7 +2,7 @@ const fs = require('fs');
 const express = require('express');
 const app = express();
 const Bundler = require('parcel-bundler');
-const env = process.env.NODE_ENV ? process.env.NODE_ENV : "development";
+const env = (process.env.NODE_ENV ? process.env.NODE_ENV : "development").trim();
 const https = require('https').createServer({
     key: fs.readFileSync('./certs/localhost+3-key.pem'),
     cert: fs.readFileSync('./certs/localhost+3.pem'),
@@ -50,46 +50,51 @@ io.on('connection', function (socket) {
         logger.info(`Received set-flag message for job ID ${ data.jobid } and flag ID ${ data.flagid }`);
 
         bigChangeApi.setFlag(jobid, flagid).then(response => {
-            logger.info(`Response received: ${response}`);
+            logger.info(`Response received: ${response.data.Result}`);
             getOrders();
         }).catch(err => {
             logger.error(`Error setting flag: ${err}`);
+            socket.emit('error', { label: 'Error setting label', detail: err });
         })
     });
 
     socket.on('get-worksheets', (data) => {
         logger.info(`Received get-worksheets message for job ID ${ data.jobId }`);
 
-        bigChangeApi.getWorksheets(data.jobId).then(worksheets => {
+        bigChangeApi.getWorksheets(data.jobId).then(response => {
             logger.info(`Response received: ${response}`);
-            socket.emit('worksheets', { worksheets });
+            socket.emit('worksheets', { worksheets: response.data.Result });
         }).catch(err => {
             logger.error(`Error getting worksheets: ${err}`);
+            socket.emit('error', { label: 'Error getting worksheets', detail: err });
         });
     });
 });
 
 function getResources() {
-    bigChangeApi.getResources().then(resources => {
-        io.emit('resources', { resources });
+    bigChangeApi.getResources().then(response => {
+        io.emit('resources', { resources: response.data.Result });
     }).catch(err => {
         logger.error(`Error getting resources: ${err}`);
+        io.emit('error', { label: 'Error getting resources', detail: err });
     });
 }
 
 function getOrders() {
-    bigChangeApi.getJobs().then(jobs => {
-        io.emit('orders', { jobs });
+    bigChangeApi.getJobs().then(response => {
+        io.emit('orders', { jobs: response.data.Result });
     }).catch(err => {
         logger.error(`Error getting orders: ${err}`);
+        io.emit('error', { label: 'Error getting jobs', detail: err });
     });
 }
 
 function getFlags() {
-    bigChangeApi.getFlags().then(flags => {
-        io.emit('flags', { flags });
+    bigChangeApi.getFlags().then(response => {
+        io.emit('flags', { flags: response.data.Result });
     }).catch(err => {
         logger.error(`Error getting flags: ${err}`);
+        io.emit('error', { label: 'Error getting flags', detail: err });
     });
 }
 
