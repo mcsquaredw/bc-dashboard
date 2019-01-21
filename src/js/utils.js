@@ -101,7 +101,7 @@ export function getNextFlag(job, flags) {
   } else if(job.Type.includes("Remedial")) {
     if(!job.CurrentFlag) {
       nextFlag = getFlagDetails("Remedial", flags);
-    } if(job.CurrentFlag.includes("Remedial")) {
+    } else if(job.CurrentFlag.includes("Remedial")) {
       nextFlag = getFlagDetails("Paid", flags);
     }
   }

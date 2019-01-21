@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "nodemon index.js",
     "build": "parcel build src/*.html",
     "start-production": "set NODE_ENV=production && parcel build src/index.html && npm run start",
     "start-development": "set NODE_ENV=development && npm run start"
@@ -15,6 +15,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "chart.js": "^2.7.3",
+    "csvtojson": "^2.0.8",
     "express": "^4.16.4",
     "log4js": "^3.0.6",
     "logger.js": "0.0.1",
@@ -23,6 +24,7 @@
     "parcel-bundler": "^1.10.3",
     "redux": "^4.0.1",
     "socket.io": "^2.2.0",
-    "sqlite3": "^4.0.4"
+    "sql-template-strings": "^2.2.2",
+    "sqlite": "^3.0.0"
   }
 }
