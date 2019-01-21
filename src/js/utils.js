@@ -74,7 +74,7 @@ export function getPreviousFlag(job, flags) {
     } else if (job.CurrentFlag.includes("IF06", flags)) {
       previousFlag = getFlagDetails("IF02", flags);
     } 
-  } else if(job.Type.includes("Remedial") && job.CurrentFlag.includes("Paid")) {
+  } else if(job.CurrentFlag && job.Type.includes("Remedial") && job.CurrentFlag.includes("Paid")) {
     previousFlag = getFlagDetails("Remedial", flags);
   }
 
