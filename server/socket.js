@@ -1,17 +1,24 @@
-const bigChangeApi = require('../api/big-change');
-
 module.exports = (https, db, logger) => {
+    const bigChangeApi = require('../api/big-change');
     const io = require('socket.io')(https);
+    const localDb = require('../api/local-db')(db, logger);
 
     function getResources() {
         bigChangeApi.getResources().then(response => {
-            io.emit('resources', { resources: response.data.Result });
+            localDb.getSavedResources().then(savedResources => {
+                console.log(savedResources, response.data.Result);
+
+                io.emit('resources', { resources: response.data.Result });
+            }).catch(err => {
+                logger.error(`Error getting local resources: ${err}`);
+                io.emit('error', { label: 'Error getting resources', detail: err });
+            });
         }).catch(err => {
             logger.error(`Error getting resources: ${err}`);
             io.emit('error', { label: 'Error getting resources', detail: err });
         });
     }
-    
+
     function getOrders() {
         bigChangeApi.getJobs().then(response => {
             io.emit('orders', { jobs: response.data.Result });
@@ -19,7 +26,7 @@ module.exports = (https, db, logger) => {
             logger.error(`Error getting orders: ${err}`);
             io.emit('error', { label: 'Error getting jobs', detail: err });
         });
-    }
+    }      
     
     function getFlags() {
         bigChangeApi.getFlags().then(response => {
@@ -29,7 +36,7 @@ module.exports = (https, db, logger) => {
             io.emit('error', { label: 'Error getting flags', detail: err });
         });
     }
-    
+
     io.on('connection', function (socket) {
         logger.info(`Connection received from client`);
         getFlags();
@@ -68,4 +75,10 @@ module.exports = (https, db, logger) => {
         getResources();
         getOrders();
     }, 120000);
+
+    return {
+        getResources,
+        getJobs,
+        getFlags
+    }
 }

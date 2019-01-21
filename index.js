@@ -1,6 +1,7 @@
+const sqlite = require('sqlite');
+
 const env = (process.env.NODE_ENV ? process.env.NODE_ENV : "DEVELOPMENT").trim();
 const port = process.env.PORT ? process.env.PORT : 3000;
-const sqlite = require('sqlite');
 const logger = require('./server/logging')(env);
 const https = require('./server/http')(env, port, logger);
 
@@ -12,5 +13,7 @@ sqlite.open(`./data/${env}-bclocal.sqlite`).then(db => {
         logger.info("Shutting down");
         db.close();
     });
+}).catch(err => {
+    logger.error("Cannot connect to local database: ", err);
 });
 

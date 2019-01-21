@@ -8,7 +8,7 @@ let apiCalls = 0;
 logger = log4js.getLogger('server');
 
 module.exports = {
-    getJobs: async function () {
+    getJobs: async () => {
         let response;
 
         apiCalls++;
@@ -21,7 +21,7 @@ module.exports = {
         
         return response;
     },
-    getOneJob: async function (id) {
+    getOneJob: async (id) => {
         let response;
 
         apiCalls++;
@@ -36,7 +36,7 @@ module.exports = {
 
         return response;
     },
-    getResources: async function () {
+    getResources: async() => {
         let response;
 
         apiCalls++;
@@ -47,11 +47,9 @@ module.exports = {
             `https://webservice.bigchangeapps.com/v01/services.ashx?&key=${api_key}&login=${username}&pwd=${password}&action=live`
         );
 
-       
-
         return response;
     },
-    getFlags: async function () {
+    getFlags: async() => {
         let response;
 
         apiCalls++;
@@ -64,10 +62,9 @@ module.exports = {
         logger.info(`Big Change API Calls Used: ${apiCalls}`);
 
         return response;
-    },
-    setFlag: async function (jobId, tagId) {
+    },    
+    setFlag: async(jobId, tagId) => {
         let response;
-        let dateObj = new Date();
 
         apiCalls++;
         logger.info(`Setting flag for job with ID ${jobId} to flag with ID ${tagId}`);
@@ -79,7 +76,7 @@ module.exports = {
 
         return response;
     },
-    getWorksheets: async function (jobId) {
+    getWorksheets: async(jobId) => {
         let response;
 
         apiCalls++;
