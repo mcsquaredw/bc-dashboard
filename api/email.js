@@ -1,4 +1,4 @@
-const { emailoutgoingserver, emailpassword, emailusername } = require('../config');
+const { emailoutgoingserver, emailpassword, emailusername } = require('../config/config').vars;
 const nodemailer = require("nodemailer");
 
 module.exports = (logger) => {

@@ -1,6 +1,7 @@
 .next
 node_modules
-config.js
+config/development.js
+config/production.js
 dist
 .cache
 certs/*

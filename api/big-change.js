@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { username, password, api_key } = require("../config");
+const { username, password, api_key } = require("../config/config").vars;
 const moment = require("moment");
 const log4js = require('log4js');
 
