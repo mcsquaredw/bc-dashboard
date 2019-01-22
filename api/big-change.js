@@ -94,6 +94,7 @@ module.exports = {
         }
     },
     setFlag: async (jobId, tagId) => {
+        let error;
         let response;
 
         try {
@@ -114,6 +115,7 @@ module.exports = {
         }
     },
     getWorksheets: async (jobId) => {
+        let error;
         let response;
 
         try {

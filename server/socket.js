@@ -57,11 +57,11 @@ module.exports = (https, db, logger) => {
             logger.info(`Received set-flag message for job ID ${ data.jobid } and flag ID ${ data.flagid }`);
     
             bigChangeApi.setFlag(jobid, flagid).then(response => {
-                logger.info(`Response received: ${response.data.Result}`);
+                logger.info(`Response received: ${response.result}`);
                 getOrders();
             }).catch(err => {
                 logger.error(`Error setting flag: ${err}`);
-                socket.emit('error', { label: 'Error setting label', detail: err });
+                socket.emit('error', { label: 'Error setting label', err: response.error });
             })
         });
     
@@ -69,11 +69,10 @@ module.exports = (https, db, logger) => {
             logger.info(`Received get-worksheets message for job ID ${ data.jobId }`);
     
             bigChangeApi.getWorksheets(data.jobId).then(response => {
-                logger.info(`Response received: ${response}`);
-                socket.emit('worksheets', { worksheets: response.data.Result });
+                socket.emit('worksheets', { worksheets: response.result });
             }).catch(err => {
                 logger.error(`Error getting worksheets: ${err}`);
-                socket.emit('error', { label: 'Error getting worksheets', detail: err });
+                socket.emit('error', { label: 'Error getting worksheets', err });
             });
         });
     });
@@ -86,7 +85,7 @@ module.exports = (https, db, logger) => {
 
     return {
         getResources,
-        getJobs,
+        getOrders,
         getFlags
     }
 }

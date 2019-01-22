@@ -7,7 +7,8 @@ import {
     newOrderData,
     newResourceData,
     newWorksheetData,
-    hideWorksheetData
+    hideWorksheetData,
+    setFromTo
 } from './redux/actions';
 import { renderDashboard } from './components/dashboard';
 import { renderOrderStatus } from './components/order-status';
@@ -107,13 +108,14 @@ document.addEventListener("DOMContentLoaded", () => {
         [...document.getElementsByClassName("job-card")].map(jobCard => {
             jobCard.onclick = (ev) => {
                 const element = ev.currentTarget;
-                const { jobid, customer, postcode, jobtype } = element.dataset;
+                const { jobid, customer, postcode, jobtype, workerposition, jobposition } = element.dataset;
                 const modalTitle = document.getElementById("modal-title-text");
     
                 modalTitle.innerHTML = `
                     ${jobtype} - ${customer} ${postcode}
                 `;
-    
+
+                store.dispatch(setFromTo(workerposition, jobposition));
                 socket.emit("get-worksheets", { jobId: jobid });
             };
         });
@@ -147,11 +149,16 @@ document.addEventListener("DOMContentLoaded", () => {
     function updateWorksheetModal() {
         const modal = document.getElementById("modal");
         const modalTarget = document.getElementById("modal-target");
-        const { worksheets, show } = store.getState().ws;
+        const { worksheets, show, from, to } = store.getState().ws;
 
         if(show) {
             if(worksheets.length > 0) {
                 modalTarget.innerHTML = `
+                    <iframe frameborder="0" 
+                            style="border:0"
+                            src="https://www.google.com/maps/embed/v1/directions?origin=${from.replace(/ /g, "+")}&destination=${to.replace(/ /g, "+")}&key=AIzaSyD55V3pJb2XQ02l44ecXJ5VgWWE8KRk-NM" 
+                            allowfullscreen>
+                    </iframe> 
                     ${worksheets.sort((a, b) => {
                         return a.QuestionOrder - b.QuestionOrder;
                     }).map(question => renderQuestion(question)).join('')}

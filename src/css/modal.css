@@ -50,6 +50,11 @@
   padding: 5px;
 }
 
+#modal-target iframe {
+  width: 100%;
+  min-height: 400px;
+}
+
 .close {
     margin-left: auto;
   }

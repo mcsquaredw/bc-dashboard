@@ -12,7 +12,7 @@ function renderWorker(worker, jobs, position, driving, flags) {
                     const nextFlag = getNextFlag(job, flags);
                     const previousFlag = getPreviousFlag(job, flags);
 
-                    return renderJobCard(job, currentFlag, previousFlag, nextFlag)
+                    return renderJobCard(job, currentFlag, previousFlag, nextFlag, position)
                 }).join('')}
             </div>
         </div>
@@ -61,7 +61,6 @@ export function renderDashboard(target, dateFieldId, store, desiredWorkers, sock
                 };
             })[0];
 
-        console.log(positionData);
         return `${renderWorker(key, workers[key].jobs, positionData.positionAddress, (positionData.positionSpeed ? true : false) , flags)}`;
     }).join('');
 }

@@ -108,3 +108,13 @@ export function stopWorking() {
         working: false
     }
 }
+
+export const SET_FROM_TO = 12;
+
+export function setFromTo(from, to) {
+    return {
+        type: SET_FROM_TO,
+        from,
+        to
+    }
+}

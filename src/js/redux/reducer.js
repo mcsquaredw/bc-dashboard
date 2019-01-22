@@ -10,7 +10,8 @@ import {
     CHANGE_GDN_POSTCODE,
     NEW_WORKSHEET_DATA,
     HIDE_WORKSHEET_DATA,
-    UPDATE_DASHBOARD_DATE
+    UPDATE_DASHBOARD_DATE,
+    SET_FROM_TO
 } from './actions';
 
 function bigChange(
@@ -105,7 +106,9 @@ function gdn(
 function worksheets(
     state = {
         worksheets: [],
-        show: false
+        show: false,
+        from: "",
+        to: ""
     },
     action
 ) {
@@ -119,6 +122,11 @@ function worksheets(
         case HIDE_WORKSHEET_DATA:
             return Object.assign({}, state, {
                 show: false
+            });
+        case SET_FROM_TO: 
+            return Object.assign({}, state, {
+                from: action.from,
+                to: action.to
             });
         default:
             return state;

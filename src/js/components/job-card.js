@@ -51,13 +51,15 @@ function renderJobTypeIcon(job) {
     `;
 }
 
-export function renderJobCard(job, flag, previousFlag, nextFlag) {
+export function renderJobCard(job, flag, previousFlag, nextFlag, workerPosition) {
     return `
         <div class="job-card shadow"                     
             data-jobid="${job.JobId}"
             data-customer="${job.Contact}"
             data-postcode="${job.Postcode}"
-            data-jobType="${job.Type}">
+            data-jobType="${job.Type}"
+            data-workerposition="${workerPosition}"
+            data-jobposition="${job.Postcode}">
             <div class="job-card-header ${jobStatusColour(job)}">
                 <div class="job-card-icon">
                     ${renderJobTypeIcon(job)}
