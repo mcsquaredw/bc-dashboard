@@ -159,11 +159,11 @@ document.addEventListener("DOMContentLoaded", () => {
                         allowfullscreen>
                 </iframe> 
                 ${worksheets.length > 0 ?
-                    "No Worksheet Data"
-                : 
                     worksheets.sort((a, b) => {
                         return a.QuestionOrder - b.QuestionOrder;
                     }).map(question => renderQuestion(question)).join('')
+                : 
+                    "No Worksheet Data"
                 }
             `;
 
