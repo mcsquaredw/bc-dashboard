@@ -1,19 +1,11 @@
 .worker {
     display: grid;
-    grid-template-areas: "location name"
-                         "location jobs";
-    grid-template-columns: 15% auto;
+    grid-template-areas: "name"
+                         "jobs";
+    grid-template-columns: auto;
     border: 1px solid black;
     margin: 5px;
     font-size: 25px;
-}
-
-.worker .location {
-    grid-area: location;
-}
-
-.worker .location iframe {
-    height: 100%;
     width: 100%;
 }
 
@@ -30,8 +22,9 @@
 .worker .jobs {
     grid-area: jobs;
     display: grid;
-    grid-template-columns: repeat(4, 24%);
+    grid-template-columns: repeat(5, 20%);
     grid-column-gap: 7px;
     grid-row-gap: 7px;
     margin: 5px;
+    justify-items: center;
 }

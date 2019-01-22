@@ -5,7 +5,11 @@ const port = process.env.PORT ? process.env.PORT : 3000;
 const logger = require('./server/logging')(env);
 const https = require('./server/http')(env, port, logger);
 
-sqlite.open(`./data/${env}-bclocal.sqlite`).then(db => {
+sqlite
+.open(`./data/${env}-bclocal.sqlite`)
+.then(db => {
+    db.migrate({ force: 'last' });
+    
     logger.info("Database connection established");
     require('./server/socket')(https, db, logger);
 

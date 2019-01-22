@@ -5,35 +5,43 @@ module.exports = (https, db, logger) => {
 
     function getResources() {
         bigChangeApi.getResources().then(response => {
-            localDb.getSavedResources().then(savedResources => {
-                console.log(savedResources, response.data.Result);
-
-                io.emit('resources', { resources: response.data.Result });
-            }).catch(err => {
-                logger.error(`Error getting local resources: ${err}`);
-                io.emit('error', { label: 'Error getting resources', detail: err });
-            });
+            if(response.error) {
+                logger.error(`Error getting resources: ${err}`);
+                io.emit('error', { label: `Error getting resources`, err: response.error });
+            } else {
+                io.emit('resources', { resources: response.result });
+            } 
         }).catch(err => {
             logger.error(`Error getting resources: ${err}`);
-            io.emit('error', { label: 'Error getting resources', detail: err });
+            io.emit('error', { label: `Error getting resources`, err });
         });
     }
 
     function getOrders() {
         bigChangeApi.getJobs().then(response => {
-            io.emit('orders', { jobs: response.data.Result });
+            if(response.error) {
+                logger.error(`Error getting orders: ${response.error}`);
+                io.emit('error', { label: 'Error getting jobs', err: response.error });
+            } else {
+                io.emit('orders', { jobs: response.result });
+            }
         }).catch(err => {
             logger.error(`Error getting orders: ${err}`);
-            io.emit('error', { label: 'Error getting jobs', detail: err });
+            io.emit('error', { label: 'Error getting jobs', err });
         });
     }      
     
     function getFlags() {
         bigChangeApi.getFlags().then(response => {
-            io.emit('flags', { flags: response.data.Result });
+            if(response.error) {
+                logger.error(`Error getting flags: ${response.error}`);
+                io.emit('error', { label: 'Error getting flags', err: response.error });
+            } else {
+                io.emit('flags', { flags: response.result });
+            }
         }).catch(err => {
             logger.error(`Error getting flags: ${err}`);
-            io.emit('error', { label: 'Error getting flags', detail: err });
+            io.emit('error', { label: 'Error getting flags', err });
         });
     }
 

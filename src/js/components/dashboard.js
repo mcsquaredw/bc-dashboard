@@ -2,14 +2,10 @@ import { sortJobs, getNextFlag, getPreviousFlag, getFlagDetails } from '../utils
 import { updateDashboardDate } from '../redux/actions';
 import { renderJobCard } from './job-card';
 
-function renderWorker(worker, jobs, position, flags) {
+function renderWorker(worker, jobs, position, driving, flags) {
     return `
         <div class="worker">
-            <div class="location">
-                <iframe src="https://google.com/maps/embed/v1/place?key=AIzaSyD55V3pJb2XQ02l44ecXJ5VgWWE8KRk-NM&zoom=9&q=${position}">
-                </iframe>
-            </div>
-            <div class="name">${worker}</div>
+            <div class="name">${worker} - Last Reported at ${position} - <i class="material-icons">${driving ? 'local_shipping' : 'home'}</i></div>
             <div class="jobs">
                 ${jobs.map(job => {
                     const currentFlag = getFlagDetails(job.CurrentFlag, flags)
@@ -56,13 +52,16 @@ export function renderDashboard(target, dateFieldId, store, desiredWorkers, sock
         });
 
     container.innerHTML = Object.keys(workers).map(key => {
-        const position = positions
+        const positionData = positions
             .filter(resource => resource.ResourceName === key)
             .map(resource => {
-                return `${resource.PositionLatitude},${resource.PositionLongitude}`;
-            })
-            .join('');
+                return {
+                    positionAddress: resource.PositionAddress,
+                    positionSpeed: resource.PositionSpeed
+                };
+            })[0];
 
-        return `${renderWorker(key, workers[key].jobs, position, flags)}`;
+        console.log(positionData);
+        return `${renderWorker(key, workers[key].jobs, positionData.positionAddress, (positionData.positionSpeed ? true : false) , flags)}`;
     }).join('');
 }

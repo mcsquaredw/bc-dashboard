@@ -2,7 +2,11 @@
 
 CREATE TABLE Person (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    personName TEXT NOT NULL UNIQUE
+    personName TEXT NOT NULL UNIQUE,
+    latitude TEXT,
+    longitude TEXT,
+    speed INTEGER,
+    registration TEXT
 );
 
 CREATE TABLE Customer (

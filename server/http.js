@@ -5,11 +5,9 @@ const app = express();
 const now = new Date();
 
 module.exports = (env, port, logger) => {
-    const https = require('https').createServer({
+    const https = require('https').Server({
         key: fs.readFileSync('./certs/localhost+2-key.pem'),
-        cert: fs.readFileSync('./certs/localhost+2.pem'),
-        requestCert: false, 
-        rejectUnauthorized: false
+        cert: fs.readFileSync('./certs/localhost+2.pem')
     }, app);
 
     if (env === "production") {
