@@ -152,20 +152,20 @@ document.addEventListener("DOMContentLoaded", () => {
         const { worksheets, show, from, to } = store.getState().ws;
 
         if(show) {
-            if(worksheets.length > 0) {
-                modalTarget.innerHTML = `
-                    <iframe frameborder="0" 
-                            style="border:0"
-                            src="https://www.google.com/maps/embed/v1/directions?origin=${from.replace(/ /g, "+")}&destination=${to.replace(/ /g, "+")}&key=AIzaSyD55V3pJb2XQ02l44ecXJ5VgWWE8KRk-NM" 
-                            allowfullscreen>
-                    </iframe> 
-                    ${worksheets.sort((a, b) => {
+            modalTarget.innerHTML = `
+                <iframe frameborder="0" 
+                        style="border:0"
+                        src="https://www.google.com/maps/embed/v1/directions?origin=${from.replace(/ /g, "+")}&destination=${to.replace(/ /g, "+")}&key=AIzaSyD55V3pJb2XQ02l44ecXJ5VgWWE8KRk-NM" 
+                        allowfullscreen>
+                </iframe> 
+                ${worksheets.length > 0 ?
+                    "No Worksheet Data"
+                : 
+                    worksheets.sort((a, b) => {
                         return a.QuestionOrder - b.QuestionOrder;
-                    }).map(question => renderQuestion(question)).join('')}
-                `;
-            } else {
-                modalTarget.innerHTML = `No Worksheet Data`;
-            }
+                    }).map(question => renderQuestion(question)).join('')
+                }
+            `;
 
             modal.style.display = "block";
         } else {
