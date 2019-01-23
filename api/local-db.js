@@ -21,7 +21,7 @@ module.exports = (db, logger) => {
 
         try {
             logger.info(`Logging Job ID ${jobId} as an Issue`);
-            await db.all(SQL`INSERT INTO Issues (JobId) VALUES (${jobId});`);
+            result = await db.all(SQL`INSERT INTO Issues (JobId) VALUES (${jobId});`);
 
             return {
                 result

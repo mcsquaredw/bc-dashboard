@@ -33,7 +33,7 @@ module.exports = (https, db, logger) => {
                     .filter(job => moment(job.PlannedStart).isAfter(moment("21/01/2019", "DD/MM/YYYY")))
                     .map(job => {
                         localDb.isNotified(job.JobId).then(notified => {
-                            if (!notified) {
+                            if (!notified.result) {
                                 bigChangeApi.getWorksheets(job.JobId).then(worksheetData => {
                                     email.sendEmail(
                                         `Job with Issues - ${job.Type} - ${job.Contact} ${job.Postcode}`,

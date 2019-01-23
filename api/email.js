@@ -15,14 +15,14 @@ module.exports = (logger) => {
     async function sendEmail(subject, text, html) {
         try {
             let mailOptions = {
-                from: `"JB Doors Alerts" <${alertemail}>`,
+                from: `"JB Doors Alerts" <${emailusername}>`,
                 to: `${alertemail}`,
                 subject,
                 text, 
                 html
             }
     
-            logger.info(`Sending alert email to ${emailusername}`)
+            logger.info(`Sending alert email to ${alertemail}`)
             await transporter.sendMail(mailOptions);
 
             return { error: "" }
