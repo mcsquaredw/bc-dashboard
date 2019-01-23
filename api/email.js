@@ -1,4 +1,4 @@
-const { emailoutgoingserver, emailpassword, emailusername } = require('../config/config').vars;
+const { emailoutgoingserver, emailpassword, emailusername, alertemail } = require('../config/config').vars;
 const nodemailer = require("nodemailer");
 
 module.exports = (logger) => {
@@ -15,8 +15,8 @@ module.exports = (logger) => {
     async function sendEmail(subject, text, html) {
         try {
             let mailOptions = {
-                from: `"JB Doors Alerts" <${emailusername}>`,
-                to: `${emailusername}`,
+                from: `"JB Doors Alerts" <${alertemail}>`,
+                to: `${alertemail}`,
                 subject,
                 text, 
                 html
