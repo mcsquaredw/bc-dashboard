@@ -8,6 +8,11 @@ const https = require('./server/http')(env, port, logger);
 sqlite
 .open(`./data/${env}-bclocal.sqlite`)
 .then(db => {
+    if(env === 'PRODUCTION') {
+        db.migrate();
+    } else {
+        db.migrate({force: 'last'});
+    }
     logger.info("Database connection established");
     require('./server/socket')(https, db, logger);
 
