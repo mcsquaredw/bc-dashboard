@@ -6,8 +6,8 @@
   "scripts": {
     "start": "nodemon index.js",
     "build": "parcel build src/*.html",
-    "start-production": "set NODE_ENV=production && parcel build src/index.html && npm run start",
-    "start-development": "set NODE_ENV=development && npm run start"
+    "start-production": "set NODE_ENV=PRODUCTION && parcel build src/index.html && npm run start",
+    "start-development": "set NODE_ENV=DEVELOPMENT && npm run start"
   },
   "keywords": [],
   "author": "",
