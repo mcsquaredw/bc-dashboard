@@ -1,6 +1,6 @@
 const sqlite = require('sqlite');
 
-const env = (process.env.NODE_ENV ? process.env.NODE_ENV : "DEVELOPMENT").trim();
+const env = (process.env.NODE_ENV ? process.env.NODE_ENV : "DEVELOPMENT").trim().toUpperCase();
 const port = process.env.PORT ? process.env.PORT : 3000;
 const logger = require('./server/logging')(env);
 const https = require('./server/http')(env, port, logger);
