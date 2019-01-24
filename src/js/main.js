@@ -71,13 +71,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         switch (page) {
             case 'engineer-jobs':
-                renderDashboard("engineer-jobs", "engineer-date", store, engineers, socket);
+                renderDashboard("engineer-jobs", "engineer-date", store, engineers);
                 break;
             case 'surveyor-jobs':
-                renderDashboard("surveyor-jobs", "surveyor-date", store, surveyors, socket);
+                renderDashboard("surveyor-jobs", "surveyor-date", store, surveyors);
                 break;
             case 'door-orders':
-                renderOrderStatus(store, socket);
+                renderOrderStatus(store);
                 break;
             case 'sales':
                 renderSales(store, surveyors);
@@ -134,13 +134,25 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function renderQuestion(question) {
+        let element;
+
+        if(question.AnswerPhoto) {
+            element = `<img width="400" height="224" src="data:image/png;base64, ${question.AnswerPhoto}" />`;
+        } else if(question.AnswerText === "true") {
+            element = `Yes`;
+        } else if(question.AnswerText === "false") {
+            element = `No`;
+        } else {
+            element = `${question.AnswerText}`;
+        }
+
         return `
             <div class="question">
                 <div class="qn">
                     ${question.Question}
                 </div>
                 <div class="answer">
-                    ${question.AnswerText}
+                    ${element}
                 </div>
             </div>
         `;

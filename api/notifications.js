@@ -8,18 +8,28 @@ module.exports = (db, logger) => {
     function worksheetTable(worksheetData) {
         return `
             <table>
-                ${worksheetData.map(qn => 
-                    `
+                ${worksheetData.map(question => {
+                    if(question.AnswerPhoto) {
+                        element = `<img width="400" height="224" src="data:image/png;base64, ${question.AnswerPhoto}" />`;
+                    } else if(question.AnswerText === "true") {
+                        element = `Yes`;
+                    } else if(question.AnswerText === "false") {
+                        element = `No`;
+                    } else {
+                        element = `${question.AnswerText}`;
+                    }
+
+                    return `
                     <tr>
                         <td>
-                            <b>${qn.Question}</b>
+                            <b>${question.Question}</b>
                         </td>
                         <td>
-                            ${qn.AnswerText}
+                            ${element}
                         </td>
                     </tr>
                     `
-                ).join('')}
+                }).join('')}
             </table>
         `;
     }
@@ -72,10 +82,8 @@ module.exports = (db, logger) => {
             processNotification(
                 job,
                 `New Sale - ${job.Contact} ${job.Postcode}`,
-                `
-                    <b>${job.Resource}</b> has sold to customer <b>${job.Contact}</b> at <b>${job.Postcode}</b>
-                    <br />
-                `,
+                `<b>${job.Resource}</b> has sold to customer <b>${job.Contact}</b> at <b>${job.Postcode}</b>
+                <br />`,
                 `sales`
             )
         );

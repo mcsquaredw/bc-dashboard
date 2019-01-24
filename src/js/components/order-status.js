@@ -2,7 +2,7 @@ import { changeSearchText, changeSearchFlag } from '../redux/actions';
 import { formatDate, dateToString, getFlagDetails, getNextFlag, getPreviousFlag } from '../utils';
 import { renderJobCard } from './job-card';
 
-export function renderOrderStatus(store, socket) {
+export function renderOrderStatus(store) {
     const dates = {};
     const jobs = store.getState().bc.jobs;
     const flags = store.getState().bc.flags;
