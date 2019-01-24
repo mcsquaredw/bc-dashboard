@@ -1,14 +1,11 @@
 const axios = require('axios');
 const { username, password, api_key } = require("../config/config").vars;
 const moment = require("moment");
-const log4js = require('log4js');
 
 let apiCalls = 0;
 
-logger = log4js.getLogger('server');
-
-module.exports = {
-    getJobs: async () => {
+module.exports = (logger) => {
+    async function getOrders() {
         let error;
         let response;
 
@@ -28,8 +25,9 @@ module.exports = {
             error,
             result: response.data.Result || {}
         }
-    },
-    getOneJob: async (id) => {
+    }
+
+    async function getOneJob(id) {
         let error;
         let response;
 
@@ -49,8 +47,9 @@ module.exports = {
             error,
             result: response.data.Result || {}
         }
-    },
-    getResources: async () => {
+    }
+
+    async function getResources() {
         let error;
         let response;
 
@@ -70,8 +69,9 @@ module.exports = {
             error,
             result: response.data.Result || {}
         }
-    },
-    getFlags: async () => {
+    }
+
+    async function getFlags() {
         let error;
         let response;
 
@@ -92,8 +92,9 @@ module.exports = {
             error,
             result: response.data.Result || {}
         }
-    },
-    setFlag: async (jobId, tagId) => {
+    }
+
+    async function setFlag(jobId, tagId) {
         let error;
         let response;
 
@@ -113,8 +114,9 @@ module.exports = {
             error,
             result: response.data.Result || {}
         }
-    },
-    getWorksheets: async (jobId) => {
+    }
+
+    async function getWorksheets(jobId) {
         let error;
         let response;
 
@@ -134,5 +136,14 @@ module.exports = {
             error,
             result: response.data.Result || {}
         }
+    }
+
+    return {
+        getOrders, 
+        getOneJob,
+        getResources,
+        getFlags,
+        setFlag,
+        getWorksheets
     }
 }
