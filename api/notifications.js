@@ -73,7 +73,7 @@ module.exports = (db, logger) => {
                 job,
                 `New Sale - ${job.Contact} ${job.Postcode}`,
                 `
-                    ${job.Resource} has sold to customer ${job.Contact} at ${job.Postcode}
+                    <b>${job.Resource}</b> has sold to customer <b>${job.Contact}</b> at <b>${job.Postcode}</b>
                     <br />
                 `,
                 `sales`
