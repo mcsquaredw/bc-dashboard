@@ -5,7 +5,7 @@ import { renderJobCard } from './job-card';
 function renderWorker(worker, jobs, position, driving, flags) {
     return `
         <div class="worker">
-            <div class="name">${worker} - Last Reported at ${position} - <i class="material-icons">${driving ? 'local_shipping' : 'home'}</i></div>
+            <div class="name"><i class="material-icons">${driving ? 'local_shipping' : 'home'}</i> ${worker} - ${position ? `Last Reported at ${position}` : `No Position Data`}</div>
             <div class="jobs">
                 ${jobs.map(job => {
                     const currentFlag = getFlagDetails(job.CurrentFlag, flags)
@@ -19,7 +19,7 @@ function renderWorker(worker, jobs, position, driving, flags) {
     `;
 }
 
-export function renderDashboard(target, dateFieldId, store, desiredWorkers, socket) {
+export function renderDashboard(target, dateFieldId, store, desiredWorkers) {
     const jobs = store.getState().bc.jobs;
     const positions = store.getState().bc.resources;
     const flags = store.getState().bc.flags;

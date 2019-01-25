@@ -1,7 +1,7 @@
 module.exports = (https, db, logger) => {
     const io = require('socket.io')(https);
-    const notifications = require('../api/notifications')(db, logger);
-    const bigChangeApi = require('../api/big-change')(logger);
+    const notifications = require('./api/notifications')(db, logger);
+    const bigChangeApi = require('./api/big-change')(logger);
 
     function getResources() {
         logger.info("----- BEGIN RESOURCE UPDATE -----");

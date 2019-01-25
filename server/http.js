@@ -15,7 +15,7 @@ module.exports = (env, port, logger) => {
     
         app.use(express.static('dist'));
     } else {
-        const entryPoint = './src/index.html';
+        const entryPoint = './client/index.html';
         const bundler = new Bundler(entryPoint, {});
     
         logger.info(`Starting in DEVELOPMENT mode at ${now}`);

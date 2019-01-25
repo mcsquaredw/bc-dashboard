@@ -4,27 +4,31 @@
                          "jobs";
     grid-template-columns: auto;
     border: 1px solid black;
-    margin: 5px;
     font-size: 25px;
     width: 100%;
 }
 
 .worker .name {
     grid-area: name;   
-    font-size: 25px;
-    font-weight: bold;
-    margin-left: 5px;   
+    font-size: 35px;
+    font-weight: bold;   
     background-color: darkslategrey;
     color: white;
     padding-left: 5px;
+    padding-bottom: 5px;
+}
+
+.worker .name i {
+    font-size: 35px;
 }
 
 .worker .jobs {
     grid-area: jobs;
     display: grid;
     grid-template-columns: repeat(5, 20%);
-    grid-column-gap: 7px;
-    grid-row-gap: 7px;
-    margin: 5px;
+    grid-column-gap: 10px;
+    grid-row-gap: 10px;
     justify-items: center;
+    padding: 3px;
+    padding-bottom: 7px;
 }

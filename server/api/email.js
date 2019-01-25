@@ -1,7 +1,7 @@
-const { emailoutgoingserver, emailpassword, emailusername, alertemail } = require('../config/config').vars;
+const { emailoutgoingserver, emailpassword, emailusername, alertemail } = require('../../config/config').vars;
 const nodemailer = require("nodemailer");
 
-module.exports = (logger) => {
+module.exports = function setup(logger) {
     let transporter = nodemailer.createTransport({
         host: emailoutgoingserver,
         port: 587,

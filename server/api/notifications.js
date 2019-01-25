@@ -121,4 +121,4 @@ module.exports = (db, logger) => {
     return {
         processNotifications
     }
-}
+};

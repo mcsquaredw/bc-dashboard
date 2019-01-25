@@ -1,10 +1,10 @@
 const axios = require('axios');
-const { username, password, api_key } = require("../config/config").vars;
+const { username, password, api_key } = require("../../config/config").vars;
 const moment = require("moment");
 
 let apiCalls = 0;
 
-module.exports = (logger) => {
+module.exports = function setup(logger) {
     async function getOrders() {
         let error;
         let response;
@@ -49,6 +49,11 @@ module.exports = (logger) => {
         }
     }
 
+
+    /**
+     * Gets all details for resources (people) from Big Change API, including speed and position tracking information if available
+     * @returns {Promise<Result>}
+     */
     async function getResources() {
         let error;
         let response;
@@ -71,6 +76,10 @@ module.exports = (logger) => {
         }
     }
 
+    /**
+     * Get all flag information using Big Change API, including label and colour
+     * @returns {Promise<Result>}
+     */
     async function getFlags() {
         let error;
         let response;
@@ -146,4 +155,4 @@ module.exports = (logger) => {
         setFlag,
         getWorksheets
     }
-}
+};
