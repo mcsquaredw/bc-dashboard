@@ -18,7 +18,7 @@ export function renderSales(store, surveyors) {
   let startDate = new Date(new Date(store.getState().sales.start).setHours(0, 0, 0, 0)).getTime();
   let endDate = new Date(new Date(store.getState().sales.end).setHours(23, 59, 59, 999)).getTime();
 
-  surveyorField.innerHTML = `${surveyors.map(surveyor => `<option value="${surveyor}">${surveyor}</surveyor>`).join('')}`;
+  surveyorField.innerHTML = `${surveyors.map(surveyor => `<option value="${surveyor}">${surveyor}</option>`).join('')}`;
 
   startDateField.onchange = (ev) => {
     store.dispatch(changeSalesFilters(startDateField.valueAsDate, endDateField.valueAsDate, surveyorField.value));

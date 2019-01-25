@@ -7,7 +7,10 @@ module.exports = (env) => {
             serverConsole: { type: 'console' }
         },
         categories: {
-            default: { appenders: [ 'server', 'serverConsole' ], level: 'debug'}
+            default: { 
+                appenders: [ 'server', 'serverConsole' ], 
+                level: env === "PRODUCTION" ? 'debug' : 'warn'
+            }
         }
     });
 

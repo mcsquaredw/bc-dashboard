@@ -21,6 +21,8 @@ export function renderOrderStatus(store) {
         store.dispatch(changeSearchFlag(searchFlagInput.value));
     };
 
+    searchFlagInput.innerHTML = `${flags.map(flag => `<option value="${flag.tagName.slice(0, 4)}">${flag.tagName}</option>`).join('')}`;
+    searchFlagInput.value = searchFlag;
     dates["No Date"] = {};
     dates["No Date"].jobs = [];
 
@@ -39,7 +41,6 @@ export function renderOrderStatus(store) {
 
         if (job.PlannedStart) {
             dateKey = dateToString(new Date(job.PlannedStart));
-            start = new Date(job.PlannedStart);
             if (!dates[dateKey]) {
                 dates[dateKey] = {};
                 dates[dateKey].jobs = [];
@@ -57,9 +58,9 @@ export function renderOrderStatus(store) {
         Object.keys(dates).sort((a, b) => ('' + a).localeCompare(b)).map(key => {
             if (dates[key].jobs.length > 0) {
                 return `    
-                    <h2 class="order-status-date-label">
+                    <div class="order-status-date-label">
                         ${new Date(key).toLocaleDateString("en-GB", { weekday: 'long' })} ${formatDate(new Date(key))}
-                    </h2>
+                    </div>
 
                     <div class="order-status-grid">
                     ${dates[key].jobs
