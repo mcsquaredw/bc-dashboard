@@ -3,7 +3,6 @@
     grid-template-areas: "logo controls menu menu";
     align-items: center;
     border-bottom: 1px solid black;
-    margin-bottom: 5px;
 }
 
 #header #logo {
@@ -32,7 +31,6 @@
     text-decoration: none;
     border: 3px solid rgb(51, 95, 156);
     border-radius: 10px;
-    margin-right: 5px;
     padding-top: 10px;
     padding-bottom: 5px;
     padding-right: 5px;

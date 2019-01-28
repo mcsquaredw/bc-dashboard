@@ -30,7 +30,6 @@
     grid-template-columns: 70% 30%;
     border-bottom: 1px solid black;
     background-color: lightgrey;
-    margin: 0px;
     padding: 5px;
 }
 
@@ -56,7 +55,7 @@
 }
 
 .close {
-    margin-left: auto;
+    padding-left: auto;
   }
   
 .close:hover,

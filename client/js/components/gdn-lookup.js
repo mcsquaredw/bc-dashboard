@@ -15,7 +15,8 @@ const suppliers = [{
     telephone: "01483 237393",
     address: "9, Clasford Farm Stables, Aldershot Road, Guildford GU3 3HQ",
     postcode: "GU3 3HQ",
-    instructions: "Appointments in Calendar hayleysmith@thegaragedoornetwork.com"
+    instructions: "Appointments in Calendar hayleysmith@thegaragedoornetwork.com",
+    calendar: "bgcolor=%23FFFFFF&amp;src=jlgpsj40eaj1pc1p66g9c7vvhc%40group.calendar.google.com&amp;color=%23865A5A"
 },
 {
     name: "Doormatic Chalfont",
@@ -23,7 +24,8 @@ const suppliers = [{
     telephone: "01483 237393",
     address: "25 Market Pl, Chalfont St Peter, Gerrards Cross SL9 9DU",
     postcode: "SL9 9DU",
-    instructions: "Appointments in Calendar hayleysmith@thegaragedoornetwork.com"
+    instructions: "Appointments in Calendar hayleysmith@thegaragedoornetwork.com",
+    calendar: "bgcolor=%23FFFFFF&amp;src=n4876vjl1r4pqd2r2k1b3hkqco%40group.calendar.google.com&amp;color=%23875509"
 },
 {
     name: "Don's Doors",
@@ -39,7 +41,8 @@ const suppliers = [{
     telephone: "01553 844566",
     address: "Nar Valley House, Wormegay, King's Lynn PE33 0SH",
     postcode: "PE33 0SH",
-    instructions: "Appointments in diary."
+    instructions: "Appointments in diary.",
+    calendar: "bgcolor=%23FFFFFF&amp;src=abtijplm7g1d3jtmop9shqkgcc%40group.calendar.google.com&amp;color=%23853104&amp;src=orcphk628bhiok68gtjk0t5l6g%40group.calendar.google.com&amp;color=%23333333"
 },
 {
     name: "Exclusive",
@@ -87,7 +90,8 @@ const suppliers = [{
     telephone: "01302 817300",
     address: "1 Milethorn Ln, Doncaster DN1 2SU",
     postcode: "DN1 2SU",
-    instructions: "Appointments in diary."
+    instructions: "Appointments in diary.",
+    calendar: "bgcolor=%23FFFFFF&amp;src=dean%40zapgaragedoors.com&amp;color=%232F6309"
 },
 {
     name: "Zap Sheffield",
@@ -95,7 +99,8 @@ const suppliers = [{
     telephone: "01142 424265",
     address: "137-143 Attercliffe Common, Sheffield S9 2FA",
     postcode: "S9 2FA",
-    instructions: "Appointments in diary."
+    instructions: "Appointments in diary.",
+    calendar: "bgcolor=%23FFFFFF&amp;src=jason%40zapgaragedoors.com&amp;color=%231B887A"
 },
 {
     name: "Zap Wakefield",
@@ -103,7 +108,8 @@ const suppliers = [{
     telephone: "01924 871777",
     address: "412 Bradford Rd, Carr Gate, Wakefield WF2 0QW",
     postcode: "WF2 0QW",
-    instructions: "Appointments in diary."
+    instructions: "Appointments in diary.",
+    calendar: "bgcolor=%23FFFFFF&amp;src=2vcjtud70tdi2d53vii6uhh7f8%40group.calendar.google.com&amp;color=%23875509"
 }
 ];
 
@@ -122,13 +128,21 @@ export function renderGDNLookup(store) {
             return `
                 <div class="office">
                     <div class="map">
-                        <iframe height="400px" width="400px" src="${MAPS_URL}&q=${supplier.postcode.replace(/ /g, "+")}&zoom=9"></iframe>
+                        <iframe src="${MAPS_URL}&q=${supplier.postcode.replace(/ /g, "+")}&zoom=9"></iframe>
                     </div>
                     <div class="details">
                         <h1>${supplier.name}</h1>
                         Tel: ${supplier.telephone}
                         <br />
                         ${supplier.instructions}
+                        <br />
+                    </div>
+                    <div class="calendar">
+                        ${supplier.calendar ? 
+                            `<iframe src="https://calendar.google.com/calendar/b/2/embed?mode=WEEK&amp;height=600&amp;wkst=1&amp;${supplier.calendar}&amp;ctz=Europe%2FLondon" style="border-width:0" frameborder="0" scrolling="no"></iframe>`
+                        :
+                            ''
+                        }
                     </div>
                 </div>
             `

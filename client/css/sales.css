@@ -2,8 +2,6 @@
     display: grid;
     grid-template-areas: "sales-chart sales-table";
     grid-template-columns: 50% 50%;
-    margin-left: 5px;
-    margin-right: 5px;
 }
 
 #sales-container #chart {

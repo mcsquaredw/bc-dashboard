@@ -1,16 +1,31 @@
-#container .office {
+#gdn-contractors .office {
     margin: 7px;
     padding: 5px;
     display: grid;
-    grid-template-columns: 30% auto auto;
-    grid-template-areas: "gdn-map gdn-details gdn-details";
+    grid-template-columns: 20% 20% auto;
+    grid-template-areas: "gdn-map gdn-details gdn-calendar";
     border: 1px solid black;
+    min-height: 500px;
 }
 
-#container .map {
+.office .map {
     grid-area: gdn-map;
 }
 
-#container .details {
+.office .map iframe {
+    width: 100%;
+    height: 100%;   
+}
+
+.office .gdn-calendar {
+    grid-area: gdn-calendar;
+}
+
+.office .gdn-calendar {
+    width: 100%;
+    height: 100%;
+}
+
+.office .details {
     grid-area: gdn-details;
 }
