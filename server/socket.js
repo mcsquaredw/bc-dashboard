@@ -1,6 +1,7 @@
 module.exports = (https, db, logger) => {
     const io = require('socket.io')(https);
     const notifications = require('./api/notifications')(db, logger);
+    const reports = require('./api/reports')(db, logger);
     const bigChangeApi = require('./api/big-change')(logger);
 
     function getResources() {
@@ -26,6 +27,7 @@ module.exports = (https, db, logger) => {
                 io.emit('error', { label: 'Error getting jobs', err: response.error });
             } else {
                 notifications.processNotifications(response.result);
+                reports.processReports(response.result);
 
                 io.emit('orders', { jobs: response.result });
             }

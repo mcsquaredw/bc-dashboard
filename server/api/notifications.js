@@ -35,7 +35,6 @@ module.exports = (db, logger) => {
     }
 
     async function processNotification(job, emailSubject, emailText, notificationType) {
-        logger.info("----- BEGIN NOTIFICATIONS -----");
         const notificationResult = await localDb.isNotified(job.JobId, notificationType);
 
         if(notificationResult.error) {
@@ -93,7 +92,7 @@ module.exports = (db, logger) => {
         jobs
         .filter(job => job.Type.includes("Remedial") || job.Type.includes("Fitting"))
         .filter(job => job.Status.includes("issues"))
-        .map(job => 
+        .map(async(job) => 
             processNotification(
                 job,
                 `Job with Issues - ${job.Type} - ${job.Contact} ${job.Postcode}`,
@@ -108,13 +107,14 @@ module.exports = (db, logger) => {
     }
 
     function processNotifications(jobs) {
+        logger.info("----- BEGIN NOTIFICATIONS -----");
         const filteredJobs = jobs.filter(job => moment(job.PlannedStart).isAfter(moment("24/01/2019", "DD/MM/YYYY")));
 
         Promise.all([
             notifySales(filteredJobs),
             notifyIssues(filteredJobs)
         ]).catch(err => {
-            console.log(err);
+            logger.error(err);
         });
     }
 
