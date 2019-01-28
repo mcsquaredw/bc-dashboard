@@ -139,7 +139,7 @@ export function renderGDNLookup(store) {
                     </div>
                     <div class="calendar">
                         ${supplier.calendar ? 
-                            `<iframe src="https://calendar.google.com/calendar/b/2/embed?mode=WEEK&amp;height=600&amp;wkst=1&amp;${supplier.calendar}&amp;ctz=Europe%2FLondon" style="border-width:0" frameborder="0" scrolling="no"></iframe>`
+                            `<iframe width="1024" height="768" src="https://calendar.google.com/calendar/b/2/embed?mode=WEEK&amp;wkst=1&amp;${supplier.calendar}&amp;ctz=Europe%2FLondon" style="border-width:0" frameborder="0" scrolling="no"></iframe>`
                         :
                             ''
                         }
