@@ -24,9 +24,9 @@ module.exports = (db, logger) => {
                             <td style="padding: 5px; font-weight: bold;">Customer Postcode</td>
                             <td style="padding: 5px; font-weight: bold;">Current Flag</td>
                         <tr>
-                    ${jobs.map(job => {
+                    ${jobs.map((job, index) => {
                         return `
-                            <tr>
+                            <tr ${index % 2 == 0 ? `style="background-color: lightgrey"` : '' }>
                                 <td style="padding: 5px;">${moment(job.PlannedStart).format("DD/MM/YYYY")}</td>
                                 <td style="padding: 5px;">${job.Type}</td>
                                 <td style="padding: 5px;">${job.Contact}</td>
