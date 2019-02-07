@@ -1,29 +1,30 @@
-const { emailoutgoingserver, emailpassword, emailusername, alertemail } = require('../../config/config').vars;
 const nodemailer = require("nodemailer");
 
-module.exports = function setup(logger) {
+module.exports = (config, logger) => {
+    const { EMAIL_OUTGOING_SERVER, EMAIL_PASSWORD, EMAIL_USERNAME, EMAIL_DESTINATION } = config;
+
     let transporter = nodemailer.createTransport({
-        host: emailoutgoingserver,
+        host: EMAIL_OUTGOING_SERVER,
         port: 587,
         secure: false,
         auth: {
-            user: emailusername,
-            pass: emailpassword
+            user: EMAIL_USERNAME,
+            pass: EMAIL_PASSWORD
         }
     });
 
     async function sendEmail(subject, text, html) {
         try {
             let mailOptions = {
-                from: `"⚠️ JB Doors Alerts" <${emailusername}>`,
-                to: `${alertemail}`,
+                from: `"⚠️ JB Doors Alerts" <${EMAIL_USERNAME}>`,
+                to: `${EMAIL_DESTINATION}`,
                 subject,
                 text, 
                 html
             }
     
-            logger.info(`Sending alert email to ${alertemail}`)
-            await transporter.sendMail(mailOptions);
+            logger.info(`Sending alert email to ${EMAIL_DESTINATION}`)
+            //await transporter.sendMail(mailOptions);
 
             return { error: "" }
         } catch(err) {

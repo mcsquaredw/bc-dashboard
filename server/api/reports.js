@@ -1,15 +1,16 @@
 const moment = require('moment');
 
-module.exports = (db, logger) => {
-    const localDb = require('../api/local-db')(db, logger);
-    const email = require('../api/email')(logger);
+module.exports = (config, logger, db) => {
+    const email = require('../api/email')(config, logger);
 
     async function processReport(reportType, jobs, emailSubject, emailText) {
-        const reportRun = await localDb.reportRun(reportType);
+        let reportRun = await db.collection('reports').findOne({ reportType, reportDate: moment().format("DD/MM/YYYY") });
 
-        if(reportRun.error) {
-            logger.error(`Error while checking if report ${reportType} was run: ${reportRun.error}`);
-        } else if(!reportRun.result) {
+        if(!reportRun) {
+            reportRun = {
+                reportType,
+                reportDate: moment().format("DD/MM/YYYY")
+            }
             const emailResult = await email.sendEmail(
                 emailSubject,
                 ``,
@@ -42,11 +43,7 @@ module.exports = (db, logger) => {
             if(emailResult.error) {
                 logger.error(`Error while sending email: ${emailResult.error}`);
             } else {
-                const saveReportResult = await localDb.setReportRun(reportType);
-    
-                if(saveReportResult.error) {
-                    logger.error(`Error saving report status: ${saveReportResult.error}`)
-                } 
+                await db.collection('reports').insertOne(reportRun);
             }
         }
     }
@@ -76,7 +73,7 @@ module.exports = (db, logger) => {
     }
 
     function processReports(jobs) {
-        logger.info("----- BEGIN NOTIFICATIONS -----");
+        logger.info("----- BEGIN REPORTS -----");
         const filteredJobs = jobs
                                 .filter(job => moment(job.PlannedStart).isAfter(moment("27/01/2019", "DD/MM/YYYY")))
                                 .sort((a, b) => new Date(a.PlannedStart) - new Date(b.PlannedStart));

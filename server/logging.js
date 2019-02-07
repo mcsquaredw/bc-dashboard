@@ -14,9 +14,5 @@ module.exports = (env) => {
         }
     });
 
-    process.on('SIGINT', () => {
-        log4js.shutdown();    
-    });
-
     return log4js.getLogger('server');
 };

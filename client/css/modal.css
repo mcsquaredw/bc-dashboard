@@ -39,6 +39,7 @@
 
 #modal-close {
   grid-area: modal-close;
+  margin-left: auto;
 }
 
 .modal-info {

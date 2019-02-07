@@ -2,12 +2,14 @@ const fs = require('fs');
 const express = require('express');
 const Bundler = require('parcel-bundler');
 const app = express();
+
 const now = new Date();
 
-module.exports = (env, port, logger) => {
+module.exports = (config, env, port, logger) => {
+    const { KEY, CERT } = config;
     const https = require('https').Server({
-        key: fs.readFileSync('./certs/localhost+2-key.pem'),
-        cert: fs.readFileSync('./certs/localhost+2.pem')
+        key: fs.readFileSync(__dirname + `/certs/${KEY}`),
+        cert: fs.readFileSync(__dirname + `/certs/${CERT}`)
     }, app);
 
     if (env === "production") {

@@ -1,17 +1,24 @@
-module.exports = (https, db, logger) => {
+module.exports = (config, https, logger, db) => {
+    const { ENGINEERS, SURVEYORS } = config;
     const io = require('socket.io')(https);
-    const notifications = require('./api/notifications')(db, logger);
-    const reports = require('./api/reports')(db, logger);
-    const bigChangeApi = require('./api/big-change')(logger);
+    const notifications = require('./api/notifications')(config, logger, db);
+    const reports = require('./api/reports')(config, logger, db);
+    const bigChangeApi = require('./api/big-change')(config, logger);
 
     function getResources() {
         logger.info("----- BEGIN RESOURCE UPDATE -----");
         bigChangeApi.getResources().then(response => {
             if (response.error) {
-                logger.error(`Error getting resources: ${err}`);
-                io.emit('error', { label: `Error getting resources`, err: response.error });
+                logger.error(`Error getting resources from Big Change: ${err}`);
+                io.emit('error', { label: `Error getting resources from Big Change`, err: response.error });
             } else {
-                io.emit('resources', { resources: response.result });
+                io.emit('resources', { resources: response.result.map(resource => {
+                    return { ...resource, 
+                                isEngineer: ENGINEERS.includes(resource.ResourceName),
+                                isSurveyor: SURVEYORS.includes(resource.ResourceName)
+                            }
+                    }) 
+                });
             }
         }).catch(err => {
             logger.error(`Error getting resources: ${err}`);
@@ -23,16 +30,39 @@ module.exports = (https, db, logger) => {
         logger.info("----- BEGIN ORDER UPDATE -----");
         bigChangeApi.getOrders().then(response => {
             if (response.error) {
-                logger.error(`Error getting orders: ${response.error}`);
-                io.emit('error', { label: 'Error getting jobs', err: response.error });
+                logger.error(`Error getting jobs from Big Change: ${response.error}`);
+                io.emit('error', { label: 'Error getting jobs from Big Change', err: response.error });
             } else {
-                notifications.processNotifications(response.result);
-                reports.processReports(response.result);
+                const jobs = response.result;
 
-                io.emit('orders', { jobs: response.result });
+                Promise.all(
+                    jobs
+                    .filter(job => job.RealEnd)
+                    .filter(async(job) => !await db.collection('jobs').find({ JobId: job.JobId }))
+                    .map(async(job) => {
+                        try {
+                            const jobDetails = await bigChangeApi.getOneJob(job.JobId);
+                            const worksheets = await bigChangeApi.getWorksheets(job.JobId);
+
+                            return await db.collection('jobs').insertOne(
+                                {
+                                    ...jobDetails.result,
+                                    worksheets: worksheets.result
+                                }
+                            )
+                        } catch(err) {
+                            logger.error(`${err}`);
+                        } 
+                    })
+                );
+                
+                notifications.processNotifications(jobs);
+                reports.processReports(jobs);
+                
+                io.emit('orders', { jobs });
             }
         }).catch(err => {
-            logger.error(`Error getting orders: ${err}`);
+            logger.error(`Error getting jobs: ${err}`);
             io.emit('error', { label: 'Error getting jobs', err });
         });
     }
@@ -41,8 +71,8 @@ module.exports = (https, db, logger) => {
         logger.info("----- BEGIN FLAG UPDATE -----");
         bigChangeApi.getFlags().then(response => {
             if (response.error) {
-                logger.error(`Error getting flags: ${response.error}`);
-                io.emit('error', { label: 'Error getting flags', err: response.error });
+                logger.error(`Error getting flags from Big Change: ${response.error}`);
+                io.emit('error', { label: 'Error getting flags from Big Change', err: response.error });
             } else {
                 io.emit('flags', { flags: response.result });
             }
@@ -75,12 +105,30 @@ module.exports = (https, db, logger) => {
         socket.on('get-worksheets', (data) => {
             logger.info(`Received get-worksheets message for job ID ${data.jobId}`);
 
-            bigChangeApi.getWorksheets(data.jobId).then(response => {
-                socket.emit('worksheets', { worksheets: response.result });
+            db.collection("jobs").findOne({ JobId: data.jobId}).then(job => {
+                if(job) {
+                    logger.info("Found saved worksheets in local DB");
+                    socket.emit('worksheets', { worksheets: job.worksheets });
+                } else {
+                    bigChangeApi.getWorksheets(data.jobId).then(response => {
+                        logger.info("Retrieved worksheets from Big Change");
+
+                        job.worksheets = response.result;
+                        
+                        db.collection("jobs").update({JobId: job.JobId}, job).catch(err => {
+                            logger.error("Worksheet data not saved!");
+                        });
+
+                        socket.emit('worksheets', { worksheets: response.result });
+                    }).catch(err => {
+                        logger.error(`Error getting worksheets: ${err}`);
+                        socket.emit('error', { label: 'Error getting worksheets', err });
+                    });
+                }
             }).catch(err => {
                 logger.error(`Error getting worksheets: ${err}`);
                 socket.emit('error', { label: 'Error getting worksheets', err });
-            });
+            })
         });
     });
 

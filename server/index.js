@@ -1,26 +1,19 @@
-const sqlite = require('sqlite');
-
+const config = require('../config/config').vars;
 const env = (process.env.NODE_ENV ? process.env.NODE_ENV : "DEVELOPMENT").trim().toUpperCase();
-const port = process.env.PORT ? process.env.PORT : 3000;
 const logger = require('./logging')(env);
-const https = require('./http')(env, port, logger);
+const port = process.env.PORT ? process.env.PORT : 3000;
+const https = require('./http')(config, env, port, logger);
+const MongoClient = require('mongodb').MongoClient;
+const assert = require('assert');
+let db;
 
-sqlite
-.open(`./data/${env}-bclocal.sqlite`)
-.then(db => {
-    if(env === 'PRODUCTION') {
-        db.migrate();
-    } else {
-        db.migrate({force: 'last'});
-    }
-    logger.info("Database connection established");
-    require('./socket')(https, db, logger);
+MongoClient.connect(config.MONGO_URL, { useNewUrlParser: true }, (err, client) => {
+    assert.equal(null, err);
+    db = client.db(config.MONGO_DBNAME);
+    require('./socket')(config, https, logger, db);
+});
 
-    process.on('SIGINT', () => {
-        logger.info("Shutting down");
-        db.close();
-    });
-}).catch(err => {
-    logger.error("Cannot connect to local database: ", err);
+process.on('SIGINT', () => {
+    logger.info("Shutting down");
 });
 

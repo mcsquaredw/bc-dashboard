@@ -1,9 +1,7 @@
 .next
 node_modules
 config/development.js
-config/production.js
 dist
 .cache
-certs/*
+server/certs/*
 logs/*
-data/*

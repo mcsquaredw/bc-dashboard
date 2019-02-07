@@ -15,24 +15,6 @@ import { renderOrderStatus } from './components/order-status';
 import { renderSales } from './components/sales';
 import { renderGDNLookup } from './components/gdn-lookup';
 
-const engineers = [
-    "Adrian Ibbertson",
-    "Andy Begg",
-    "Andy MacDonald",
-    "Dave McLaughan",
-    "Jamie Organ",
-    "Jimmy Rawlings",
-    "Jordan Fletcher",
-    "Kevin Jowett",
-    "Stuart Kershaw"
-];
-
-const surveyors = [
-    "Andy Marshall",
-    "Darren Baker",
-    "Jason Housby"
-];
-
 document.addEventListener("DOMContentLoaded", () => {
     const socket = io.connect({ secure: true });
     const store = createStore(reducers);
@@ -71,16 +53,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
         switch (page) {
             case 'engineer-jobs':
-                renderDashboard("engineer-jobs", "engineer-date", store, engineers);
+                renderDashboard("engineer-jobs", "engineer-date", store, store.getState().bc.resources.filter(resource => resource.isEngineer).map(resource => resource.ResourceName));
                 break;
             case 'surveyor-jobs':
-                renderDashboard("surveyor-jobs", "surveyor-date", store, surveyors);
+                renderDashboard("surveyor-jobs", "surveyor-date", store, store.getState().bc.resources.filter(resource => resource.isSurveyor).map(resource => resource.ResourceName));
                 break;
             case 'door-orders':
                 renderOrderStatus(store);
                 break;
             case 'sales':
-                renderSales(store, surveyors);
+                renderSales(store, store.getState().bc.resources.filter(resource => resource.isSurveyor).map(resource => resource.ResourceName));
                 break;
             case 'gdn-contractors':
                 renderGDNLookup(store);
