@@ -110,14 +110,6 @@ module.exports = (config, https, logger, db) => {
                     socket.emit('worksheets', { worksheets: job.worksheets });
                 } else {
                     bigChangeApi.getWorksheets(data.jobId).then(response => {
-                        logger.info("Retrieved worksheets from Big Change");
-
-                        job.worksheets = response.result;
-
-                        db.collection("jobs").update({ JobId: job.JobId }, job).catch(err => {
-                            logger.error("Worksheet data not saved!");
-                        });
-
                         socket.emit('worksheets', { worksheets: response.result });
                     }).catch(err => {
                         logger.error(`Error getting worksheets: ${err}`);
