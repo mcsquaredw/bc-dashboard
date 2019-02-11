@@ -1,11 +1,12 @@
 import { sortJobs, getNextFlag, getPreviousFlag, getFlagDetails } from '../utils';
 import { updateDashboardDate } from '../redux/actions';
 import { renderJobCard } from './job-card';
+import moment from 'moment';
 
-function renderWorker(worker, jobs, position, driving, flags) {
+function renderWorker(worker, jobs, position, driving, flags, positionDate) {
     return `
         <div class="worker">
-            <div class="name"><i class="material-icons">${driving ? 'local_shipping' : 'home'}</i> ${worker} - ${position ? `Last Reported at ${position}` : `No Position Data`}</div>
+            <div class="name"><i class="material-icons">${driving ? 'local_shipping' : 'home'}</i> ${worker} - ${position ? `Last Reported at ${position} at ${moment(positionDate).format("HH:mm:ss")}` : `No Position Data`}</div>
             <div class="jobs">
                 ${jobs.map(job => {
                     const currentFlag = getFlagDetails(job.CurrentFlag, flags)
@@ -57,10 +58,11 @@ export function renderDashboard(target, dateFieldId, store, desiredWorkers) {
             .map(resource => {
                 return {
                     positionAddress: resource.PositionAddress,
-                    positionSpeed: resource.PositionSpeed
+                    positionSpeed: resource.PositionSpeed,
+                    positionDate: resource.PositionDate
                 };
             })[0];
 
-        return `${renderWorker(key, workers[key].jobs, positionData.positionAddress, (positionData.positionSpeed ? true : false) , flags)}`;
+        return `${renderWorker(key, workers[key].jobs, positionData.positionAddress, (positionData.positionSpeed ? true : false) , flags, positionData.positionDate)}`;
     }).join('');
 }
