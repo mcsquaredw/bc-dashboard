@@ -10,5 +10,6 @@ module.exports = {
     KEY: process.env.KEY,
     COUCHDB_URL: process.env.COUCHDB_URL,
     SURVEYORS: process.env.SURVEYORS,
-    ENGINEERS: process.env.ENGINEERS
+    ENGINEERS: process.env.ENGINEERS,
+    EPOCH: "2018-11-01"
 }

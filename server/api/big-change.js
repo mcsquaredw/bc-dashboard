@@ -3,7 +3,7 @@ const moment = require("moment");
 
 module.exports = (config, logger) => {
     let apiCalls = 0;
-    const { BC_USERNAME, BC_PASSWORD, BC_API_KEY } = config;
+    const { BC_USERNAME, BC_PASSWORD, BC_API_KEY, EPOCH } = config;
     const BC_URL = `https://webservice.bigchangeapps.com/v01/services.ashx?key=${BC_API_KEY}&login=${BC_USERNAME}&pwd=${BC_PASSWORD}`;
 
     async function getOrders() {
@@ -11,11 +11,11 @@ module.exports = (config, logger) => {
         let response;
 
         try {
-            logger.info(`Getting details for jobs between ${moment("2019-02-01")} and ${moment().add(60, 'days')}`);
+            logger.info(`Getting details for jobs between ${moment(EPOCH)} and ${moment().add(60, 'days')}`);
             logger.info(`Big Change API Calls Used: ${++apiCalls}`);
 
             response = await axios.get(
-                `${BC_URL}&action=jobs&start=${moment("2018-11-01").format('YYYY-MM-DD')}&end=${moment().add(60, 'days').format('YYYY-MM-DD')}`
+                `${BC_URL}&action=jobs&start=${moment(EPOCH).format('YYYY-MM-DD')}&end=${moment().add(60, 'days').format('YYYY-MM-DD')}`
             );
         } catch (err) {
             error = err;

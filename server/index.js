@@ -11,6 +11,10 @@ MongoClient.connect(config.MONGO_URL, { useNewUrlParser: true }, (err, client) =
     assert.equal(null, err);
     db = client.db(config.MONGO_DBNAME);
     require('./socket')(config, https, logger, db);
+    db.collection('jobs').createIndex({ JobId: 1 });
+    db.collection('jobs').createIndex({ ContactId: 1 });
+    db.collection('jobs').createIndex({ Type: 1 });
+    db.collection('jobs').createIndex({ CurrentFlag: 1});
 });
 
 process.on('SIGINT', () => {

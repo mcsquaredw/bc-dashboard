@@ -12,12 +12,14 @@ module.exports = (config, https, logger, db) => {
                 logger.error(`Error getting resources from Big Change: ${err}`);
                 io.emit('error', { label: `Error getting resources from Big Change`, err: response.error });
             } else {
-                io.emit('resources', { resources: response.result.map(resource => {
-                    return { ...resource, 
-                                isEngineer: ENGINEERS.includes(resource.ResourceName),
-                                isSurveyor: SURVEYORS.includes(resource.ResourceName)
-                            }
-                    }) 
+                io.emit('resources', {
+                    resources: response.result.map(resource => {
+                        return {
+                            ...resource,
+                            isEngineer: ENGINEERS.includes(resource.ResourceName),
+                            isSurveyor: SURVEYORS.includes(resource.ResourceName)
+                        }
+                    })
                 });
             }
         }).catch(err => {
@@ -26,44 +28,41 @@ module.exports = (config, https, logger, db) => {
         });
     }
 
-    function getOrders() {
+    async function getOrders() {
         logger.info("----- BEGIN ORDER UPDATE -----");
-        bigChangeApi.getOrders().then(response => {
-            if (response.error) {
-                logger.error(`Error getting jobs from Big Change: ${response.error}`);
-                io.emit('error', { label: 'Error getting jobs from Big Change', err: response.error });
-            } else {
-                const jobs = response.result;
+        const newJobs = (await bigChangeApi.getOrders()).result;
+        let writes = [];
 
-                Promise.all(
-                    jobs
-                    .filter(job => job.RealEnd)
-                    .filter(async(job) => !await db.collection('jobs').find({ JobId: job.JobId }))
-                    .map(async(job) => {
-                        try {
-                            const jobDetails = await bigChangeApi.getOneJob(job.JobId);
-                            const worksheets = await bigChangeApi.getWorksheets(job.JobId);
+        Promise.all(
+            newJobs
+            .filter(newJob => newJob.RealEnd)
+            .map(async(finishedJob) => {
+                const savedJob = await db.collection('jobs').findOne({ JobId: finishedJob.JobId }, { JobId: 1});
+                
+                if(!savedJob) {
+                    const jobDetails = (await bigChangeApi.getOneJob(finishedJob.JobId)).result;
+                    const worksheets = (await bigChangeApi.getWorksheets(finishedJob.JobId)).result;
 
-                            return await db.collection('jobs').insertOne(
-                                {
-                                    ...jobDetails.result,
-                                    worksheets: worksheets.result
-                                }
-                            )
-                        } catch(err) {
-                            logger.error(`${err}`);
-                        } 
-                    })
-                );
+                    writes.push(
+                        { insertOne: {
+                                ...jobDetails,
+                                worksheets
+                            } 
+                        }
+                    )
+                }
                 
-                notifications.processNotifications(jobs);
-                reports.processReports(jobs);
-                
-                io.emit('orders', { jobs });
+            })
+        ).then(() => {
+            if(writes.length > 0) {
+                db.collection('jobs').bulkWrite(writes);
             }
+            
+            io.emit('orders', {jobs: newJobs});
+            notifications.processNotifications(newJobs);
+            reports.processReports(newJobs);
         }).catch(err => {
-            logger.error(`Error getting jobs: ${err}`);
-            io.emit('error', { label: 'Error getting jobs', err });
+            logger.error(err);
         });
     }
 
@@ -105,8 +104,8 @@ module.exports = (config, https, logger, db) => {
         socket.on('get-worksheets', (data) => {
             logger.info(`Received get-worksheets message for job ID ${data.jobId}`);
 
-            db.collection("jobs").findOne({ JobId: data.jobId}).then(job => {
-                if(job) {
+            db.collection("jobs").findOne({ JobId: data.jobId }).then(job => {
+                if (job) {
                     logger.info("Found saved worksheets in local DB");
                     socket.emit('worksheets', { worksheets: job.worksheets });
                 } else {
@@ -114,8 +113,8 @@ module.exports = (config, https, logger, db) => {
                         logger.info("Retrieved worksheets from Big Change");
 
                         job.worksheets = response.result;
-                        
-                        db.collection("jobs").update({JobId: job.JobId}, job).catch(err => {
+
+                        db.collection("jobs").update({ JobId: job.JobId }, job).catch(err => {
                             logger.error("Worksheet data not saved!");
                         });
 
@@ -137,10 +136,4 @@ module.exports = (config, https, logger, db) => {
         getResources();
         getOrders();
     }, 120000);
-
-    return {
-        getResources,
-        getOrders,
-        getFlags
-    }
 }
