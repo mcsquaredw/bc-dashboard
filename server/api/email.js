@@ -24,7 +24,7 @@ module.exports = (config, logger) => {
             }
     
             logger.info(`Sending alert email to ${EMAIL_DESTINATION}`)
-            //await transporter.sendMail(mailOptions);
+            await transporter.sendMail(mailOptions);
 
             return { error: "" }
         } catch(err) {
