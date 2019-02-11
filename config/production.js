@@ -8,7 +8,8 @@ module.exports = {
     EMAIL_DESTINATION: process.env.EMAIL_DESTINATION,
     CERT: process.env.CERT,
     KEY: process.env.KEY,
-    COUCHDB_URL: process.env.COUCHDB_URL,
+    MONGO_URL: process.env.MONGO_URL,
+    MONGO_DBNAME: process.env.MONGO_DBNAME,
     SURVEYORS: process.env.SURVEYORS,
     ENGINEERS: process.env.ENGINEERS,
     EPOCH: "2018-11-01"
