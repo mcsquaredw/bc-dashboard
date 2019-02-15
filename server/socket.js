@@ -9,7 +9,7 @@ module.exports = (config, https, logger, db) => {
         logger.info("----- BEGIN RESOURCE UPDATE -----");
         bigChangeApi.getResources().then(response => {
             if (response.error) {
-                logger.error(`Error getting resources from Big Change: ${err}`);
+                logger.error(`Error getting resources from Big Change: ${response.error}`);
                 io.emit('error', { label: `Error getting resources from Big Change`, err: response.error });
             } else {
                 io.emit('resources', {
