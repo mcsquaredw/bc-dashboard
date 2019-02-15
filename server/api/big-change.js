@@ -2,7 +2,6 @@ const axios = require('axios');
 const moment = require("moment");
 
 module.exports = (config, logger) => {
-    let apiCalls = 0;
     const { BC_USERNAME, BC_PASSWORD, BC_API_KEY, EPOCH } = config;
     const BC_URL = `https://webservice.bigchangeapps.com/v01/services.ashx?key=${BC_API_KEY}&login=${BC_USERNAME}&pwd=${BC_PASSWORD}`;
 
@@ -97,8 +96,7 @@ module.exports = (config, logger) => {
         let error;
         let result;
 
-        try {
-            apiCalls++;
+        try {            
             logger.info(`Getting flags`);
 
             const response = await axios.get(
@@ -125,7 +123,6 @@ module.exports = (config, logger) => {
         let result;
 
         try {
-            apiCalls++;
             logger.info(`Setting flag for job with ID ${jobId} to flag with ID ${tagId}`);
 
             const response = await axios.get(
@@ -152,7 +149,6 @@ module.exports = (config, logger) => {
         let result;
 
         try {
-            apiCalls++;
             logger.info(`Getting worksheets for job with ID ${jobId}`);
 
             const response = await axios.get(
