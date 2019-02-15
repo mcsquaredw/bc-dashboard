@@ -16,7 +16,7 @@ module.exports = (config, logger) => {
     async function sendEmail(subject, text, html) {
         try {
             let mailOptions = {
-                from: `"⚠️ JB Doors Alerts" <${EMAIL_USERNAME}>`,
+                from: `"⚠️ ${config.COMPANY_NAME} Alerts" <${EMAIL_USERNAME}>`,
                 to: `${EMAIL_DESTINATION}`,
                 subject,
                 text, 

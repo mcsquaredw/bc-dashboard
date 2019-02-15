@@ -1,9 +1,8 @@
 const fs = require('fs');
 const express = require('express');
 const Bundler = require('parcel-bundler');
-const app = express();
 
-const now = new Date();
+const app = express();
 
 module.exports = (config, env, port, logger) => {
     const { KEY, CERT } = config;
@@ -13,14 +12,14 @@ module.exports = (config, env, port, logger) => {
     }, app);
 
     if (env === "production") {
-        logger.info(`Starting in PRODUCTION mode at ${now}`);
+        logger.info(`Starting in PRODUCTION mode`);
     
         app.use(express.static('dist'));
     } else {
         const entryPoint = './client/index.html';
         const bundler = new Bundler(entryPoint, {});
     
-        logger.info(`Starting in DEVELOPMENT mode at ${now}`);
+        logger.info(`Starting in DEVELOPMENT mode`);
         app.use(bundler.middleware());
     }
 
