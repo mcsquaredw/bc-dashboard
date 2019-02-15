@@ -37,21 +37,24 @@ module.exports = (config, https, logger, db) => {
             newJobs
             .filter(newJob => newJob.RealEnd)
             .map(async(finishedJob) => {
-                const savedJob = await db.collection('jobs').findOne({ JobId: finishedJob.JobId }, { JobId: 1});
+                try {
+                    const savedJob = await db.collection('jobs').findOne({ JobId: finishedJob.JobId }, { JobId: 1});
                 
-                if(!savedJob) {
-                    const jobDetails = (await bigChangeApi.getOneJob(finishedJob.JobId)).result;
-                    const worksheets = (await bigChangeApi.getWorksheets(finishedJob.JobId)).result;
+                    if(!savedJob) {
+                        const jobDetails = (await bigChangeApi.getOneJob(finishedJob.JobId)).result;
+                        const worksheets = (await bigChangeApi.getWorksheets(finishedJob.JobId)).result;
 
-                    writes.push(
-                        { insertOne: {
-                                ...jobDetails,
-                                worksheets
-                            } 
-                        }
-                    )
+                        writes.push(
+                            { insertOne: {
+                                    ...jobDetails,
+                                    worksheets
+                                } 
+                            }
+                        )
+                    }
+                } catch(err) {
+                    logger.error(`Error while retrieving extra details: ${err}. This will be automatically retried on the next update.`);
                 }
-                
             })
         ).then(() => {
             if(writes.length > 0) {
