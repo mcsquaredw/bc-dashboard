@@ -2,10 +2,9 @@ const config = require('../config/config').vars;
 const env = (process.env.NODE_ENV ? process.env.NODE_ENV : "DEVELOPMENT").trim().toUpperCase();
 const logger = require('./logging')(env);
 const port = process.env.PORT ? process.env.PORT : 3000;
-const https = require('./http')(config, env, port, logger);
+
 const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
-let db;
 
 assert(config.BC_API_KEY, "Big Change API Key not present");
 assert(config.BC_USERNAME, "Big Change Username not present");
@@ -25,7 +24,8 @@ assert(config.SURVEYORS, "No Surveyors specified");
 
 MongoClient.connect(config.MONGO_URL, { useNewUrlParser: true }, (err, client) => {
     assert.equal(null, err);
-    db = client.db(config.MONGO_DBNAME);
+    const db = client.db(config.MONGO_DBNAME);
+    const https = require('./http')(config, env, port, logger);
     require('./socket')(config, https, logger, db);
     db.collection('jobs').createIndex({ JobId: 1 });
     db.collection('jobs').createIndex({ ContactId: 1 });
