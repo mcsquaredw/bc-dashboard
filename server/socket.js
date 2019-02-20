@@ -64,9 +64,9 @@ module.exports = (config, https, logger, db) => {
                     db.collection('jobs').bulkWrite(writes);
                 }
                 
-                io.emit('orders', {jobs: newJobs});
-                notifications.processNotifications(newJobs);
-                reports.processReports(newJobs);
+                io.emit('orders', {jobs: newJobs.result});
+                notifications.processNotifications(newJobs.result);
+                reports.processReports(newJobs.result);
             }).catch(err => {
                 logger.error(err);
             });
