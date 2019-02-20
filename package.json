@@ -7,8 +7,7 @@
     "start": "nodemon server",
     "build": "parcel build src/*.html",
     "start-production": "set NODE_ENV=PRODUCTION && parcel build client/index.html && npm run start",
-    "start-development": "set NODE_ENV=DEVELOPMENT && npm run start",
-    "generate-documentation": "jsdoc -r . -c jsdoc.json -d docs"
+    "start-development": "set NODE_ENV=DEVELOPMENT && npm run start"
   },
   "keywords": [],
   "author": "",
@@ -20,7 +19,6 @@
     "express": "^4.16.4",
     "express-jwt": "^5.3.1",
     "express-session": "^1.15.6",
-    "isomorphic-ws": "^4.0.1",
     "jsonwebtoken": "^8.4.0",
     "log4js": "^4.0.1",
     "moment": "^2.22.2",
@@ -31,10 +29,5 @@
     "redux": "^4.0.1",
     "socket.io": "^2.2.0",
     "socket.io-client": "^2.2.0"
-  },
-  "devDependencies": {
-    "chai": "^4.2.0",
-    "chai-http": "^4.2.1",
-    "mocha": "^5.2.0"
   }
 }

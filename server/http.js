@@ -1,6 +1,7 @@
 const fs = require('fs');
 const express = require('express');
 const Bundler = require('parcel-bundler');
+const bodyParser = require('body-parser');
 
 const app = express();
 
@@ -11,7 +12,7 @@ module.exports = (config, env, port, logger) => {
         cert: fs.readFileSync(__dirname + `/certs/${CERT}`)
     }, app);
 
-    if (env === "production") {
+    if (env === "PRODUCTION") {
         logger.info(`Starting in PRODUCTION mode`);
     
         app.use(express.static('dist'));
@@ -22,6 +23,8 @@ module.exports = (config, env, port, logger) => {
         logger.info(`Starting in DEVELOPMENT mode`);
         app.use(bundler.middleware());
     }
+
+    app.use(bodyParser.json());
 
     https.listen(port, () => {
         logger.info(`Listening on Port ${port}`);

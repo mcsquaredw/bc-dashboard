@@ -2,7 +2,7 @@ const axios = require('axios');
 const moment = require("moment");
 
 module.exports = (config, logger) => {
-    const { BC_USERNAME, BC_PASSWORD, BC_API_KEY, EPOCH } = config;
+    const { BC_USERNAME, BC_PASSWORD, BC_API_KEY } = config;
     const BC_URL = `https://webservice.bigchangeapps.com/v01/services.ashx?key=${BC_API_KEY}&login=${BC_USERNAME}&pwd=${BC_PASSWORD}`;
 
     async function getOrders() {
@@ -10,10 +10,10 @@ module.exports = (config, logger) => {
         let result;
 
         try {
-            logger.info(`Getting details for jobs between ${moment(EPOCH)} and ${moment().add(60, 'days')}`);
+            logger.info(`Getting details for jobs between ${moment().add(-7, 'days')} and ${moment().add(30, 'days')}`);
 
             const response = await axios.get(
-                `${BC_URL}&action=jobs&start=${moment(EPOCH).format('YYYY-MM-DD')}&end=${moment().add(60, 'days').format('YYYY-MM-DD')}`
+                `${BC_URL}&action=jobs&start=${moment().add(-7, 'days').format('YYYY-MM-DD')}&end=${moment().add(30, 'days').format('YYYY-MM-DD')}`
             );
 
             if(response.status === 200) {

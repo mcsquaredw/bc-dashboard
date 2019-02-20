@@ -14,7 +14,6 @@ assert(config.KEY, "HTTPS Key path not present");
 assert(config.COMPANY_NAME, "Company Name not present");
 assert(config.MONGO_URL, "MongoDB URL not present");
 assert(config.MONGO_DBNAME, "MongoDB Database Name not present");
-assert(config.EPOCH, "Start Date not present");
 assert(config.EMAIL_OUTGOING_SERVER, "Email Server not present");
 assert(config.EMAIL_USERNAME, "Email Username not present");
 assert(config.EMAIL_PASSWORD, "Email Password not present");

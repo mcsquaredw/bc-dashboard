@@ -12,6 +12,5 @@ module.exports = {
     MONGO_DBNAME: process.env.MONGO_DBNAME,
     SURVEYORS: process.env.SURVEYORS,
     ENGINEERS: process.env.ENGINEERS,
-    EPOCH: "2018-11-01",
     COMPANY_NAME: process.env.COMPANY_NAME
 }

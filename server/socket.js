@@ -30,43 +30,47 @@ module.exports = (config, https, logger, db) => {
 
     async function getOrders() {
         logger.info("----- BEGIN ORDER UPDATE -----");
-        const newJobs = (await bigChangeApi.getOrders()).result;
+        const newJobs = (await bigChangeApi.getOrders());
         let writes = [];
 
-        Promise.all(
-            newJobs
-            .filter(newJob => newJob.RealEnd)
-            .map(async(finishedJob) => {
-                try {
-                    const savedJob = await db.collection('jobs').findOne({ JobId: finishedJob.JobId }, { JobId: 1});
-                
-                    if(!savedJob) {
-                        const jobDetails = (await bigChangeApi.getOneJob(finishedJob.JobId)).result;
-                        const worksheets = (await bigChangeApi.getWorksheets(finishedJob.JobId)).result;
-
-                        writes.push(
-                            { insertOne: {
-                                    ...jobDetails,
-                                    worksheets
-                                } 
-                            }
-                        )
+        if(newJobs.error) {
+            logger.error(`Error while retrieving orders: ${newJobs.error}`);
+        } else {
+            Promise.all(
+                newJobs.result
+                .filter(newJob => newJob.RealEnd)
+                .map(async(finishedJob) => {
+                    try {
+                        const savedJob = await db.collection('jobs').findOne({ JobId: finishedJob.JobId }, { JobId: 1});
+                    
+                        if(!savedJob) {
+                            const jobDetails = (await bigChangeApi.getOneJob(finishedJob.JobId)).result;
+                            const worksheets = (await bigChangeApi.getWorksheets(finishedJob.JobId)).result;
+    
+                            writes.push(
+                                { insertOne: {
+                                        ...jobDetails,
+                                        worksheets
+                                    } 
+                                }
+                            )
+                        }
+                    } catch(err) {
+                        logger.error(`Error while retrieving extra details: ${err}. This will be automatically retried on the next update.`);
                     }
-                } catch(err) {
-                    logger.error(`Error while retrieving extra details: ${err}. This will be automatically retried on the next update.`);
+                })
+            ).then(() => {
+                if(writes.length > 0) {
+                    db.collection('jobs').bulkWrite(writes);
                 }
-            })
-        ).then(() => {
-            if(writes.length > 0) {
-                db.collection('jobs').bulkWrite(writes);
-            }
-            
-            io.emit('orders', {jobs: newJobs});
-            notifications.processNotifications(newJobs);
-            reports.processReports(newJobs);
-        }).catch(err => {
-            logger.error(err);
-        });
+                
+                io.emit('orders', {jobs: newJobs});
+                notifications.processNotifications(newJobs);
+                reports.processReports(newJobs);
+            }).catch(err => {
+                logger.error(err);
+            });
+        }
     }
 
     function getFlags() {
@@ -130,5 +134,5 @@ module.exports = (config, https, logger, db) => {
         logger.info(`Updating clients with new data`);
         getResources();
         getOrders();
-    }, 120000);
+    }, 300000);
 }
