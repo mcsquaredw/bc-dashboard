@@ -122,10 +122,11 @@ module.exports = (config, logger, db) => {
         Promise.all([
             notifyIssues(filteredJobs),
             notifySales(filteredJobs)
-        ]).catch(err => {
+        ]).then(() => {
+            logger.info("------ END NOTIFICATIONS ------");
+        }).catch(err => {
             logger.error(err);
-        })
-        
+        })       
     }
 
     return {

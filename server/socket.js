@@ -66,7 +66,7 @@ module.exports = (config, https, logger, db) => {
                 
                 io.emit('orders', {jobs: newJobs.result});
                 notifications.processNotifications(newJobs.result);
-                reports.processReports(newJobs.result);
+                reports.processDailyReports(newJobs.result);
             }).catch(err => {
                 logger.error(err);
             });

@@ -9,7 +9,7 @@ module.exports = (env) => {
         categories: {
             default: { 
                 appenders: [ 'server', 'serverConsole' ], 
-                level: env === "PRODUCTION" ? 'warn' : 'info'
+                level: env === "production" ? 'warn' : 'info'
             }
         }
     });

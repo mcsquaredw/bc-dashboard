@@ -1,5 +1,5 @@
 const config = require('../config/config').vars;
-const env = (process.env.NODE_ENV ? process.env.NODE_ENV : "DEVELOPMENT").trim().toUpperCase();
+const env = (process.env.NODE_ENV ? process.env.NODE_ENV : "development").trim().toUpperCase();
 const logger = require('./logging')(env);
 const port = process.env.PORT ? process.env.PORT : 3000;
 

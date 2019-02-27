@@ -12,15 +12,15 @@ module.exports = (config, env, port, logger) => {
         cert: fs.readFileSync(__dirname + `/certs/${CERT}`)
     }, app);
 
-    if (env === "PRODUCTION") {
-        logger.info(`Starting in PRODUCTION mode`);
+    if (env === "production") {
+        logger.info(`Starting in production mode`);
     
         app.use(express.static('dist'));
     } else {
         const entryPoint = './client/index.html';
         const bundler = new Bundler(entryPoint, {});
     
-        logger.info(`Starting in DEVELOPMENT mode`);
+        logger.info(`Starting in development mode`);
         app.use(bundler.middleware());
     }
 

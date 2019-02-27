@@ -6,8 +6,8 @@
   "scripts": {
     "start": "nodemon server",
     "build": "parcel build src/*.html",
-    "start-production": "set NODE_ENV=PRODUCTION && parcel build client/index.html && npm run start",
-    "start-development": "set NODE_ENV=DEVELOPMENT && npm run start"
+    "start-production": "set NODE_ENV=production && parcel build client/index.html && npm run start",
+    "start-development": "set NODE_ENV=development && npm run start"
   },
   "keywords": [],
   "author": "",
