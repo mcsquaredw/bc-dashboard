@@ -86,7 +86,6 @@ module.exports = (config, logger, db) => {
         }).catch(err => {
             logger.error(`Error processing reports: ${err}`)
         });
-
     }
 
     return {

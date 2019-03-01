@@ -2,7 +2,7 @@
   "name": "jb_dashboard",
   "version": "2.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "server/index.js",
   "scripts": {
     "start": "nodemon server",
     "build": "parcel build src/*.html",

@@ -3,6 +3,7 @@ module.exports = (config, https, logger, db) => {
     const io = require('socket.io')(https);
     const notifications = require('./api/notifications')(config, logger, db);
     const reports = require('./api/reports')(config, logger, db);
+    const weeklyReports = require('./api/weekly-report')(config, logger, db);
     const bigChangeApi = require('./api/big-change')(config, logger);
 
     function getResources() {
@@ -67,6 +68,7 @@ module.exports = (config, https, logger, db) => {
                 io.emit('orders', {jobs: newJobs.result});
                 notifications.processNotifications(newJobs.result);
                 reports.processDailyReports(newJobs.result);
+                weeklyReports.processWeeklyReports();
             }).catch(err => {
                 logger.error(err);
             });

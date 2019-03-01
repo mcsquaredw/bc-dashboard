@@ -31,9 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     socket.on('resources', (data) => {
-        if(JSON.stringify(data.resources) !== JSON.stringify(store.getState().bc.resources)) {
-            store.dispatch(newResourceData(data.resources));
-        }
+        store.dispatch(newResourceData(data.resources));
     });
 
     socket.on('flags', (data) => {
